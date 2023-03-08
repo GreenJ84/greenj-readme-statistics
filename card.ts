@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 import { createIntl, createIntlCache } from '@formatjs/intl';
 
-import { colors } from './colors';
+import { COLORS } from './colors';
 import { THEMES, THEMETYPE } from './themes';
 
 /**
@@ -29,7 +29,6 @@ function getFormatDate(dateString: string, format: string | null, locale: string
     },
     cache
   )
-
   // if current year, display only month and day
   if (date.toFormat('yyyy') === DateTime.now().toFormat('yyyy')) {
     if (format) {
@@ -80,8 +79,6 @@ function normalizeThemeName(theme: string): string {
  * @return The chosen theme or default
  */
 function getRequestedTheme(params: Record<string, string>): THEMETYPE {
-  //List of valid CSS colors
-  const CSS_COLORS: string[] = colors;
   // normalize theme name
   const selectedTheme = normalizeThemeName(params["theme"] ?? "default");
   // get theme colors, or default colors if theme not found
@@ -100,7 +97,7 @@ function getRequestedTheme(params: Record<string, string>): THEMETYPE {
         theme[prop] = "#" + param;
       }
       // check if color is valid css color
-      else if (CSS_COLORS.includes(param)) {
+      else if (COLORS.includes(param)) {
         // set property
         theme[prop] = param;
       }
@@ -112,3 +109,36 @@ function getRequestedTheme(params: Record<string, string>): THEMETYPE {
   }
   return theme;
 }
+/**
+  * Wraps a string to a given number of characters
+  * Similar to `wordwrap()`, but uses regex and does not break with certain non-ascii characters
+  * @param string The input string
+  * @param width The number of characters at which the string will be wrapped
+  * @param break The line is broken using the optional `break` parameter
+  * @param cutLongWords If `cutLongWords` is set to true, long words are broken apart to wrap
+  * When false the function does not split the word even if affecting the wrap
+ * @returns The given string wrapped at the specified length
+ */
+function utf8WordWrap(string: string, width = 75, breakString = "\n", cutLongWords = false): string {
+  // match anything 1 to width chars long followed by whitespace or EOS
+  string = string.replace(new RegExp(`(.{1,${width}})(?:\\s|$)`, "u"), `$1${breakString}`);
+  // split words that are too long after being broken up
+  if (cutLongWords) {
+    string = string.replace(new RegExp(`(\\S{${width}})(?=\\S)`, "u"), `$1${breakString}`);
+  }
+  // trim any trailing line breaks
+  return string.trimEnd();
+}
+
+/**
+  * Get the length of a string with utf8 characters
+  * Similar to `strlen()`, but uses regex and does not break with certain non-ascii characters
+  * @param string The input string
+  * @returns The length of the string
+*/
+function utf8Strlen(string: string): number {
+  return (string.match(/./ug) || []).length;
+}
+
+
+module.exports = {getRequestedTheme, getFormatDate}
