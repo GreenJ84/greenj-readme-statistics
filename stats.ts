@@ -110,6 +110,134 @@ curl_multi_close($multi);
 return $responses;
 }
 
+interface ContributionCalendar {
+    weeks: {
+    contributionDays: {
+        date: string;
+        contributionCount: number;
+    }[];
+    }[];
+}
+
+interface ContributionGraph {
+    data: {
+    user: {
+        contributionsCollection: {
+        contributionCalendar: ContributionCalendar;
+        };
+    };
+    };
+}
+/**
+ * Get an array of all dates with the number of contributions
+ *
+ * @param contributionGraphs List of GraphQL response objects by year
+ * @return Y-M-D dates mapped to the number of contributions
+ */
+function getContributionDates(contributionGraphs: ContributionGraph[]): Record<string, number> {
+    const contributions: Record<string, number> = {};
+    const today = new Date().toISOString().slice(0, 10);
+    const tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+    // sort contribution calendars by year key
+    contributionGraphs.sort((a, b) => Number(a) - Number(b));
+    for (const graph of contributionGraphs) {
+    const weeks = graph.data.user.contributionsCollection.contributionCalendar.weeks;
+    for (const week of weeks) {
+        for (const day of week.contributionDays) {
+        const date = day.date;
+        const count = day.contributionCount;
+        // count contributions up until today
+        // also count next day if user contributed already
+        if (date <= today || (date === tomorrow && count > 0)) {
+            // add contributions to the array
+            contributions[date] = count;
+        }
+        }
+    }
+    }
+    return contributions;
+}
+
+interface ContributionStats {
+    mode: string;
+    totalContributions: number;
+    firstContribution: string;
+    longestStreak: {
+    start: string;
+    end: string;
+    length: number;
+    };
+    currentStreak: {
+    start: string;
+    end: string;
+    length: number;
+    };
+}
+/**
+    * Get a stats array with the contribution count, daily streak, and dates
+    * @param contributions Y-M-D contribution dates with contribution counts
+    * @return Streak stats
+*/
+function getContributionStats(contributions: {[key: string]: number}): ContributionStats {
+    // if no contributions, display error
+    if (Object.keys(contributions).length === 0) {
+    throw new Error("No contributions found.");
+    }
+    const today = Object.keys(contributions)[Object.keys(contributions).length - 1]!;
+    const first = Object.keys(contributions)[0]!;
+    const stats: ContributionStats = {
+    mode: "daily",
+    totalContributions: 0,
+    firstContribution: "",
+    longestStreak: {
+        start: first,
+        end: first,
+        length: 0,
+    },
+    currentStreak: {
+        start: first,
+        end: first,
+        length: 0,
+    },
+    };
+
+    // calculate the stats from the contributions object
+    Object.entries(contributions).forEach(([date, count]) => {
+    // add contribution count to total
+    stats.totalContributions += count;
+    // check if still in streak
+    if (count > 0) {
+        // increment streak
+        ++stats.currentStreak.length;
+        stats.currentStreak.end = date;
+        // set start on first day of streak
+        if (stats.currentStreak.length == 1) {
+        stats.currentStreak.start = date;
+        }
+        // set first contribution date the first time
+        if (!stats.firstContribution) {
+        stats.firstContribution = date;
+        }
+        // update longestStreak
+        if (stats.currentStreak.length > stats.longestStreak.length) {
+        // copy current streak start, end, and length into longest streak
+        stats.longestStreak.start = stats.currentStreak.start;
+        stats.longestStreak.end = stats.currentStreak.end;
+        stats.longestStreak.length = stats.currentStreak.length;
+        }
+    }
+    // reset streak but give exception for today
+    else if (date != today) {
+        // reset streak
+        stats.currentStreak.length = 0;
+        stats.currentStreak.start = today;
+        stats.currentStreak.end = today;
+    }
+    });
+    return stats;
+}
 
 /**
     * Get the previous Sunday of a given date
