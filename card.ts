@@ -140,5 +140,61 @@ function utf8Strlen(string: string): number {
   return (string.match(/./ug) || []).length;
 }
 
+/**
+  * Split lines of text using <tspan> elements if it contains a newline or exceeds a maximum number of characters
+  * @param text Text to split
+  * @param maxChars Maximum number of characters per line
+  * @param line1Offset Offset for the first line
+  * @return Original text if one line, or split text with <tspan> elements
+*/
+function splitLines(text: string, maxChars: number, line1Offset: number): string {
+  // if too many characters, insert \n before a " " or "-" if possible
+  if (text.length > maxChars && !text.includes("\n")) {
+    // prefer splitting at " - " if possible
+    if (text.includes(" - ")) {
+      text = text.replace(" - ", "\n- ");
+    }
+    // otherwise, use word wrap to split at spaces
+    else {
+      text = utf8WordWrap(text, maxChars, "\n", true);
+    }
+  }
+  // sanitize text
+  text = text.replace(/[<>"&]/g, (match) => {
+    if (match == '<') { return '&lt;' }
+    else if (match == '>') { return '&gt;' }
+    else if (match == '"') { return '&quot;' }
+    else if (match == '&') { return '&amp;' }
+    else return ""
+  });
+  return text.replace(
+    /^(.*)\n(.*)/,
+    `<tspan x='81.5' dy='${line1Offset}'>$1</tspan><tspan x='81.5' dy='16'>$2</tspan>`
+  );
+}
+
+/**
+  * Normalize a locale code
+  * @param localeCode Locale code
+  * @return Normalized locale code
+*/
+function normalizeLocaleCode(localeCode: string): string {
+  const matches = localeCode.match(/^([a-z]{2,3})(?:[_-]([a-z]{4}))?(?:[_-]([0-9]{3}|[a-z]{2}))?$/i);
+  if (!matches) {
+    return "en";
+  }
+  let language = matches[1] ?? "";
+  let script = matches[2] ?? "";
+  let region = matches[3] ?? "";
+  // convert language to lowercase
+  language = language.toLowerCase();
+  // convert script to title case
+  script = script.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+  // convert region to uppercase
+  region = region.toUpperCase();
+  // combine language, script, and region using underscores
+  return [language, script, region].filter(Boolean).join("_");
+}
+
 
 module.exports = {getRequestedTheme, getFormatDate}
