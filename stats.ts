@@ -111,6 +111,90 @@ return $responses;
 }
 
 
+/**
+    * Get the previous Sunday of a given date
+    * @param date Date to get previous Sunday of (YYYY-MM-DD)
+    * @return Previous Sunday in format "YYYY-MM-DD"
+*/
+function getPreviousSunday(date: string): string {
+    const dayOfWeek = new Date(date).getDay();
+    return new Date(new Date(date).setDate(new Date(date).getDate() - dayOfWeek)).toISOString().slice(0, 10);
+}
 
+/**
+    * Get a stats object with the contribution count, weekly streak, and dates
+    * @param contributions Y-M-D contribution dates with contribution counts
+    * @return Streak stats object
+*/
+function getWeeklyContributionStats(contributions: Record<string, number>): Record<string, any> {
+    // if no contributions, display error
+    if (Object.keys(contributions).length === 0) {
+    throw new Error("No contributions found.");
+    }
+    const thisWeek = getPreviousSunday(Object.keys(contributions)[Object.keys(contributions).length - 1]!);
+    const firstWeek = getPreviousSunday(Object.keys(contributions)[0]!);
+    const stats = {
+    mode: "weekly",
+    totalContributions: 0,
+    firstContribution: "",
+    longestStreak: {
+        start: firstWeek,
+        end: firstWeek,
+        length: 0,
+    },
+    currentStreak: {
+        start: firstWeek,
+        end: firstWeek,
+        length: 0,
+    },
+    };
+
+    // calculate contributions per week
+    const weeks: Record<string, number> = {};
+    Object.entries(contributions).forEach(([date, count]) => {
+    const week = getPreviousSunday(date);
+    if (!weeks[week]) {
+        weeks[week] = 0;
+    }
+    if (count > 0) {
+        weeks[week] += count;
+        // set first contribution date the first time
+        if (!stats.firstContribution) {
+        stats.firstContribution = date;
+        }
+    }
+    });
+
+    // calculate the stats from the contributions object
+    Object.entries(weeks).forEach(([week, count]) => {
+    // add contribution count to total
+    stats.totalContributions += count;
+    // check if still in streak
+    if (count > 0) {
+        // increment streak
+        ++stats.currentStreak.length;
+        stats.currentStreak.end = week;
+        // set start on first week of streak
+        if (stats.currentStreak.length === 1) {
+        stats.currentStreak.start = week;
+        }
+        // update longestStreak
+        if (stats.currentStreak.length > stats.longestStreak.length) {
+        // copy current streak start, end, and length into longest streak
+        stats.longestStreak.start = stats.currentStreak.start;
+        stats.longestStreak.end = stats.currentStreak.end;
+        stats.longestStreak.length = stats.currentStreak.length;
+        }
+    }
+    // reset streak but give exception for this week
+    else if (week !== thisWeek) {
+        // reset streak
+        stats.currentStreak.length = 0;
+        stats.currentStreak.start = thisWeek;
+        stats.currentStreak.end = thisWeek;
+    }
+    });
+    return stats;
+}
 
 export {}
