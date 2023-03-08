@@ -1,4 +1,4 @@
-export const colors: string[] = [
+export const COLORS: string[] = [
     "aliceblue",
     "antiquewhite",
     "aqua",
