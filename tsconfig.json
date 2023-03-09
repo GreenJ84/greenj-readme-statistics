@@ -1,7 +1,29 @@
 {
     "compilerOptions": {
-        "target": "ES6",
-        "module": "commonJS",
+        "target": "ES2017",
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "allowJs": true,
+        "skipDefaultLibCheck": true,
+        "baseUrl": ".",
+        "outDir": "/dist",
+        "strict": true,
+        "alwaysStrict": true,
+        "forceConsistentCasingInFileNames": true,
+        "esModuleInterop": true,
+        "noEmit": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noUncheckedIndexedAccess": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true
+    },
+    "ts-node": {
+        "compilerOptions": {
+        "target": "ES2017",
+        "module": "ESNext",
         "moduleResolution": "node",
         "allowJs": true,
         "skipDefaultLibCheck": true,
@@ -18,5 +40,8 @@
         "noUncheckedIndexedAccess": true,
         "resolveJsonModule": true,
         "isolatedModules": true
-    }
+        },
+        "files": true
+    },
+    "include": ["./*.ts", "./*.tsx", "./src/**/*.ts", "./src/**/*.tsx"]
 }
