@@ -1,3 +1,4 @@
+import { Curl } from 'node-libcurl'
 /**
  * Build a GraphQL query for a contribution graph
  *
@@ -108,6 +109,54 @@ for (const request of Object.values(requests)) {
 }
 curl_multi_close($multi);
 return $responses;
+}
+
+/**
+    * Remove a token from the token pool
+    * @param token Token to remove
+    * @throws AssertionError if no tokens are available after removing the token
+*/
+function removeGitHubToken(token: string): void {
+    const index = ALL_TOKENS.indexOf(token);
+    if (index !== -1) {
+    ALL_TOKENS.splice(index, 1);
+    }
+    // if there is no available token, throw an error
+    if (ALL_TOKENS.length === 0) {
+    throw new AssertionError(
+        "We are being rate-limited! Check <a href='https://git.io/streak-ratelimit' font-weight='bold'>git.io/streak-ratelimit</a> for details.",
+        429
+    );
+    }
+}
+
+/** Create a CurlHandle for a POST request to GitHub's GraphQL API
+   * @param query GraphQL query
+   * @param token GitHub token to use for the request
+   * @return The curl handle for the request
+   */
+function getGraphQLCurlHandle(query: string, token: string): Curl {
+    const headers = [
+        "Authorization: bearer " + token,
+        "Content-Type: application/json",
+        "Accept: application/vnd.github.v4.idl",
+        "User-Agent: GitHub-Readme-Streak-Stats",
+    ];
+    const body = { query };
+    const ch = new Curl();
+    ch.setOpt(Curl.option.URL, "https://api.github.com/graphql");
+    ch.setOpt(Curl.option.HTTPHEADER, headers);
+    ch.setOpt(Curl.option.POST, true);
+    ch.setOpt(Curl.option.POSTFIELDS, JSON.stringify(body));
+    ch.setOpt(Curl.option.FOLLOWLOCATION, true);
+    ch.setOpt(Curl.option.SSL_VERIFYPEER, true);
+    ch.setOpt(Curl.option.VERBOSE, false);
+    ch.setOpt(Curl.option.WRITEFUNCTION, (buffer: Buffer, size: number, nmemb: number) => {
+        const data = buffer.toString();
+        console.log(data);
+        return size * nmemb;
+    });
+    return ch;
 }
 
 interface ContributionCalendar {
