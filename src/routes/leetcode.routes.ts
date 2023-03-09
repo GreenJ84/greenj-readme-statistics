@@ -3,9 +3,9 @@ import express from "express";
 export const GithubRoutes = (app: express.Application) => {
     // Stars, contribution points, reputaion, rating
     app.get('/leetcode/stats')
-    // Display th earned leetcode badges
+    // Display earned leetcode badges
     app.get('/leetcode/badges')
-    // Questions solved total and by level
+    // Get number of questions solved in total and by level
     app.get('/leetcode/questions_solved')
     // Display top 5 most recent questions solved and their languages
     app.get('/leetcode/recent-questions')
