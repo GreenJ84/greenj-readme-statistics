@@ -1,14 +1,19 @@
 import express from "express";
+import { getLeetcodeProfileStats } from "../controllers/leetcode.controller";
 
-export const GithubRoutes = (app: express.Application) => {
+export const LeetCodeRoutes = (app: express.Application) => {
     // Stars, contribution points, reputaion, rating
-    app.get('/leetcode/stats')
+    app.get('/leetcode/stats/:username',
+        getLeetcodeProfileStats
+    )
     // Display earned leetcode badges
-    app.get('/leetcode/badges')
+    app.get('/leetcode/badges/:user', (req, res) => {
+        res.json(`Hello ${req.params.user!}`)
+    })
     // Get number of questions solved in total and by level
-    app.get('/leetcode/questions_solved')
+    app.get('/leetcode/questions_solved/:user')
     // Display top 5 most recent questions solved and their languages
-    app.get('/leetcode/recent-questions')
+    app.get('/leetcode/recent-questions/:user')
     // Get a random leetcode problem title
     app.get('/leetcode/random-question')
 }
