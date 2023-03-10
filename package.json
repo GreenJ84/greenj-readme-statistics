@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Display your total contributions, current streak, and longest streak on your GitHub profile README",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "dev": "ts-node-esm server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -20,9 +19,12 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.10",
     "@formatjs/intl": "^2.6.7",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "graphql": "^15.8.0",
+    "graphql-tag": "^2.12.6",
     "leetcode-query": "^0.2.7",
     "luxon": "^3.3.0"
   }
