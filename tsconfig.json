@@ -1,8 +1,10 @@
 {
     "compilerOptions": {
         "target": "ES2017",
-        "module": "ESNext",
+        "module": "CommonJS",
         "moduleResolution": "node",
+        "sourceRoot": "./src",
+        "inlineSourceMap": true,
         "allowJs": true,
         "skipDefaultLibCheck": true,
         "baseUrl": ".",
@@ -23,7 +25,7 @@
     "ts-node": {
         "compilerOptions": {
         "target": "ES2017",
-        "module": "ESNext",
+        "module": "CommonJS",
         "moduleResolution": "node",
         "allowJs": true,
         "skipDefaultLibCheck": true,
@@ -43,5 +45,6 @@
         },
         "files": true
     },
-    "include": ["./*.ts", "./*.tsx", "./src/**/*.ts", "./src/**/*.tsx"]
+    "include": ["src/**/*.ts", "src/**/*.tsx"],
+    "exclude": ["node_modules", ".vscode"]
 }
