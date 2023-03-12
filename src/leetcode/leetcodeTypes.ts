@@ -1,3 +1,7 @@
+import { DocumentNode } from 'graphql';
+import * as Leet from '../leetcode/leetcodeTypes'
+
+
 export interface UserProfile {
     allQuestionsCount: AllQuestionsCount[];
     matchedUser: MatchedUser | null;
@@ -72,37 +76,6 @@ export interface UserProfile {
         lang: string;
     }
 
-export interface Contest {
-    title: string;
-    startTime: number;
-}
-
-export interface ContestInfo {
-    attended: boolean;
-    trendDirection: string;
-    problemsSolved: number;
-    totalProblems: number;
-    finishTimeInSeconds: number;
-    rating: number;
-    ranking: number;
-    contest: Contest;
-}
-export interface ContestRanking {
-    attendedContestsCount: number;
-    rating: number;
-    globalRanking: number;
-    totalParticipants: number;
-    topPercentage: number;
-    badge: null | {
-        name: string;
-    };
-}
-
-export interface UserContestInfo {
-    userContestRanking: ContestRanking;
-    userContestRankingHistory: ContestInfo[];
-}
-
 export interface TopicTag {
     name: string;
     slug: string;
@@ -123,73 +96,66 @@ export interface ChallengeQuestion {
     type: string;
 }
 
-export type ProblemDifficulty = "Easy" | "Medium" | "Hard";
-
-export interface Problem {
-    questionId: string;
-    questionFrontendId: string;
-    boundTopicId: unknown;
-    title: string;
-    titleSlug: string;
-    content: string;
-    translatedTitle: string | null;
-    translatedContent: string | null;
-    isPaidOnly: boolean;
-    difficulty: ProblemDifficulty;
-    likes: number;
-    dislikes: number;
-    isLiked: boolean | null;
-    similarQuestions: string;
-    exampleTestcases: string;
-    contributors: unknown[];
-    topicTags: TopicTag[];
-    companyTagStats: unknown;
-    codeSnippets: CodeSnippet[];
-    stats: string;
-    hints: string[];
-    solution: OfficialSolution;
-    status: unknown;
-    sampleTestCase: string;
-    metaData: string;
-    judgerAvailable: boolean;
-    judgeType: string;
-    mysqlSchemas: unknown[];
-    enableRunCode: boolean;
-    enableTestMode: boolean;
-    enableDebugger: boolean;
-    envInfo: string;
-    libraryUrl: string | null;
-    adminUrl: string | null;
-    challengeQuestion: ChallengeQuestion;
-    /** null if not logged in */
-    note: string | null;
-}
-
-
-export interface ProblemList {
-    total: number;
-    questions: {
-        acRate: number;
-        difficulty: "Easy" | "Medium" | "Hard";
-        freqBar: null;
-        questionFrontendId: string;
-        isFavor: boolean;
-        isPaidOnly: boolean;
-        status: string | null;
-        title: string;
-        titleSlug: string;
-        topicTags: {
-            name: string;
-            id: string;
-            slug: string;
-        }[];
-        hasSolution: boolean;
-        hasVideoSolution: boolean;
-    }[];
-}
-
 export interface DailyChallenge {
     date: string;
     link: string;
     question: Problem;
+}
+
+    export type ProblemDifficulty = "Easy" | "Medium" | "Hard";
+    export interface Problem {
+        questionId: string;
+        questionFrontendId: string;
+        boundTopicId: unknown;
+        title: string;
+        titleSlug: string;
+        content: string;
+        translatedTitle: string | null;
+        translatedContent: string | null;
+        isPaidOnly: boolean;
+        difficulty: ProblemDifficulty;
+        likes: number;
+        dislikes: number;
+        isLiked: boolean | null;
+        similarQuestions: string;
+        exampleTestcases: string;
+        contributors: unknown[];
+        topicTags: TopicTag[];
+        companyTagStats: unknown;
+        codeSnippets: CodeSnippet[];
+        stats: string;
+        hints: string[];
+        solution: unknown;
+        status: unknown;
+        sampleTestCase: string;
+        metaData: string;
+        judgerAvailable: boolean;
+        judgeType: string;
+        mysqlSchemas: unknown[];
+        enableRunCode: boolean;
+        enableTestMode: boolean;
+        enableDebugger: boolean;
+        envInfo: string;
+        libraryUrl: string | null;
+        adminUrl: string | null;
+        challengeQuestion: ChallengeQuestion;
+        /** null if not logged in */
+        note: string | null;
+    }
+
+export interface GraphQLError {
+    message: string,
+    error: any,
+    error_code: number
+}
+
+
+// LeetCode GraphQL
+export interface LeetCodeGraphQLQuery {
+    variables?: { [key: string]: unknown };
+    query: DocumentNode;
+}
+// Leetcode Response
+export interface LeetCodeGraphQLResponse {
+    data: Leet.UserProfile | Leet.RecentSubmission[] | Leet.DailyChallenge | GraphQLError;
 }
