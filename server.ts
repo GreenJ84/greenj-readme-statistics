@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import rateLimit from "express-rate-limit";
 
 import { LeetCodeRoutes } from './src/routes/leetcode.routes';
@@ -20,7 +21,7 @@ app.use(
     }),
 );
 
-// Error handling
+// Generic Error handling
 app.use(
     (err: Error, req: Request, res: Response, next: NextFunction) => {
         console.error(err.stack);
@@ -34,6 +35,18 @@ const limiter = rateLimit({
     max: 100
 });
 app.use('/', limiter);
+
+// API security
+app.use(helmet({
+    contentSecurityPolicy: false,
+    xssFilter: true,
+    noSniff: true,
+    hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true
+    },
+}))
 
 LeetCodeRoutes(app)
 
