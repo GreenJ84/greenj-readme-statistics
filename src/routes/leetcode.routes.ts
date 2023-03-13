@@ -1,10 +1,10 @@
 import express from "express";
-import { getLeetcodeProfileStats } from "../controllers/leetcode.controller";
+import * as LeetcodeController from "../controllers/leetcode.controller";
 
 export const LeetCodeRoutes = (app: express.Application) => {
     // Stars, contribution points, reputaion, rating
     app.get('/leetcode/stats/:username',
-        getLeetcodeProfileStats
+        LeetcodeController.getProfileStats
     )
     // Display earned leetcode badges
     app.get('/leetcode/badges/:user', (req, res) => {
