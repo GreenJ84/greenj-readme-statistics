@@ -2,9 +2,9 @@
   "name": "github-readme-streak",
   "version": "1.0.0",
   "description": "Display your total contributions, current streak, and longest streak on your GitHub profile README",
-  "main": "index.js",
+  "main": "server.ts",
   "scripts": {
-    "dev": "ts-node-esm server.ts",
+    "dev": "ts-node server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -28,9 +28,7 @@
     "graphql": "^15.8.0",
     "graphql-tag": "^2.12.6",
     "helmet": "^6.0.1",
-    "leetcode-query": "^0.2.7",
     "luxon": "^3.3.0",
-    "node-fetch": "^3.3.1",
     "react": "^18.2.0"
   }
 }
