@@ -1,5 +1,4 @@
 import { DocumentNode } from 'graphql';
-import * as Leet from '../leetcode/leetcodeTypes'
 
 
 export interface UserProfile {
@@ -157,5 +156,5 @@ export interface LeetCodeGraphQLQuery {
 }
 // Leetcode Response
 export interface LeetCodeGraphQLResponse {
-    data: Leet.UserProfile | Leet.RecentSubmission[] | Leet.DailyChallenge | GraphQLError;
+    data: UserProfile | RecentSubmission[] | DailyChallenge | GraphQLError;
 }
