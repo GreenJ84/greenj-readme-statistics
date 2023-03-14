@@ -1,16 +1,12 @@
 {
     "compilerOptions": {
-        "target": "ES2017",
-        "module": "CommonJS",
         "moduleResolution": "node",
         "sourceRoot": "./src",
         "inlineSourceMap": true,
         "allowJs": true,
         "skipDefaultLibCheck": true,
-        "baseUrl": ".",
         "outDir": "/dist",
         "strict": true,
-        "alwaysStrict": true,
         "forceConsistentCasingInFileNames": true,
         "esModuleInterop": true,
         "noEmit": true,
@@ -20,18 +16,13 @@
         "noUnusedParameters": true,
         "noUncheckedIndexedAccess": true,
         "resolveJsonModule": true,
-        "isolatedModules": true
     },
     "ts-node": {
         "compilerOptions": {
-        "target": "ES2017",
-        "module": "CommonJS",
         "moduleResolution": "node",
-        "allowJs": true,
         "skipDefaultLibCheck": true,
         "outDir": "/dist",
         "strict": true,
-        "alwaysStrict": true,
         "forceConsistentCasingInFileNames": true,
         "esModuleInterop": true,
         "noEmit": true,
@@ -41,10 +32,9 @@
         "noUnusedParameters": true,
         "noUncheckedIndexedAccess": true,
         "resolveJsonModule": true,
-        "isolatedModules": true
         },
         "files": true
     },
-    "include": ["src/**/*.ts", "src/**/*.tsx"],
+    "include": ["**/**.ts", "**/**.tsx"],
     "exclude": ["node_modules", ".vscode"]
 }
