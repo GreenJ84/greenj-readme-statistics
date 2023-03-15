@@ -1,4 +1,4 @@
-import { BASE_URL, BASE_URL_CN, USER_AGENT } from "leetcode-query";
+import { CRED_URL, GRAPHQL_URL_CN, USER_AGENT } from "../utils/constants";
 import { parse_cookie } from "./utils";
 
 // Credential
@@ -10,7 +10,7 @@ export interface ICredential {
 }
 
 export async function get_csrf(): Promise<String> {
-    const cookies_raw = await fetch(BASE_URL, {
+    const cookies_raw = await fetch(CRED_URL, {
         headers: {
             "user-agent": USER_AGENT,
         },
@@ -26,7 +26,7 @@ export async function get_csrf(): Promise<String> {
 };
 
 export async function get_csrf_cn() {
-    const cookies_raw = await fetch(`${BASE_URL_CN}/graphql/`, {
+    const cookies_raw = await fetch(GRAPHQL_URL_CN, {
         method: "POST",
         headers: {
             "content-type": "application/json",

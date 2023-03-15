@@ -1,5 +1,5 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import { USER_AGENT } from "leetcode-query";
+import { USER_AGENT } from "../utils/constants";
 import { LeetCodeGraphQLResponse, LeetCodeGraphQLQuery } from "./leetcodeTypes";
 
 export async function leetcodeGraphQL (query: LeetCodeGraphQLQuery, url: string, csrf: string = ""): Promise<LeetCodeGraphQLResponse> {
