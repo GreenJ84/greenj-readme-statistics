@@ -2,9 +2,9 @@ import fs from 'fs';
 import { gql } from "graphql-tag";
 import { match } from 'ts-pattern';
 import * as leetcode from '../leetcode/query';
-import { GRAPHQL_URL } from '../utils/constants';
+import { GRAPHQL_URL, GraphQLError } from '../utils/constants';
 import { get_csrf } from '../utils/credentials';
-import { GraphQLError, LeetCodeGraphQLResponse } from './leetcodeTypes';
+import { LeetCodeGraphQLResponse } from './leetcodeTypes';
 
 const getGraph = (type: string): string => {
     const graph = match(type)
@@ -15,6 +15,7 @@ const getGraph = (type: string): string => {
         .run()
     return graph
 }
+
 export const setQuery = async (username: string, type: string) => {
     const path = getGraph(type);
     const graphql = gql(

@@ -1,8 +1,8 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import { USER_AGENT } from "../utils/constants";
-import { LeetCodeGraphQLResponse, LeetCodeGraphQLQuery, GraphQLError } from "./leetcodeTypes";
+import { USER_AGENT, GraphQLQuery, GraphQLError } from "../utils/constants";
+import { LeetCodeGraphQLResponse } from "./leetcodeTypes";
 
-export async function leetcodeGraphQL (query: LeetCodeGraphQLQuery, url: string, csrf: string): Promise<LeetCodeGraphQLResponse> {
+export async function leetcodeGraphQL (query: GraphQLQuery, url: string, csrf: string): Promise<LeetCodeGraphQLResponse> {
     const BASE = url;
     const client = new ApolloClient({
         uri: `${BASE}/graphql`,

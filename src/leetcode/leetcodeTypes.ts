@@ -1,4 +1,4 @@
-import { DocumentNode } from 'graphql';
+import { GraphQLError } from '../utils/constants';
 
 
 export interface UserProfile {
@@ -142,18 +142,6 @@ export interface DailyChallenge {
         note: string | null;
     }
 
-export interface GraphQLError {
-    message: string,
-    error: any,
-    error_code: number
-}
-
-
-// LeetCode GraphQL
-export interface LeetCodeGraphQLQuery {
-    variables?: { [key: string]: unknown };
-    query: DocumentNode;
-}
 // Leetcode Response
 export interface LeetCodeGraphQLResponse {
     data: UserProfile | RecentSubmission[] | DailyChallenge | GraphQLError;
