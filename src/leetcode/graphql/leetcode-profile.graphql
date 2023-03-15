@@ -4,26 +4,14 @@ query ($username: String!) {
         count
     }
     matchedUser(username: $username) {
-        username
-        socialAccounts
-        githubUrl
         contributions {
             points
-            questionCount
-            testcaseCount
         }
         profile {
-            realName
-            websites
-            countryName
-            skillTags
-            company
-            school
             starRating
-            aboutMe
-            userAvatar
             reputation
             ranking
+            userAvatar
         }
         submissionCalendar
         submitStats {
@@ -32,31 +20,9 @@ query ($username: String!) {
                 count
                 submissions
             }
-            totalSubmissionNum {
-                difficulty
-                count
-                submissions
-            }
         }
         badges {
             id
-            displayName
-            icon
-            creationDate
         }
-        upcomingBadges {
-            name
-            icon
-        }
-        activeBadge {
-            id
-        }
-    }
-    recentSubmissionList(username: $username, limit: 20) {
-        title
-        titleSlug
-        timestamp
-        statusDisplay
-        lang
     }
 }
