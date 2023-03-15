@@ -1,8 +1,8 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { USER_AGENT } from "../utils/constants";
-import { LeetCodeGraphQLResponse, LeetCodeGraphQLQuery } from "./leetcodeTypes";
+import { LeetCodeGraphQLResponse, LeetCodeGraphQLQuery, GraphQLError } from "./leetcodeTypes";
 
-export async function leetcodeGraphQL (query: LeetCodeGraphQLQuery, url: string, csrf: string = ""): Promise<LeetCodeGraphQLResponse> {
+export async function leetcodeGraphQL (query: LeetCodeGraphQLQuery, url: string, csrf: string): Promise<LeetCodeGraphQLResponse> {
     const BASE = url;
     const client = new ApolloClient({
         uri: `${BASE}/graphql`,
@@ -28,7 +28,7 @@ export async function leetcodeGraphQL (query: LeetCodeGraphQLQuery, url: string,
             }
         )
             .then(result => {
-                return result.data
+                return result.data as LeetCodeGraphQLResponse
             })
             .catch(err => {
                 return {
@@ -36,10 +36,10 @@ export async function leetcodeGraphQL (query: LeetCodeGraphQLQuery, url: string,
                         message: "An error occurred while retrieving data from the external API",
                         error_code: 500,
                         error: err
-                    }
+                    } as GraphQLError
                 }
             });
-        return result as LeetCodeGraphQLResponse;
+        return result;
     }
     catch (err) {
         console.log("an error has occured", err);
