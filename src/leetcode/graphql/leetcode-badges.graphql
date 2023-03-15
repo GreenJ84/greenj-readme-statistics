@@ -1,0 +1,10 @@
+query ($username: String!) {
+    matchedUser(username: $username) {
+        badges {
+            id
+            displayName
+            icon
+            creationDate
+        }
+    }
+}
