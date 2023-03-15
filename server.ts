@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import rateLimit from "express-rate-limit";
 
 import { LeetCodeRoutes } from './src/routes/leetcode.routes';
+import { GithubRoutes } from './src/routes/github.routes';
 
 const PORT = 8000
 
@@ -51,6 +52,7 @@ app.use(helmet({
 }))
 
 LeetCodeRoutes(app)
+GithubRoutes(app)
 
 app.listen(PORT,
     () => console.log(`Server is running on port ${PORT}`)
