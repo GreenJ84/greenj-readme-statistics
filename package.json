@@ -22,6 +22,7 @@
     "@apollo/client": "^3.7.10",
     "@formatjs/intl": "^2.6.7",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-rate-limit": "^6.7.0",
     "express-validator": "^6.15.0",
