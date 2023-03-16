@@ -1,0 +1,16 @@
+query ($username: String!, $start: Int!, $end: Int!) {
+        user(login: $username) {
+            createdAt
+            contributionsCollection(from: $start, to: $end) {
+                contributionYears
+                contributionCalendar {
+                    weeks {
+                        contributionDays {
+                            contributionCount
+                            date
+                        }
+                    }
+                }
+            }
+        }
+    }"
