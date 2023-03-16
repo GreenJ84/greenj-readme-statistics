@@ -8,16 +8,18 @@ export const LeetCodeRoutes = (app: express.Application) => {
     )
     // Display earned leetcode badges
     app.get('/leetcode/badges/:username',
-    LeetcodeController.getBadges
-)
+        LeetcodeController.getBadges
+    )
     // Get number of questions solved in total and by level
     app.get('/leetcode/questions_solved/:username',
-    LeetcodeController.getQuestionsAnswered
-)
+        LeetcodeController.getQuestionsAnswered
+    )
     // Display top 5 most recent questions solved and their languages
     app.get('/leetcode/recent-questions/:username',
-    LeetcodeController.getRecentSubmitions
-)
+        LeetcodeController.getRecentSubmitions
+    )
     // Get a random leetcode problem title
-    app.get('/leetcode/daily-question', LeetcodeController.getDailyQuestion)
+    app.get('/leetcode/daily-question',
+        LeetcodeController.getDailyQuestion
+    )
 }
