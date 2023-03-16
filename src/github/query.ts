@@ -2,16 +2,18 @@ import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { LeetCodeGraphQLResponse } from "../leetcode/leetcodeTypes";
 import { GraphQLQuery, GraphQLError, USER_AGENT, GIT_URL } from "../utils/constants";
 
-export async function leetcodeGraphQL (query: GraphQLQuery, token: string): Promise<LeetCodeGraphQLResponse> {
+export async function githubGraphQL(query: GraphQLQuery): Promise<LeetCodeGraphQLResponse> {
+    const token = process.env.TOKEN1!
+
     const client = new ApolloClient({
         uri: GIT_URL,
         cache: new InMemoryCache(),
     });
     const headers = {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/vnd.github+json',
         Accept: 'application/vnd.github.v4.idl',
-        "user-agent": USER_AGENT,
+        "X-GitHub-Api-Version": "2022-11-28"
     };
     
     try {
