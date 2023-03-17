@@ -7,7 +7,7 @@ export const GRAPHQL_URL_CN = "https://leetcode.cn/graphql/";
 export const USER_AGENT = "Mozilla/5.0 LeetCode API";
 
 //GitHub
-export const GIT_URL = "https://api.github.com/graphql/";
+export const GIT_URL = "https://api.github.com/graphql";
 
 
 
