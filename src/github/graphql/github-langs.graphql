@@ -1,19 +1,20 @@
-query userInfo($username: String!) {
-        user(username: $username) {
-        # fetch only owner repos & not forks
-        repositories(ownerAffiliations: OWNER, isFork: false, first: 100) {
-            nodes {
+query userInfo($login: String!) {
+        user(login: $login) {
             name
-            languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
-                edges {
-                    size
-                    node {
-                        color
-                        name
+        # fetch only owner repos & not forks
+            repositories(ownerAffiliations: OWNER, isFork: false, first: 100) {
+                nodes {
+                    name
+                    languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
+                        edges {
+                            size
+                            node {
+                                color
+                                name
+                            }
+                        }
                     }
                 }
             }
-            }
-        }
         }
     }
