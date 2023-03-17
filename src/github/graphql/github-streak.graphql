@@ -1,5 +1,5 @@
-query ($username: String!, $start: Int!, $end: Int!) {
-        user(login: $username) {
+query ($login: String!, $start: Int!, $end: Int!) {
+        user(login: $login) {
             createdAt
             contributionsCollection(from: $start, to: $end) {
                 contributionYears
@@ -13,4 +13,4 @@ query ($username: String!, $start: Int!, $end: Int!) {
                 }
             }
         }
-    }"
+    }
