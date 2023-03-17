@@ -1,19 +1,15 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import { LeetCodeGraphQLResponse } from "../leetcode/leetcodeTypes";
-import { GraphQLQuery, GraphQLError, USER_AGENT, GIT_URL } from "../utils/constants";
+import { GraphQLQuery, GraphQLError, GIT_URL } from "../utils/constants";
+const token = "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";
 
-export async function githubGraphQL(query: GraphQLQuery): Promise<LeetCodeGraphQLResponse> {
-    const token = process.env.TOKEN1!
-
+export async function githubGraphQL(query: GraphQLQuery): Promise<any> {
     const client = new ApolloClient({
         uri: GIT_URL,
         cache: new InMemoryCache(),
     });
     const headers = {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/vnd.github+json',
-        Accept: 'application/vnd.github.v4.idl',
-        "X-GitHub-Api-Version": "2022-11-28"
+        Authorization: `bearer ${token}`,
+        "Content-Type": "application/json",
     };
     
     try {
@@ -22,12 +18,12 @@ export async function githubGraphQL(query: GraphQLQuery): Promise<LeetCodeGraphQ
                 ...query,
                 context: {
                     headers,
-                    method: 'POST',
+                    method: 'GET',
                 }
             }
         )
             .then(result => {
-                return result.data as LeetCodeGraphQLResponse
+                return result.data as any
             })
             .catch(err => {
                 return {

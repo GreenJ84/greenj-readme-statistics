@@ -27,7 +27,6 @@ export const preQery = async (req: Request, res: Response) => {
                 error_code: 400
             })
     }
-
     setQuery(username!, type).then((data) => {
         if ("error" in data && "error_code" in data) {
             res.status(400).send(data);
@@ -46,7 +45,7 @@ export const setQuery = async (username: string, type: string) => {
     const data = await github.githubGraphQL(
         {
             query: graphql,
-            variables: { username: username }
+            variables: { login: username }
         },
     )
         .then((res) => res as any)
