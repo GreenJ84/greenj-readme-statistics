@@ -1,5 +1,5 @@
-query userInfo($username: String!, $after: String) {
-    user(username: $username) {
+query userInfo($login: String!) {
+    user(login: $login) {
         name
         contributionsCollection {
             totalCommitContributions
@@ -10,16 +10,13 @@ query userInfo($username: String!, $after: String) {
         pullRequests(first: 1) {
             totalCount
         }
-        openIssues: issues(states: OPEN) {
+        issues(first: 1, states: [OPEN, CLOSED]) {
             totalCount
         }
-        closedIssues: issues(states: CLOSED) {
+        followers(first: 1) {
             totalCount
         }
-        followers {
-            totalCount
-        }
-        repositories(first: 100, ownerAffiliations: OWNER, orderBy: {direction: DESC, field: STARGAZERS}, after: $after) {
+        repositories(first: 100, ownerAffiliations: [OWNER], orderBy: {direction: DESC, field: STARGAZERS} ) {
             totalCount
             nodes {
                 name
