@@ -3,6 +3,7 @@
 import { Request, Response } from "express";
 import { getDaily } from "../leetcode/daily";
 import { preQuery } from '../leetcode/profile';
+import { GraphQLError } from "../utils/constants";
 
 export const getProfileStats = async (req: Request, res: Response) => {
     preQuery(req, res);
@@ -23,12 +24,14 @@ export const getRecentSubmitions = async (req: Request, res: Response) => {
 
 export const getDailyQuestion = async (req: Request, res: Response) => {
     const { } = req.query;
-    getDaily().then((data) => {
-        if ("error" in data && "error_code" in data) {
-            res.status(400).send(data);
-        } else {
-            res.status(200).send(data);
-        }
-    })
-};
+    getDaily()
+        .then((data: any | GraphQLError) => {
+            if ((data as GraphQLError).error !== undefined) {
+                res.status(400).send(data);
+            } else {
+                res.status(200).send(data);
+            }
+            return data;
+        })
+}
 
