@@ -30,13 +30,15 @@ export const preQuery = async (req: Request, res: Response) => {
             })
     }
 
-    setQuery(username!, type).then((data) => {
-        if ("error" in data && "error_code" in data) {
-            res.status(400).send(data);
-        } else {
-            res.status(200).send(data);
-        }
-    })
+    setQuery(username!, type)
+        .then((data: any | GraphQLError) => {
+            if ((data as GraphQLError).error !== undefined) {
+                res.status(400).send(data);
+            } else {
+                res.status(200).send(data);
+            }
+            return data;
+        })
 };
 
 export const setQuery = async (username: string, type: string) => {
