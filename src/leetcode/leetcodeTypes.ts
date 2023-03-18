@@ -4,7 +4,7 @@ import { GraphQLError } from '../utils/constants';
 export interface UserProfile {
     allQuestionsCount: AllQuestionsCount[];
     matchedUser: MatchedUser | null;
-    recentSubmissionList: RecentSubmission[] | null;
+    recentSubmissionList: RecentSubmissionList | null;
 }
 
     export interface AllQuestionsCount {
@@ -74,7 +74,9 @@ export interface UserProfile {
         statusDisplay: string;
         lang: string;
     }
-
+export interface RecentSubmissionList {
+    [index: number]: RecentSubmission
+}
 export interface TopicTag {
     name: string;
     slug: string;
@@ -143,6 +145,9 @@ export interface DailyChallenge {
     }
 
 // Leetcode Response
-export interface LeetCodeGraphQLResponse {
-    data: UserProfile | RecentSubmission[] | DailyChallenge | GraphQLError;
+export enum LeetCodeGraphQLResponse {
+    UserProfile,
+    RecentSubmissionList,
+    DailyChallenge,
+    GraphQLError
 }
