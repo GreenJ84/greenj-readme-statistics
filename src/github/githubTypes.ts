@@ -5,18 +5,28 @@ export enum GraphQLResponse {
     any
 }
 
+export enum ReadMeData {
+    StreakResponse,
+}
+
 export interface StreakResponse {
     user: {
         createdAt: string
         contributionsCollection: {
             contributionYears: number[]
             contributionCalendar: {
-                contributionCount: number
-                date: string
+                weeks: contrWeek[]
             }
         }
     }
-}
+};
+    export interface contrWeek {
+        contributionDays: contrDay[]
+    }
+    export interface contrDay {
+        contributionCount: number
+        date: string
+    }
 
 
 export interface STREAKTYPE {
