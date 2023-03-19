@@ -1,4 +1,4 @@
-query ($login: String!, $start: string!, $end: string!) {
+query ($login: String!, $start: DateTime!, $end: DateTime!) {
         user(login: $login) {
             createdAt
             contributionsCollection(from: $start, to: $end) {
