@@ -5,8 +5,7 @@ import { gql } from "graphql-tag";
 import { match } from 'ts-pattern';
 
 import { GraphQLQuery, GraphQLError, GIT_URL } from '../utils/constants';
-import { GraphQLResponse, ReadMeData } from './githubTypes';
-import { parseGraphData } from './apiParser';
+import { GraphQLResponse } from './githubTypes';
 
 const token = "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";
 
@@ -22,7 +21,7 @@ const getGraph = (type: string): string => {
 }
 
 // Provides all basic GitHub details for GraphQL query
-async function githubGraphQL(query: GraphQLQuery): Promise<GraphQLError | GraphQLResponse> {
+export async function githubGraphQL(query: GraphQLQuery): Promise<GraphQLError | GraphQLResponse> {
     const client = new ApolloClient({
         uri: GIT_URL,
         cache: new InMemoryCache(),
@@ -54,9 +53,9 @@ async function githubGraphQL(query: GraphQLQuery): Promise<GraphQLError | GraphQ
     return result;
 };
 
-
-// Extract api type query information
-const setQuery = async (res: Response, username: string, type: string): Promise<GraphQLResponse> => {
+// Decide GraphQL query before execution
+export const preQery = async (req: Request, res: Response, variables: {}): Promise<GraphQLError | GraphQLResponse> => {
+    const type = req.path.split("/")[2]!;
     const path = getGraph(type);
     const graphql = gql(
         fs.readFileSync(path, 'utf8')
@@ -64,7 +63,7 @@ const setQuery = async (res: Response, username: string, type: string): Promise<
     const data = await githubGraphQL(
         {
             query: graphql,
-            variables: { login: username }
+            variables: variables
         })
         .then((res) => res as GraphQLResponse)
         .catch((err) => {
@@ -80,39 +79,4 @@ const setQuery = async (res: Response, username: string, type: string): Promise<
     }
     // Data to be returned will be of a valid response type
     return data as GraphQLResponse;
-}
-
-// Preflight for required parameters
-export const preQery = async (req: Request, res: Response): Promise<GraphQLError | ReadMeData> => {
-    const { username } = req.params;
-    const type = req.path.split("/")[2]!;
-
-    if (!username) {
-        res.status(400).send(
-            {
-                message: 'No username found on API Call',
-                error: "Missing username parameter.",
-                error_code: 400
-            })
-    }
-
-
-    const data = await setQuery(res, username!, type)
-        .then((data) => {
-            return data as GraphQLResponse;
-        })
-        .catch((err) => {
-            return {
-                message: "Internal server error",
-                error: err,
-                error_code: 500,
-            } as GraphQLError;
-        });
-    if ((data as GraphQLError).error !== undefined) {
-        res.status(400).send(data);
-    }
-    // Parse valid Data here before return
-    const parsedData: ReadMeData = parseGraphData(req, data as GraphQLResponse);
-
-    return parsedData;
 }
