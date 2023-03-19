@@ -38,7 +38,8 @@ export const handleProbe = (req: Request, res: Response): [string, number[]] => 
 
     return [
         (data as unknown as StreakProbe).user.createdAt,
-        (data as unknown as StreakProbe).user.contributionsCollection.contributionYears];
+        (data as unknown as StreakProbe).user.contributionsCollection.contributionYears.sort()];
+    
 }
 
 export const handleStreakMulti = (data: StreakResponse): => {
