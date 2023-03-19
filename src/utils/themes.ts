@@ -1,6 +1,8 @@
 export interface THEMETYPE{
     background: string
     border: string,
+    hideBorder?: boolean,
+    borderRadius?: number,
     stroke: string,
     detailMain: string,
     detailSub: string,
@@ -9,7 +11,8 @@ export interface THEMETYPE{
     textMain: string,
     textSub: string,
     dates: string,
-    [key: string]: string;
+    locale?: string,
+    [key: string]: any;
 }
 export const THEMES: Record<string, THEMETYPE> = {
         "default": {
