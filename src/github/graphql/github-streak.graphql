@@ -1,7 +1,7 @@
 query ($login: String!) {
         user(login: $login) {
             createdAt
-            contributionsCollection(from: "2023-01-01T00:00:00Z", to: "2023-12-31T23:59:59Z") {
+            contributionsCollection(from: "2023-01-01T00:00:00Z", to: "2023-03-19T23:59:59Z") {
                 contributionYears
                 contributionCalendar {
                     weeks {
