@@ -48,7 +48,7 @@ const streakParse = (req: Request, data: StreakResponse): STREAKTYPE => {
         longestText: "Longest Streak",
         longestDate: "10-12-2022-3-18-2023",
         theme: req.query.theme !== undefined ? 
-            THEMES[req.query.theme! as string] as THEMETYPE : THEMES["default"]! as THEMETYPE,
+            THEMES[req.query.theme! as string] as THEMETYPE : THEMES["black-ice"]! as THEMETYPE,
     }
 
     return parsedData;

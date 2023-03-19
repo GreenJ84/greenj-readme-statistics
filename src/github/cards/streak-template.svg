@@ -46,7 +46,7 @@
             <!-- Total Contributions Label -->
             <g transform='translate(1,84)'>
                 <text x='92' y='55' stroke-width='0' text-anchor='middle' fill='#151515' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='400' font-size='14px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.7s'>
-                    Total Contributions Text
+                    Total Contributions
                 </text>
             </g>
             <!-- total contributions range -->

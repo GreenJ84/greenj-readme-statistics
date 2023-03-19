@@ -111,7 +111,6 @@ export const preQery = async (req: Request, res: Response): Promise<GraphQLError
     if ((data as GraphQLError).error !== undefined) {
         res.status(400).send(data);
     }
-    console.log(data);
     // Parse valid Data here before return
     const parsedData: ReadMeData = parseGraphData(req, data as GraphQLResponse);
 
