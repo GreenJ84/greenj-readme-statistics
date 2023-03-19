@@ -1,0 +1,8 @@
+query ($login: String!, $start: string!, $end: string!) {
+        user(login: $login) {
+            createdAt
+            contributionsCollection(from: $start, to: $end) {
+                contributionYears
+            }
+        }
+    }
