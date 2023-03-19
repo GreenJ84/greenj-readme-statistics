@@ -16,7 +16,7 @@ export const getResponseParse = (req: Request): Function => {
 }
 
 const streakParse = (streak: STREAKTYPE, data: StreakResponse) => {
-    const created = streak.totalRange[1];
+    const created = streak.totalRange[0];
 
     let total = streak.total;
     let curr = streak.curr;
@@ -36,11 +36,11 @@ const streakParse = (streak: STREAKTYPE, data: StreakResponse) => {
             if (day.contributionCount > 0) {
                 // If no curr streak, start the curr range
                 if (curr == 0) {
-                    cS = new Date().toISOString().slice(0, 10);
+                    cS = new Date(day.date).toISOString().slice(0, 10);
                 }
                 total += day.contributionCount;
                 curr += 1;
-                cE = new Date().toISOString().slice(0, 10);
+                cE = new Date(day.date).toISOString().slice(0, 10);
             }
             // No contributions?
             else {
@@ -58,8 +58,8 @@ const streakParse = (streak: STREAKTYPE, data: StreakResponse) => {
                 }
                 // Reset current counter and dates if valid missed day
                 curr = 0;
-                cS = new Date().toISOString().slice(0, 10);
-                cE = new Date().toISOString().slice(0, 10);
+                cS = new Date(day.date).toISOString().slice(0, 10);
+                cE = new Date(day.date).toISOString().slice(0, 10);
             }
         }
     }
