@@ -5,7 +5,8 @@ import { gql } from "graphql-tag";
 import { match } from 'ts-pattern';
 
 import { GraphQLQuery, GraphQLError, GIT_URL } from '../utils/constants';
-import { GraphQLResponse } from './githubTypes';
+import { GraphQLResponse, ReadMeData } from './githubTypes';
+import { parseGraphData } from './apiParser';
 
 const token = "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";
 
@@ -55,7 +56,7 @@ async function githubGraphQL(query: GraphQLQuery): Promise<GraphQLError | GraphQ
 
 
 // Extract api type query information
-const setQuery = async (username: string, type: string): Promise<GraphQLError| GraphQLResponse> => {
+const setQuery = async (res: Response, username: string, type: string): Promise<GraphQLResponse> => {
     const path = getGraph(type);
     const graphql = gql(
         fs.readFileSync(path, 'utf8')
@@ -73,11 +74,16 @@ const setQuery = async (username: string, type: string): Promise<GraphQLError| G
                 error_code: 500,
             } as GraphQLError;
         })
-    return data;
+    // Return API errors if they have occured
+    if ((data as GraphQLError).error !== undefined) {
+        res.status(400).send(data);
+    }
+    // Data to be returned will be of a valid response type
+    return data as GraphQLResponse;
 }
 
 // Preflight for required parameters
-export const preQery = async (req: Request, res: Response): Promise<GraphQLError | GraphQLResponse> => {
+export const preQery = async (req: Request, res: Response): Promise<GraphQLError | ReadMeData> => {
     const { username } = req.params;
     const type = req.path.split("/")[2]!;
 
@@ -89,16 +95,25 @@ export const preQery = async (req: Request, res: Response): Promise<GraphQLError
                 error_code: 400
             })
     }
-    const data = setQuery(username!, type)
+
+
+    const data = await setQuery(res, username!, type)
         .then((data) => {
             return data as GraphQLResponse;
         })
         .catch((err) => {
             return {
-                message: "",
+                message: "Internal server error",
                 error: err,
-                error_code: 400,
+                error_code: 500,
             } as GraphQLError;
-        })
-    return data;
+        });
+    if ((data as GraphQLError).error !== undefined) {
+        res.status(400).send(data);
+    }
+    console.log(data);
+    // Parse valid Data here before return
+    const parsedData: ReadMeData = parseGraphData(req, data as GraphQLResponse);
+
+    return parsedData;
 }
