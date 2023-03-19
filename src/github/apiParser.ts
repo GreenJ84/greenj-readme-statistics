@@ -1,10 +1,10 @@
 import { Request } from 'express';
 import { match } from 'ts-pattern';
-import { THEMES, THEMETYPE } from '../utils/themes';
-import { GraphQLResponse, ReadMeData, StreakResponse, STREAKTYPE } from './githubTypes';
+import {  StreakResponse, STREAKTYPE } from './githubTypes';
 
 
-const getResponseParse = (type: string): Function => {
+export const getResponseParse = (req: Request): Function => {
+    const type = req.path.split("/")[2]!;
     const parseFunc = match(type)
         // .with("stats", () => {return statsParse})
         // .with("trophies", () => {return statsParse})
@@ -15,43 +15,59 @@ const getResponseParse = (type: string): Function => {
     return parseFunc
 }
 
-const streakParse = (req: Request, data: StreakResponse): STREAKTYPE => {
-    let total = 0;
-    let recent = 0;
-    let longest = 0;
+const streakParse = (streak: STREAKTYPE, data: StreakResponse) => {
+    const created = streak.totalRange[1];
+
+    let total = streak.total;
+    let curr = streak.curr;
+    let [cS, cE] = streak.currDate;
+    let longest = streak.longest;
+    let [lS, lE] = streak.longestDate;
     let past = true;
-    console.log(data);
+
     for (let week of data.user.contributionsCollection.contributionCalendar.weeks) {
         if (!past) { break }
         for (let day of week.contributionDays) {
-            if (day.contributionCount > 0 && (new Date(day.date).getTime() < new Date().getTime()) ) {
-                total += day.contributionCount;
-                recent += 1;
+            // Days before created account get skipped
+            if (new Date(day.date).getTime() < new Date(created!).getTime()) {
+                continue
             }
-            else if (day.contributionCount == 0) {
-                longest = Math.max(recent, longest) 
-                recent = 0;
+            // Days with contributions get added
+            if (day.contributionCount > 0) {
+                // If no curr streak, start the curr range
+                if (curr == 0) {
+                    cS = new Date().toISOString().slice(0, 10);
+                }
+                total += day.contributionCount;
+                curr += 1;
+                cE = new Date().toISOString().slice(0, 10);
+            }
+            // No contributions?
+            else {
+                // Check to see if current streak is longest
+                longest = Math.max(curr, longest) 
+                // If curr is longest, set the longest end as one before
+                if (longest == curr) {
+                    lS = cS
+                    lE = cE
+                }
+                // If its in the future, break and end search
+                if (new Date(day.date).getTime() >= new Date().getTime()) {
+                    past = false;
+                    break;
+                }
+                // Reset current counter and dates if valid missed day
+                curr = 0;
+                cS = new Date().toISOString().slice(0, 10);
+                cE = new Date().toISOString().slice(0, 10);
             }
         }
     }
-
-    const parsedData: STREAKTYPE = {
-        title: req.query.title ?
-            req.query.title as string : "GreenJ84's Streak",
-        total: total,
-        totalText: "Total Contributions",
-        totalRange: "10-12-2022-3-18-2023",
-        curr: recent,
-        currText: "Current Streak",
-        currDate: "10-12-2022-3-18-2023",
-        longest: longest,
-        longestText: "Longest Streak",
-        longestDate: "10-12-2022-3-18-2023",
-        theme: req.query.theme !== undefined ? 
-            THEMES[req.query.theme! as string] as THEMETYPE : THEMES["black-ice"]! as THEMETYPE,
-    }
-
-    return parsedData;
+    streak.total = total;
+    streak.curr = curr;
+    streak.currDate = [cS!, cE!];
+    streak.longest = longest;
+    streak.longestDate = [lS!, lE!];
 }
 
 // export const statsParse = () => {
@@ -61,11 +77,3 @@ const streakParse = (req: Request, data: StreakResponse): STREAKTYPE => {
 // export const langsParse = () => {
     
 // }
-
-export const parseGraphData = (req: Request, data: GraphQLResponse): ReadMeData => {
-    const type = req.path.split("/")[2]!;
-    const parse = getResponseParse(type);
-    console.log(data);
-    const parsedData: ReadMeData = parse(req, data);
-    return parsedData;
-}
