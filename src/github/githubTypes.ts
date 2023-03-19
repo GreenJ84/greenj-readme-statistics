@@ -2,13 +2,21 @@ import { THEMETYPE } from "../utils/themes"
 
 export enum GraphQLResponse {
     StreakResponse,
-    any
+    StreakProbe,
 }
 
 export enum ReadMeData {
-    StreakResponse,
+    STREAKTYPE,
 }
 
+export interface StreakProbe{
+    user: {
+        createdAt: string
+        contributionsCollection: {
+            contributionYears: number[]
+        }
+    }
+};
 export interface StreakResponse {
     user: {
         createdAt: string
@@ -33,13 +41,13 @@ export interface STREAKTYPE {
     title: string
     total: number
     totalText: string
-    totalRange: string
+    totalRange: string[]
     curr: number
     currText: string
-    currDate: string
+    currDate: string[]
     longest: number
     longestText: string
-    longestDate: string
+    longestDate: string[]
     theme: THEMETYPE
 }
 
