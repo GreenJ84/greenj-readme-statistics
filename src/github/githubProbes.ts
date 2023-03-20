@@ -6,7 +6,7 @@ import { GraphQLResponse, StreakProbe } from "./githubTypes";
 import { githubGraphQL } from "./query";
 import { GraphQLError } from '../utils/constants';
 
-export const handleProbe = async (req: Request, res: Response): Promise<[string, number[]] | boolean> => {
+export const streakProbe = async (req: Request, res: Response): Promise<[string, number[]] | boolean> => {
     const now = new Date().toISOString()
     const today = now.slice(0, 19);
     const year = now.slice(0,4)

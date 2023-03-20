@@ -12,8 +12,8 @@ const token = "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";
 // Get the GraphQL file location based on type
 const getGraph = (type: string): string => {
     const graph = match(type)
-        .with("stats", () => {return "src/github/graphql/guthub-stats.graphql"})
-        .with("trophies", () => {return "src/github/graphql/guthub-stats.graphql"})
+        .with("stats", () => {return "src/github/graphql/github-stats.graphql"})
+        .with("trophies", () => {return "src/github/graphql/github-stats.graphql"})
         .with("languages", () => {return "src/github/graphql/github-langs.graphql"})
         .with("streak", () => { return "src/github/graphql/github-streak.graphql" })
         .run()
