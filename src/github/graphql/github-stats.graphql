@@ -3,6 +3,7 @@ query userInfo($login: String!) {
         name
         contributionsCollection {
             totalCommitContributions
+            restrictedContributionsCount
         }
         repositoriesContributedTo(first: 1, contributionTypes: [COMMIT, ISSUE, PULL_REQUEST, REPOSITORY]) {
             totalCount
