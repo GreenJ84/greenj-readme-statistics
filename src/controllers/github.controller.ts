@@ -1,19 +1,22 @@
 import { Request, Response } from "express";
 import { streakCardSetup } from "../github/cards/streak-card";
+
 import { GraphQLError } from "../utils/constants";
 import { preQery } from "../github/query";
-import {  GraphQLResponse, StreakResponse, STREAKTYPE } from "../github/githubTypes";
-import { handleProbe } from "../github/streakHandle";
+import {  GraphQLResponse, ReadMeData, StreakResponse, STREAKTYPE } from "../github/githubTypes";
+import {  streakProbe } from "../github/githubProbes";
 import { preFlight } from "../utils/utils";
 import { THEMES, THEMETYPE } from "../utils/themes";
 import { getResponseParse } from "../github/apiParser";
+import { cardDirect } from "../github/githubUtils";
 
 export const getProfileStats = async (req: Request, res: Response) => {
     if (!preFlight(req, res)) {
         return;
     }
-    // const parse = getResponseParse(req);
-    let variables = {login: req.params.username! }
+    // Get Function to parse data
+    const parse = getResponseParse(req);
+    let variables = { login: req.params.username! }
     const data = await preQery(req, res, variables)
         .then((data: GraphQLResponse | GraphQLError) => {
             if ((data as GraphQLError).error !== undefined) {
@@ -21,8 +24,12 @@ export const getProfileStats = async (req: Request, res: Response) => {
             }
             return data as GraphQLResponse;
         })
-    // parse(data)
-    res.status(200).send(data);
+    const parsedData: ReadMeData = parse(data)
+    const createCard: Function = cardDirect(req);
+    const card: string = createCard(req, data);
+    card;
+
+    res.status(200).send(parsedData);
 };
 
 export const getCommitStreak = async (req: Request, res: Response) => {
@@ -31,7 +38,7 @@ export const getCommitStreak = async (req: Request, res: Response) => {
     }
     const { username } = req.params;
     // Minimal query probe to get query data
-    const [created, years] = await handleProbe(req, res)
+    const [created, years] = await streakProbe(req, res)
         .then((result: [string, number[]] | boolean): [string | boolean, number[]] => {
             if (typeof(result) == 'boolean') {
                 return [result, [0]]
