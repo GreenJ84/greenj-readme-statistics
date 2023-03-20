@@ -1,213 +1,179 @@
-<svg 
-  xmlns="http://www.w3.org/2000/svg" width="495" 
-  height="195" 
-  viewBox="0 0 495 195" 
-  fill="none"
->
-  <style>
-    .header {
-      font: 600 18px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: #4dd0e1;
-      animation: fadeInAnimation 0.8s ease-in-out forwards;
-    }
-    
-    .stat {
-      font: 600 14px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif;
-      fill: #00bcd4;
-    }
-
-    .easy {
-      fill: #00e676;
-    }
-
-    .medium {
-      fill: #ff9100
-    }
-
-    .hard {
-      fill: #f73378
-    }
-    
-    .stagger {
-      opacity: 0;
-      animation: fadeInAnimation 0.3s ease-in-out forwards;
-    }
-    
-    .acceptance-text {
-      font: 800 24px 'Segoe UI', Ubuntu, Sans-Serif;
-      fill: #00bcd4;
-      animation: scaleInAnimation 0.3s ease-in-out forwards;
-    }
-    
-    .acceptance-title {
-      font: 600 14px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif;
-      fill: #00bcd4;
-      animation: scaleInAnimation 0.3s ease-in-out forwards;
-    }
-
-    .bold {
-      font-weight: 700
-    }
-    
-    .acceptance-circle-rim {
-      stroke: #4dd0e1;
-      fill: none;
-      stroke-width: 6;
-      opacity: 0.2;
-    }
-    
-    .acceptance-circle {
-      stroke: #4dd0e1;
-      stroke-dasharray: 377;
-      fill: none;
-      stroke-width: 6;
-      stroke-linecap: round;
-      opacity: 0.8;
-      transform-origin: -10px 8px;
-      transform: rotate(-90deg);
-      animation: acceptanceAnimation 1s forwards ease-in-out;
-    }
-    
-    @keyframes acceptanceAnimation {
-      from {
-        stroke-dashoffset: 377;
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation: isolate" viewBox="0 0 552 215" width="552px" height="215px" direction="ltr">
+    <style>
+      .header {
+        font: 700 22px 'Segoe UI', Ubuntu, Sans-Serif;
+        fill: #151515;
+        animation: fadeInAnimation 0.8s ease-in-out forwards;
       }
-      to {
-        stroke-dashoffset: 129.16020000000003;
+      
+      .stat {
+        font: 600 14px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif;
+        fill: #151515;
       }
-    }
-    /* Animations */
-    
-    @keyframes scaleInAnimation {
-      from {
-        transform: translate(-5px, 5px) scale(0);
+      .num{
+        font: 600 16px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif;
+        fill: #151515;
+        letter-spacing: 1.5px;
       }
-      to {
-        transform: translate(-5px, 5px) scale(1);
+      .easy {
+        fill: #151515;
       }
-    }
-    
-    @keyframes fadeInAnimation {
-      from {
+
+      .medium {
+        fill: #151515;
+      }
+
+      .hard {
+        fill: #151515;
+      }
+      
+      .stagger {
         opacity: 0;
+        animation: fadeInAnimation 0.3s ease-in-out forwards;
       }
-      to {
-        opacity: 1;
+      
+      .acceptance-text {
+        font: 800 24px 'Segoe UI', Ubuntu, Sans-Serif;
+        fill: #11009F;
+        animation: scaleInAnimation 0.3s ease-in-out forwards;
       }
-    }
-  </style>
-  <rect x="0.5" y="0.5" rx="4.5" height="99%" stroke="#004d40" width="494" fill="#004d40" stroke-opacity="1" />
+      
+      .acceptance-title {
+        font: 600 14px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif;
+        fill: #11009F;
+        animation: scaleInAnimation 0.3s ease-in-out forwards;
+      }
 
-  <g transform="translate(25, 35)">
-    <g transform="translate(0, 0)">
-      <text x="0" y="0" class="header">
-        GreenJ84's LeetCode Stats
-      </text>
+      .bold {
+        font-weight: 700
+      }
+      
+      .acceptance-circle-rim {
+        stroke: #11009F;
+        fill: none;
+        stroke-width: 6;
+        opacity: 0.2;
+      }
+      
+      .acceptance-circle {
+        stroke: #11009F;
+        stroke-dasharray: 377;
+        fill: none;
+        stroke-width: 6;
+        stroke-linecap: round;
+        opacity: 0.8;
+        transform-origin: -10px 8px;
+        transform: rotate(-90deg);
+        animation: acceptanceAnimation 1s forwards ease-in-out;
+      }
+      
+      @keyframes acceptanceAnimation {
+        from {
+          stroke-dashoffset: 377;
+        }
+        to {
+          stroke-dashoffset: 129.16020000000003;
+        }
+      }
+      /* Animations */
+      
+      @keyframes scaleInAnimation {
+        from {
+          transform: translate(-5px, 5px) scale(0);
+        }
+        to {
+          transform: translate(-5px, 5px) scale(1);
+        }
+      }
+      
+      @keyframes fadeInAnimation {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    </style>
+    <defs>
+        <clipPath id='outer_rectangle'>
+            <rect width='552' height='215' rx='10'/>
+        </clipPath>
+    </defs>
+    <g style='isolation: isolate'>
+            <rect stroke='#151515' fill='#FB8C00' rx='10' x='0.5' y='0.5' width='551' height='214'/>
     </g>
-  </g>
-
-  <g transform="translate(0, 55)">
-    <g transform="translate(400, 47.5)">
-      <circle 
-        class="acceptance-circle-rim" cx="-10" cy="8" r="60" 
-      />
-      <circle 
-        class="acceptance-circle" cx="-10" cy="8" r="60" 
-      />
-      <text 
-        class="acceptance-text" 
-        x="0" y="0" 
-        alignment-baseline="central" 
-        dominant-baseline="central" 
-        text-anchor="middle"
-      >
-        65.74% 
-      </text>
-      <text 
-        class="acceptance-title" 
-        x="0" y="20" 
-        alignment-baseline="central" 
-        dominant-baseline="central" 
-        text-anchor="middle"
-      > 
-        acceptance 
-      </text>
+    <g transform="translate(25, 35)">
+        <g transform="translate(0, 0)">
+            <text x="0" y="0" class="header">
+                GreenJ84's LeetCode Questions
+            </text>
+        </g>
     </g>
 
-    <svg x="0" y="0">
-      <g transform="translate(0, 0)">
-        <g 
-          class="stagger" 
-          style="animation-delay: 450ms" 
-          transform="translate(25, 0)"
-        >
-          <text class="stat bold" y="12.5">
-            Ranking:
-          </text>
-          <text class="stat" x="200" y="12.5">
-            187590
-          </text>
+    <g transform="translate(0, 55)">
+        <g transform="translate(460, 47.5)">
+            <circle class="acceptance-circle-rim" cx="-10" cy="8" r="60" />
+            <circle class="acceptance-circle" cx="-10" cy="8" r="60" />
+            <text class="acceptance-text" x="0" y="0" alignment-baseline="central" dominant-baseline="central" text-anchor="middle">
+              65.74% 
+            </text>
+            <text class="acceptance-title" x="0" y="20" alignment-baseline="central" dominant-baseline="central" text-anchor="middle"> 
+              acceptance 
+            </text>
         </g>
-      </g>
-      <g transform="translate(0, 25)">
-        <g 
-          class="stagger" 
-          style="animation-delay: 600ms" 
-          transform="translate(25, 0)"
-        >
-          <text class="stat bold" y="12.5">
-            Total Questions Solved:
-          </text>
-          <text class="stat" x="200" y="12.5">
-            278/2590
-          </text>
+        <g transform="translate(0, 0)">
+            <g class="stagger" style="animation-delay: 450ms" transform="translate(25, 0)" >
+              <text class="stat bold" y="12.5">
+                Ranking:
+              </text>
+              <text class="num" x="240" y="12.5">
+                187590
+              </text>
+            </g>
         </g>
-      </g>
+        <g transform="translate(0, 30)">
+            <g class="stagger" style="animation-delay: 600ms" transform="translate(25, 0)">
+              <text class="stat bold" y="12.5">
+                Total Questions Solved:
+              </text>
+              <text class="num" x="240" y="12.5">
+                278 / 2590
+              </text>
+            </g>
+        </g>
 
-      <g transform="translate(0, 50)">
-        <g 
-          class="stagger" 
-          style="animation-delay: 750ms" 
-          transform="translate(25, 0)"
-        >
-          <text class="stat bold easy" y="12.5">
-            Easy Questions Solved:
-          </text>
-          <text class="stat easy" x="200" y="12.5">
-            147/634
-          </text>
+        <g transform="translate(0, 60)">
+            <g class="stagger" style="animation-delay: 750ms" transform="translate(25, 0)">
+              <text class="stat bold easy" y="12.5">
+                Easy Questions Solved:
+              </text>
+              <text class="easy num" x="240" y="12.5">
+                147 / 634
+              </text>
+            </g>
         </g>
-      </g>
 
-      <g transform="translate(0, 75)">
-        <g 
-          class="stagger" 
-          style="animation-delay: 900ms" 
-          transform="translate(25, 0)"
-        >
-          <text class="stat bold medium" y="12.5">
-            Medium Questions Solved:
-          </text>
-          <text class="stat medium" x="200" y="12.5">
-            126/1377
-          </text>
+        <g transform="translate(0, 90)">
+            <g class="stagger" style="animation-delay: 900ms" transform="translate(25, 0)">
+              <text class="stat bold medium" y="12.5">
+                Medium Questions Solved:
+              </text>
+              <text class="medium num" x="240" y="12.5">
+                126 / 1377
+              </text>
+            </g>
         </g>
-      </g>
 
-      <g transform="translate(0, 100)">
-        <g 
-          class="stagger" 
-          style="animation-delay: 1050ms" 
-          transform="translate(25, 0)"
-        >
-          <text class="stat bold hard" y="12.5">
-            Hard Questions Solved:
-          </text>
-          <text class="stat hard" x="200" y="12.5">
-            5/579
-          </text>
+        <g transform="translate(0, 120)">
+            <g class="stagger" style="animation-delay: 1050ms" transform="translate(25, 0)">
+              <text class="stat bold hard" y="12.5">
+                Hard Questions Solved:
+              </text>
+              <text class="hard num" x="240" y="12.5">
+                5 / 579
+              </text>
+            </g>
         </g>
-      </g>
-    </svg>
-  </g>
+    </g>
 </svg>
