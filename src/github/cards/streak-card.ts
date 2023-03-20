@@ -208,7 +208,7 @@ const createStreakCard = (data: STREAKTYPE): string => {
                     <text x='460' y='50' stroke-width='0' text-anchor='middle' fill='${
                       theme.dates
                     }' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='400' font-size='12px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 1.4s'>
-                    ${data.longestDate[0]}-${data.totalRange[1]}
+                    ${data.longestDate[0]}-${data.longestDate[1]}
                     </text>
                 </g>
             </g>
