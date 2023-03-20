@@ -3,6 +3,7 @@
     <!-- New Commit Trophy -->
     <svg x="0" y="0" width="110" height="110" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect x="0.5" y="0.5" rx="4.5" width="109" height="109" stroke="#e1e4e8" fill="#282a36" stroke-opacity="1" fill-opacity="1" />
+        <!-- Background plant -->
         <svg xmlns="http://www.w3.org/2000/svg" width="90pt" height="90pt" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
             <metadata>
                 Created by potrace 1.15, written by Peter Selinger 2001-2017
@@ -25,6 +26,7 @@
                 <path d="M7249 1054 c-42 -7 -109 -25 -150 -40 -76 -27 -226 -101 -267 -133 l-24 -18 41 -66 c22 -37 36 -67 31 -67 -18 0 -11 -80 11 -121 11 -22 53 -73 92 -113 279 -282 682 -361 1251 -245 113 23 172 49 188 84 14 30 3 72 -20 77 -9 3 18 15 61 29 l78 24 -93 81 c-362 313 -622 460 -902 509 -106 18 -194 18 -297 -1z"/>
             </g>
         </svg>
+        <!-- Right Side Trophy -->
         <svg x="68" y="35" width="65" height="65" viewBox="0 0 30 30" fill="#ffb86c" xmlns="http://www.w3.org/2000/svg">
             <path d="M7 10h2v4H7v-4z"/>
             <path d="M10 11c0 .552-.895 1-2 1s-2-.448-2-1 .895-1 2-1 2 .448 2 1z"/>
@@ -33,6 +35,7 @@
             <circle cx="8" cy="6" r="4" fill="#f8f8f2" />
             <text x="6" y="8" font-family="Courier, Monospace" font-size="7" fill="#6272a4">S</text>
         </svg>
+        <!-- Front Most trophy -->
         <defs>
             <linearGradient id="SS" gradientTransform="rotate(45)">
             <stop offset="0%" stop-color="#ffb86c"/>
@@ -48,8 +51,11 @@
             <circle cx="8" cy="6" r="4" fill="#f8f8f2" />
             <text x="6" y="8" font-family="Courier, Monospace" font-size="7" fill="#6272a4">S</text>
         </svg>
+        <!-- Title -->
         <text x="50%" y="18" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji" font-weight="bold" font-size="13" fill="#ff79c6">Commits</text>
+        <!-- Label -->
         <text x="50%" y="85" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji" font-weight="bold" font-size="10.5" fill="#f8f8f2">Deep Committer</text>
+        <!-- Stats -->
         <text x="50%" y="97" text-anchor="middle" font-family="Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji" font-weight="bold" font-size="10" fill="#f8f8f2">3.1kpt</text>
         <style>
           @keyframes CommitsRankAnimation {
@@ -64,6 +70,7 @@
             animation: CommitsRankAnimation 1s forwards ease-in-out;
           }
         </style>
+        <!-- Full level status bar -->
         <rect
           x="15"
           y="101"
@@ -73,6 +80,7 @@
           opacity="0.3"
           fill="#ff79c6"
         />
+        <!-- Filled in status bar -->
         <rect
           id="Commits-rank-progress"
           x="15"
