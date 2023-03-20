@@ -30,10 +30,20 @@ export const getCommitStreak = async (req: Request, res: Response) => {
     }
     const { username } = req.params;
     // Minimal query probe to get query data
-    const [created, years] = handleProbe(req, res);
+    const [created, years] = await handleProbe(req, res)
+        .then((result: [string, number[]] | boolean): [string | boolean, number[]] => {
+            if (typeof(result) == 'boolean') {
+                return [result, [0]]
+            } else {
+                return result;
+            }
+        });
+    if (typeof (created) == "boolean") {
+        return;
+    }
     // Get Function to parse data
     const parse = getResponseParse(req);
-    // staring data with defaults set
+    // Start data with defaults set
     let streak: STREAKTYPE = {
         title: req.query.title !== undefined ?
             req.query.title as string : "GreenJ84's Streak",
@@ -55,13 +65,13 @@ export const getCommitStreak = async (req: Request, res: Response) => {
     // Call data for each year
     for (let year of years) {
         // If before year is created year, set start to create data else year start
-        if (new Date(year).getFullYear() == new Date(created).getFullYear()) {
+        if (year == new Date(created).getFullYear()) {
             variables.start = new Date(created).toISOString().slice(0, 19) + 'Z';
         } else {
             variables.start = `${year}-01-01T00:00:00Z`;
         }
         // If year is this year, set end to current date else end of year
-        if (new Date(year).getFullYear() == new Date().getFullYear()) {
+        if (year == new Date().getFullYear()) {
             variables.end = new Date().toISOString().slice(0,19)+'Z'
         } else {
             variables.end = `${year}-12-31T00:00:00Z`;
@@ -76,10 +86,11 @@ export const getCommitStreak = async (req: Request, res: Response) => {
             })
         // Parse that data with our current stats to update
         parse(streak, data)
+        console.log(streak)
     }
     
     const card: string = streakCardSetup(req, streak);
-    console.log(card)
+    card;
     res.status(200).send(card);
 };
 
