@@ -1,17 +1,18 @@
 import { Request } from 'express';
 import { match } from 'ts-pattern';
-import {  StreakResponse, STREAKTYPE } from './githubTypes';
+import { THEMES } from '../utils/themes';
+import {  StatsResponse, STATTYPE, StreakResponse, STREAKTYPE } from './githubTypes';
+import { calculateRank } from './githubUtils';
 
 
 export const getResponseParse = (req: Request): Function => {
     const type = req.path.split("/")[2]!;
     const parseFunc = match(type)
-        // .with("stats", () => {return statsParse})
-        // .with("trophies", () => {return statsParse})
-        // .with("languages", () => {return langsParse})
+        .with("stats", () => {return statsParse})
+        .with("trophies", () => {return statsParse})
+        .with("languages", () => {return langsParse})
         .with("streak", () => {return streakParse})
         .run()
-    
     return parseFunc
 }
 
@@ -72,10 +73,25 @@ const streakParse = (streak: STREAKTYPE, data: StreakResponse) => {
     streak.longestDate = [lS!, lE!];
 }
 
-// export const statsParse = () => {
+const statsParse = (data: StatsResponse): STATTYPE => {
+    const stars = data.user.repositories.nodes
+        .reduce((prev, curr) => {
+            return prev + curr.stargazers.totalCount;
+        }, 0);
     
-// }
+    const stats = {
+        stars: stars,
+        followers: data.user.followers.totalCount,
+        commits: data.user.contributionsCollection.totalCommitContributions+data.user.contributionsCollection.restrictedContributionsCount,
+        PR: data.user.pullRequests.totalCount,
+        issues: data.user.issues.totalCount,
+        contributedTo: data.user.repositoriesContributedTo.totalCount,
+        repos: data.user.repositories.totalCount,
+        theme: THEMES['default']!,
+    }
+    return {...stats, grade: calculateRank(stats)}
+}
 
-// export const langsParse = () => {
+const langsParse = () => {
     
-// }
+}
