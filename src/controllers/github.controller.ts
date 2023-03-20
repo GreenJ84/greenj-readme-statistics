@@ -12,16 +12,17 @@ export const getProfileStats = async (req: Request, res: Response) => {
     if (!preFlight(req, res)) {
         return;
     }
+    // const parse = getResponseParse(req);
     let variables = {login: req.params.username! }
-    preQery(req, res, variables);
-};
-
-export const getProfileTrophies = async (req: Request, res: Response) => {
-    if (!preFlight(req, res)) {
-        return;
-    }
-    let variables = {login: req.params.username! }
-    preQery(req, res, variables);
+    const data = await preQery(req, res, variables)
+        .then((data: GraphQLResponse | GraphQLError) => {
+            if ((data as GraphQLError).error !== undefined) {
+                res.status(400).send(data);
+            }
+            return data as GraphQLResponse;
+        })
+    // parse(data)
+    res.status(200).send(data);
 };
 
 export const getCommitStreak = async (req: Request, res: Response) => {
@@ -92,12 +93,4 @@ export const getCommitStreak = async (req: Request, res: Response) => {
     const card: string = streakCardSetup(req, streak);
     card;
     res.status(200).send(card);
-};
-
-export const getTopLangs = async (req: Request, res: Response) => {
-    if (!preFlight(req, res)) {
-        return;
-    }
-    let variables = {login: req.params.username! }
-    preQery(req, res, variables);
 };

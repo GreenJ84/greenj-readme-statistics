@@ -4,7 +4,7 @@ import * as Github from '../controllers/github.controller';
 export const GithubRoutes = (app: express.Application) => {
     // Display github stats in trophies
     app.get('/github/trophies/:username',
-        Github.getProfileTrophies
+        Github.getProfileStats
     )
     // Display github stats in Modal
     app.get('/github/stats/:username',
@@ -12,7 +12,7 @@ export const GithubRoutes = (app: express.Application) => {
     )
     // Display most used github languages
     app.get('/github/languages/:username',
-        Github.getTopLangs
+        Github.getProfileStats
     )
     // Display github contributions streak
     app.get('/github/streak/:username',
