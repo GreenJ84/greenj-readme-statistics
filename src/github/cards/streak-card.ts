@@ -131,7 +131,7 @@ const createStreakCard = (data: STREAKTYPE): string => {
                     <text x='92' y='50' stroke-width='0' text-anchor='middle' fill='${
                       theme.dates
                     }' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='400' font-size='12px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.8s'>
-                        ${data.totalRange}
+                        ${data.totalRange[0]}-${data.totalRange[1]}
                     </text>
                 </g>
             </g>
@@ -158,7 +158,7 @@ const createStreakCard = (data: STREAKTYPE): string => {
                     <text x='276' y='46' stroke-width='0' text-anchor='middle' fill='${
                       theme.dates
                     }' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='400' font-size='12px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.9s'>
-                        ${data.currDate}
+                    ${data.currDate[0]}-${data.currDate[1]}
                     </text>
                 </g>
                 <!-- ring around number -->
@@ -208,7 +208,7 @@ const createStreakCard = (data: STREAKTYPE): string => {
                     <text x='460' y='50' stroke-width='0' text-anchor='middle' fill='${
                       theme.dates
                     }' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='400' font-size='12px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 1.4s'>
-                        ${data.longestDate}
+                    ${data.longestDate[0]}-${data.totalRange[1]}
                     </text>
                 </g>
             </g>
