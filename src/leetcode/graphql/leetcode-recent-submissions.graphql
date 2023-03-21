@@ -1,5 +1,5 @@
 query ($username: String!, $limit: Int) {
-    recentSubmissionList(username: $username, limit: $limit) {
+    recentSubmissionList(username: $username, limit: 60) {
         title
         titleSlug
         timestamp
