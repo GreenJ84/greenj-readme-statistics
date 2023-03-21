@@ -1,50 +1,93 @@
+import fs from 'fs';
+import { Request, Response } from 'express';
+import { gql } from "graphql-tag";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import { USER_AGENT, GraphQLQuery, GraphQLError } from "../utils/constants";
-import { LeetCodeGraphQLResponse } from "./leetcodeTypes";
 
-export async function leetcodeGraphQL (query: GraphQLQuery, url: string, csrf: string): Promise<LeetCodeGraphQLResponse | GraphQLError> {
-    const BASE = url;
+import { USER_AGENT, GraphQLQuery, GRAPHQL_URL, GraphQLError } from "../utils/constants";
+import { LeetCodeGraphQLResponse } from "./leetcodeTypes";
+import { getGraph } from './leetcodeUtils';
+import * as leetcode from '../leetcode/query';
+import { get_csrf } from '../utils/credentials';
+
+export async function leetcodeGraphQL(query: GraphQLQuery, url: string, csrf: string):
+    Promise<LeetCodeGraphQLResponse | GraphQLError> {
+
     const client = new ApolloClient({
-        uri: `${BASE}/graphql`,
+        uri: url,
         cache: new InMemoryCache(),
     });
     const headers = {
         'Content-Type': 'application/json',
-        origin: BASE,
-        referer: BASE,
+        origin: url,
+        referer: url,
         cookie: `csrftoken=${csrf}; LEETCODE_SESSION=;`,
         "x-csrftoken": `${csrf}`,
         "user-agent": USER_AGENT,
     };
     
-    try {
-        const result = await client.query(
-            {
-                ...query,
-                context: {
-                    headers,
-                    method: 'POST',
-                }
+    const result = await client.query(
+        {
+            ...query,
+            context: {
+                headers,
+                method: 'POST',
             }
-        )
-            .then(result => {
-                return result.data as LeetCodeGraphQLResponse
-            })
-            .catch(err => {
-                return {
-                        message: "An error occurred while retrieving data from the external API",
-                        error_code: 500,
-                        error: err
-                    } as GraphQLError
-            });
-        return result;
+        }
+    )
+        .then(result => {
+            return result.data as LeetCodeGraphQLResponse
+        })
+        .catch(err => {
+            return {
+                    message: "An error occurred while retrieving data from the external API",
+                    error_code: 500,
+                    error: err
+                } as GraphQLError
+        });
+    return result;
+};
+
+export const preProbe = async () => {
+    
+}
+
+export const preQuery = async (req: Request, res: Response):
+    Promise<LeetCodeGraphQLResponse | GraphQLError> => {
+
+    // Cross-site forgery credentials
+    const csrf_credential: string = await get_csrf()
+        .then((result) => result.toString());
+
+    // Get correct query based on api called
+    const type = req.path.split("/")[2]!;
+    const path = getGraph(type);
+    const graphql = gql(
+        fs.readFileSync(path, 'utf8')
+    );
+
+    // Username which has to be ther if preflight passed
+    const { username } = req.params;
+
+    // Call the universal leetCode querier
+    const data = await leetcode.leetcodeGraphQL(
+        {
+            query: graphql,
+            variables: { username: username! }
+        },
+        GRAPHQL_URL,
+        csrf_credential
+    )
+        .then((res) => res)
+        .catch((err) => {
+            return {
+                message: "Internal server error",
+                error: err,
+                error_code: 500,
+            } as GraphQLError;
+        })
+    // Return API errors if they have occured
+    if ((data as GraphQLError).error !== undefined) {
+        res.status(400).send(data);
     }
-    catch (err) {
-        console.log("an error has occured", err);
-        return {
-            message: "An error occurred while connecting to the external API",
-            error_code: 500,
-            error: err
-        } as GraphQLError
-    }
+    return data
 };
