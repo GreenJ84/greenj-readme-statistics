@@ -1,0 +1,7 @@
+query ($username: String!, $year: number!) {
+    matchedUser(username: $username) {
+        userCalendar(year: $year){
+            activeYears
+        }
+    }
+}
