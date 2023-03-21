@@ -73,12 +73,13 @@ const streakParse = (streak: STREAKTYPE, data: StreakResponse) => {
     streak.longestDate = [lS!, lE!];
 }
 
+
 const statsParse = (data: StatsResponse): STATTYPE => {
     const stars = data.user.repositories.nodes
         .reduce((prev, curr) => {
             return prev + curr.stargazers.totalCount;
         }, 0);
-    
+
     const stats = {
         stars: stars,
         followers: data.user.followers.totalCount,
@@ -87,7 +88,12 @@ const statsParse = (data: StatsResponse): STATTYPE => {
         issues: data.user.issues.totalCount,
         contributedTo: data.user.repositoriesContributedTo.totalCount,
         repos: data.user.repositories.totalCount,
-        theme: THEMES['default']!,
+        theme: {
+            ...THEMES["black-ice"]!,
+            hideborder: false,
+            borderRadius: 10,
+            locale: 'en'
+        },
     }
     return {...stats, grade: calculateRank(stats)}
 }

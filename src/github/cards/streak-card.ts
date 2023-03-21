@@ -28,7 +28,7 @@ export const streakCardSetup = (req: Request, data: STREAKTYPE): string => {
   }
   if (hideBorder !== undefined) {
     theme.hideBorder = true;
-  }
+  } else { theme.hideBorder = false; }
   if (borderRadius !== undefined) {
     theme.borderRadius = parseInt(borderRadius as string);
   } else {

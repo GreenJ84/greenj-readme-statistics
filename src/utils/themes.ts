@@ -14,6 +14,7 @@ export interface THEMETYPE{
     locale?: string,
     [key: string]: any;
 }
+
 export const THEMES: Record<string, THEMETYPE> = {
         "default": {
             background: "#FFFEFE",
