@@ -12,6 +12,7 @@ export enum ReadMeData {
     LANGTYPE
 }
 
+// Streak Related Types
 export interface StreakProbe{
     user: {
         createdAt: string
@@ -20,8 +21,6 @@ export interface StreakProbe{
         }
     }
 };
-
-
 export interface StreakResponse {
     user: {
         createdAt: string
@@ -45,8 +44,6 @@ export interface StreakResponse {
         contributionCount: number
         date: string
     }
-
-
 export interface STREAKTYPE {
     title: string
     total: number
@@ -61,6 +58,8 @@ export interface STREAKTYPE {
     theme: THEMETYPE
 }
 
+
+// Stats related types
 export interface StatsResponse{
     user: {
         name: string
@@ -91,9 +90,8 @@ export interface StatsResponse{
         }
     }
 }
-
-
 export interface STATTYPE{
+    title?: string
     grade?: string
     stars: number
     followers: number
@@ -106,6 +104,7 @@ export interface STATTYPE{
 }
 
 
+// Language related types
 export interface LANGTYPE {
     name: string
     usage: number
