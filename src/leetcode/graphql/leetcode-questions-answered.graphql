@@ -4,13 +4,15 @@ query ($username: String!) {
         count
     }
     matchedUser(username: $username) {
-        submissionCalendar
         submitStats {
             acSubmissionNum {
                 difficulty
                 count
                 submissions
             }
+        }
+        profile {
+            ranking
         }
     }
 }
