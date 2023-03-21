@@ -1,37 +1,30 @@
 /** @format */
 
 import { Request, Response } from "express";
-import { getDaily } from "../leetcode/daily";
+import { LeetCodeGraphQLResponse } from "../leetcode/leetcodeTypes";
 import { preQuery } from '../leetcode/profile';
 import { GraphQLError } from "../utils/constants";
+import { preFlight } from "../utils/utils";
 
-export const getProfileStats = async (req: Request, res: Response) => {
-    preQuery(req, res);
-
+export const leetcodeProfile = async (req: Request, res: Response): Promise<void> => {
+    if (!preFlight(req, res)) {
+        res.status(400).send({
+            message: "There was no username provided for a route that requires it. Provide a valid username before calling again.",
+            error: { "Missing Parameter": "Username" },
+            error_code: 400
+        });
+        return;
+    }
+    leetcodeStats(req, res);
+    return;
 };
 
-export const getQuestionsAnswered = async (req: Request, res: Response) => {
-    preQuery(req, res);
-};
-
-export const getBadges = async (req: Request, res: Response) => {
-    preQuery(req, res);
-};
-
-export const getRecentSubmitions = async (req: Request, res: Response) => {
-    preQuery(req, res);
-};
-
-export const getDailyQuestion = async (req: Request, res: Response) => {
-    const { } = req.query;
-    getDaily()
-        .then((data: any | GraphQLError) => {
-            if ((data as GraphQLError).error !== undefined) {
-                res.status(400).send(data);
-            } else {
-                res.status(200).send(data);
-            }
-            return data;
-        })
+export const leetcodeStats = async (req: Request, res: Response): Promise<void> => {
+    const data: LeetCodeGraphQLResponse = await preQuery(req, res)
+        .then((data: LeetCodeGraphQLResponse | GraphQLError) => {
+            return data as LeetCodeGraphQLResponse;
+        });
+    res.status(200).send(data);
+    return;
 }
 
