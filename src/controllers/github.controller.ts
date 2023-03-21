@@ -4,11 +4,10 @@ import { streakCardSetup } from "../github/cards/streak-card";
 import { GraphQLError } from "../utils/constants";
 import { preQery } from "../github/query";
 import {  GraphQLResponse, ReadMeData, StreakResponse, STREAKTYPE } from "../github/githubTypes";
-import {  streakProbe } from "../github/githubProbes";
 import { preFlight } from "../utils/utils";
 import { THEMES, THEMETYPE } from "../utils/themes";
 import { getResponseParse } from "../github/apiParser";
-import { cardDirect } from "../github/githubUtils";
+import { cardDirect, streakProbe } from "../github/githubUtils";
 
 
 // Universal controller for all but one github route
@@ -31,11 +30,11 @@ export const getProfileStats = async (req: Request, res: Response) => {
 
     // Get function to create correct card
     const createCard: Function = cardDirect(req);
-    const card: string = createCard(req, data);
+    const card: string = createCard(req, parsedData);
     card;
 
     // Send created card as svg string
-    res.status(200).send(parsedData);
+    res.status(200).send(card);
 };
 
 
@@ -73,7 +72,13 @@ export const getCommitStreak = async (req: Request, res: Response) => {
         longestText: "Longest Streak",
         longestDate: ["", ""],
         theme: req.query.theme !== undefined ? 
-            THEMES[req.query.theme! as string] as THEMETYPE : THEMES["black-ice"]! as THEMETYPE,
+            THEMES[req.query.theme! as string] as THEMETYPE :
+            {
+                ...THEMES["black-ice"]!,
+                hideBorder: false,
+                borderRadius: 10,
+                locale: 'en'
+            } as THEMETYPE,
     }
     // starting template variables for query
     let variables = {login: username, start: "", end: ""};
