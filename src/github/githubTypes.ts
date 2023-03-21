@@ -105,9 +105,34 @@ export interface STATTYPE{
 
 
 // Language related types
-export interface LANGTYPE {
+export interface LangsResponse{
+    user: {
+        repositories: {
+            nodes: {
+                name: string
+                languages: {
+                    edges: {
+                        size: number
+                        node: {
+                            color: string
+                            name: string
+                        }
+                    }[]
+                }
+            }[]
+        }
+    }
+}
+export interface Language {
     name: string
-    usage: number
-    color: string | number,
+    usage: number | string
+    position: number
+    width: number
+    color: string
+}
+export interface LANGTYPE {
+    title?: string
+    totalSize: number
+    languages: Language[]
     theme: THEMETYPE
 }
