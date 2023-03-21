@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import { match } from 'ts-pattern';
 import { THEMES } from '../utils/themes';
-import {  StatsResponse, STATTYPE, StreakResponse, STREAKTYPE } from './githubTypes';
+import {  LangsResponse, LANGTYPE, Language, StatsResponse, STATTYPE, StreakResponse, STREAKTYPE } from './githubTypes';
 import { calculateRank } from './githubUtils';
 
 
@@ -98,6 +98,72 @@ const statsParse = (data: StatsResponse): STATTYPE => {
     return {...stats, grade: calculateRank(stats)}
 }
 
-const langsParse = () => {
+
+const langsParse = (data: LangsResponse): LANGTYPE => {
+    let langs = {} as {[key:string]: Language}
+    let repoNodes = data.user.repositories.nodes;
+    let hiddenRepos = ["Wed_Level4","Guessing_Game","Sun_Level4","Thur_Level4"]
+    let hiddenLangs = ["C", "C++","Cython","PowerShell"]
+    // Filter non-language repos
+    repoNodes
+        .filter((node) => node.languages.edges.length > 0)
+        .filter((node) => !hiddenRepos.includes(node.name))
+    // Map them to an onject holding languages data
+    .map((node) => {
+        for (let lang of node.languages.edges) {
+            if (!hiddenLangs.includes(lang.node.name)) {
+                if (langs[lang.node.name] !== undefined) {
+                    langs[lang.node.name] = {
+                        ...langs[lang.node.name]!,
+                        usage: lang.size+(langs[lang.node.name]!.usage as number),
+                    }
+                } else {
+                    langs[lang.node.name] = {
+                        name: lang.node.name,
+                        usage: lang.size,
+                        width: 0,
+                        position: 0,
+                        color: lang.node.color,
+                    }
+                }
+            }
+        }
+    });
+    // total size of all langauges
+    let totalSize = 0;
+
+    // Sort languages based on size
+    let sortedLangs = Object.keys(langs)
+        .sort((a, b) => (langs[b]!.usage as number) - (langs[a]!.usage as number))
+    sortedLangs
+        .map(key => {
+            totalSize += langs[key]!.usage as number
+        })
     
+    let topLangs: Language[] = []
+    let position = 0;
+    sortedLangs.slice(0,8)
+        .map(key => {
+            topLangs.push({
+                ...langs[key]!,
+                position: position,
+                width: (langs[key]!.usage as number) / totalSize * 500,
+                usage: ((langs[key]!.usage as number) / totalSize * 100).toFixed(2)
+            })
+            position += (langs[key]!.usage as number) / totalSize * 500
+        })
+
+    let stats = {
+        title: "GreenJ84's Languages Used",
+        totalSize: totalSize,
+        languages: topLangs,
+        theme: {
+            ...THEMES["black-ice"]!,
+            hideborder: false,
+            borderRadius: 10,
+            locale: 'en'
+        }
+    }
+
+    return stats;
 }
