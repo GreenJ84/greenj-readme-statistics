@@ -10,12 +10,12 @@ import { THEMES, THEMETYPE } from "../utils/themes";
 import { getResponseParse } from "../github/apiParser";
 import { cardDirect } from "../github/githubUtils";
 
+
+// Universal controller for all but one github route
 export const getProfileStats = async (req: Request, res: Response) => {
     if (!preFlight(req, res)) {
         return;
     }
-    // Get Function to parse data
-    const parse = getResponseParse(req);
     let variables = { login: req.params.username! }
     const data = await preQery(req, res, variables)
         .then((data: GraphQLResponse | GraphQLError) => {
@@ -24,13 +24,21 @@ export const getProfileStats = async (req: Request, res: Response) => {
             }
             return data as GraphQLResponse;
         })
+
+    // Get Function to parse data
+    const parse = getResponseParse(req);
     const parsedData: ReadMeData = parse(data)
+
+    // Get function to create correct card
     const createCard: Function = cardDirect(req);
     const card: string = createCard(req, data);
     card;
 
+    // Send created card as svg string
     res.status(200).send(parsedData);
 };
+
+
 
 export const getCommitStreak = async (req: Request, res: Response) => {
     if (!preFlight(req, res)) {
