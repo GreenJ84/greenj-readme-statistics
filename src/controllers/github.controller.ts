@@ -107,7 +107,6 @@ export const getCommitStreak = async (req: Request, res: Response) => {
             })
         // Parse that data with our current stats to update
         parse(streak, data)
-        console.log(streak)
     }
     
     const card: string = streakCardSetup(req, streak);
