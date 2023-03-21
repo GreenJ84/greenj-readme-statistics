@@ -10,10 +10,7 @@ query ($username: String!) {
         profile {
             starRating
             reputation
-            ranking
-            userAvatar
         }
-        submissionCalendar
         submitStats {
             acSubmissionNum {
                 difficulty
