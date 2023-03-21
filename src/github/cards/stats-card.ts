@@ -1,10 +1,13 @@
 /** @format */
 
 import { Request } from "express";
+import { THEMETYPE } from "../../utils/themes";
 import { STATTYPE } from "../githubTypes";
 
 export const statsCardSetup = (req: Request, data: STATTYPE): string => {
-    const theme = data.theme;
+    const theme: THEMETYPE = data.theme;
+
+    console.log(data, theme);
     const {
         background,
         border,
@@ -31,11 +34,9 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
     }
     if (hideBorder !== undefined) {
         theme.hideBorder = true;
-    } else { theme.hideBorder = false }
+    } 
     if (borderRadius !== undefined) {
         theme.borderRadius = parseInt(borderRadius as string);
-    } else {
-        theme.borderRadius = 10;
     }
     if (stroke !== undefined) {
         theme.stroke = ("#" + stroke) as string;
@@ -63,18 +64,17 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
     }
     if (locale !== undefined) {
         theme.locale = locale as string;
-    } else { theme.locale = "en" }
-        
+    }
     if (title != undefined) {
         data.title = title as string;
-    } else { "GreenJ84's GitHub Stats" }
+    } else { data.title = "GreenJ84's GitHub Stats" }
 
     const svgString: string = createStatsCard(data);
     return svgString;
 };
 
 const createStatsCard = (data: STATTYPE): string => {
-    const theme = data.theme;
+    const theme: THEMETYPE = data.theme;
 
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr' role="img" aria-labelledby="descId">
         <title id="titleId">Jesse L. Greenough's GitHub Stats, Rank: A++</title>
@@ -235,7 +235,7 @@ const createStatsCard = (data: STATTYPE): string => {
                         y="12.5"
                         data-testid="commits"
                     >
-                        ${ data.commits }
+                        ${ data.commits > 1000 ? `${Math.floor(data.commits/1000)}.${Math.floor(data.commits/100)%10}k`: data.commits }
                     </text>
                 </g>
             </g>
