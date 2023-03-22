@@ -4,11 +4,14 @@ import { gql } from "graphql-tag";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 import { USER_AGENT, GraphQLQuery, GRAPHQL_URL, GraphQLError } from "../utils/constants";
-import { LeetCodeGraphQLResponse } from "./leetcodeTypes";
+import { LeetCodeGraphQLResponse, ProbeResponse } from "./leetcodeTypes";
 import { getGraph } from './leetcodeUtils';
 import * as leetcode from '../leetcode/query';
 import { get_csrf } from '../utils/credentials';
 
+
+
+// Universal query for GitHub
 export async function leetcodeGraphQL(query: GraphQLQuery, url: string, csrf: string):
     Promise<LeetCodeGraphQLResponse | GraphQLError> {
 
@@ -47,11 +50,46 @@ export async function leetcodeGraphQL(query: GraphQLQuery, url: string, csrf: st
     return result;
 };
 
-export const preProbe = async () => {
-    
+
+// Set up for profile years probe query
+export const preProbe = async (req: Request, res: Response):
+Promise<ProbeResponse> => {
+    // Cross-site forgery credentials
+    const csrf_credential: string = await get_csrf()
+        .then((result) => result.toString());
+        const graphql = gql(
+            fs.readFileSync("src/leetcode/graphql/profile-years-probe.graphql", 'utf8')
+        );
+    // Username which has to be there if preflight passed
+    const { username } = req.params;
+
+    // Call the universal leetCode querier
+    const data = await leetcode.leetcodeGraphQL(
+        {
+            query: graphql,
+            variables: { username: username! }
+        },
+        GRAPHQL_URL,
+        csrf_credential
+    )
+        .then((res) => res)
+        .catch((err) => {
+            return {
+                message: "Internal server error",
+                error: err,
+                error_code: 500,
+            } as GraphQLError;
+        })
+    // Return API errors if they have occured
+    if ((data as GraphQLError).error !== undefined) {
+        res.status(400).send(data);
+    }
+    return data as unknown as ProbeResponse;
 }
 
-export const preQuery = async (req: Request, res: Response):
+
+// Set up up query, credential retrieval, Server level error handling
+export const preQuery = async (req: Request, res: Response, t: string | null = null):
     Promise<LeetCodeGraphQLResponse | GraphQLError> => {
 
     // Cross-site forgery credentials
@@ -59,13 +97,13 @@ export const preQuery = async (req: Request, res: Response):
         .then((result) => result.toString());
 
     // Get correct query based on api called
-    const type = req.path.split("/")[2]!;
+    const type = t !== null ? t : req.path.split("/")[2]!;
     const path = getGraph(type);
     const graphql = gql(
         fs.readFileSync(path, 'utf8')
     );
 
-    // Username which has to be ther if preflight passed
+    // Username which has to be there if preflight passed
     const { username } = req.params;
 
     // Call the universal leetCode querier
