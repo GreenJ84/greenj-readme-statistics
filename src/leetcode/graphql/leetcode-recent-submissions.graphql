@@ -1,4 +1,4 @@
-query ($username: String!, $limit: Int) {
+query ($username: String!) {
     recentSubmissionList(username: $username, limit: 60) {
         title
         titleSlug
