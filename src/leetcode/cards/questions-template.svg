@@ -13,6 +13,7 @@
     .num{
         font: 600 16px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif;
         fill: #151515;
+        text-align: center;
         letter-spacing: 1.5px;
     }
     .easy {
@@ -127,7 +128,7 @@
             <text class="stat bold" y="12.5">
                 Ranking:
             </text>
-            <text class="num" x="240" y="12.5">
+            <text class="num" text-anchor="middle" x="260" y="12.5">
                 187590
             </text>
             </g>
@@ -137,8 +138,14 @@
             <text class="stat bold" y="12.5">
                 Total Questions Solved:
             </text>
-            <text class="num" x="240" y="12.5">
-                278 / 2590
+            <text class="hard num" text-anchor="middle" x="235" y="12.5">
+                278
+            </text>
+            <text class="hard stat" text-anchor="middle" x="260" y="12.5">
+                /
+            </text>
+            <text class="hard stat" text-anchor="middle" x="285" y="12.5">
+            2590
             </text>
             </g>
         </g>
@@ -148,8 +155,14 @@
             <text class="stat bold easy" y="12.5">
                 Easy Questions Solved:
             </text>
-            <text class="easy num" x="240" y="12.5">
-                147 / 634
+            <text class="hard num" text-anchor="middle" x="235" y="12.5">
+                147
+            </text>
+            <text class="hard stat" text-anchor="middle" x="260" y="12.5">
+                /
+            </text>
+            <text class="hard stat" text-anchor="middle" x="285" y="12.5">
+            634
             </text>
             </g>
         </g>
@@ -159,8 +172,14 @@
             <text class="stat bold medium" y="12.5">
                 Medium Questions Solved:
             </text>
-            <text class="medium num" x="240" y="12.5">
-                126 / 1377
+            <text class="hard num" text-anchor="middle" x="235" y="12.5">
+                126
+            </text>
+            <text class="hard stat" text-anchor="middle" x="260" y="12.5">
+                /
+            </text>
+            <text class="hard stat" text-anchor="middle" x="285" y="12.5">
+            1377
             </text>
             </g>
         </g>
@@ -170,8 +189,14 @@
             <text class="stat bold hard" y="12.5">
                 Hard Questions Solved:
             </text>
-            <text class="hard num" x="240" y="12.5">
-                5 / 579
+            <text class="hard num" text-anchor="middle" x="235" y="12.5">
+                5
+            </text>
+            <text class="hard stat" text-anchor="middle" x="260" y="12.5">
+                /
+            </text>
+            <text class="hard stat" text-anchor="middle" x="285" y="12.5">
+            579
             </text>
             </g>
         </g>
