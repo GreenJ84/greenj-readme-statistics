@@ -1,6 +1,7 @@
 import { THEMETYPE } from "../utils/themes";
 
 export enum LeetCodeGraphQLResponse {
+    ProbeResponse,
     StreakResponse,
     ProfileResponse,
     QuesionsAnsweredResponse,
@@ -55,7 +56,7 @@ export interface ProfileResponse {
                 difficulty: string
                 count: number
                 submissions: number
-            }
+            }[]
         }
         badges: {
             id: string
@@ -67,8 +68,8 @@ export interface ProfileResponse {
         count: number;
     }
 export interface PROFILEDATA {
-    title: string
-    completion: number
+    title?: string
+    completion: string
     reputation: number
     stars: number
     badges: number
@@ -77,6 +78,24 @@ export interface PROFILEDATA {
     theme: THEMETYPE
 }
 
+
+export interface BadgeReponse {
+    matchedUser: {
+        badges: {
+            id: string;
+            displayName: string;
+            icon: string;
+            creationDate: string;
+        }[]
+    }
+}
+export interface BADGEDATA {
+    badges: {
+        displayName: string;
+        icon: string;
+        creationDate: string;
+    }[]
+}
 
 
 export interface QuesionsAnsweredResponse {
@@ -96,32 +115,11 @@ export interface QuesionsAnsweredResponse {
 }
 export interface QUESTIONDATA {
     ranking: number
-    all: number
-    hard: number
-    medium: number
-    easy: number
-    acceptance: number
-}
-
-
-
-
-export interface BadgeReponse {
-    matchedUser: {
-        badges: {
-            id: string;
-            displayName: string;
-            icon: string;
-            creationDate: string;
-        }[]
-    }
-}
-export interface BADGEDATA {
-    badges: {
-        displayName: string;
-        icon: string;
-        creationDate: string;
-    }[]
+    all: [number, number]
+    hard: [number, number]
+    medium: [number, number]
+    easy: [number, number]
+    acceptance: string
 }
 
 
