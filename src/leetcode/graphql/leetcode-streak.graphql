@@ -1,10 +1,10 @@
-query ($username: String!) {
+query ($username: String!, $year: number!) {
     allQuestionsCount {
         difficulty
         count
     }
     matchedUser(username: $username) {
-        userCalendar {
+        userCalendar(year: $year) {
             streak
             totalActiveDays
         }
