@@ -22,15 +22,12 @@ app.use(
     }),
 );
 
-// Generic Error handling
-app.use(
-    (err: Error, req: Request, res: Response, next: NextFunction) => {
-        req;
-        console.error(err.stack);
-        res.status(500).send(`Internal Server Error: ${err.stack}`);
-        next;
-    }
-)
+app.use((req: Request, res: Response, next: NextFunction) => {
+    console.log(req)
+    // Set response headers
+    res.setHeader('Content-Type', 'image/svg+xml');
+    next();
+});
 
 // Rate limiting
 const limiter = rateLimit({
@@ -41,7 +38,16 @@ app.use('/', limiter);
 
 // API security
 app.use(helmet({
-    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+    crossOriginOpenerPolicy: false,
+    crossOriginResourcePolicy: false,
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'"],
+            styleSrc: ["'self'"],
+        }
+    },
     xssFilter: true,
     noSniff: true,
     hsts: {
