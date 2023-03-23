@@ -33,9 +33,11 @@ export interface StreakResponse {
     }
 }
 export interface STREAKDATA{
+    title?: string
     streak: [number, number]
     totalActive: number
     completion: number
+    theme: THEMETYPE
 }
 
 
@@ -95,6 +97,7 @@ export interface BADGEDATA {
         icon: string;
         creationDate: string;
     }[]
+    theme: THEMETYPE
 }
 
 
@@ -114,12 +117,14 @@ export interface QuesionsAnsweredResponse {
     }
 }
 export interface QUESTIONDATA {
+    title?:string
     ranking: number
     all: [number, number]
     hard: [number, number]
     medium: [number, number]
     easy: [number, number]
     acceptance: string
+    theme: THEMETYPE
 }
 
 
@@ -132,4 +137,16 @@ export interface RecentSubmissionResponse {
         statusDisplay: string;
         lang: string;
     }[]
+}
+
+export interface SUBMISSIONDATA {
+    title?: string
+    recentSubmissionList: {
+        title: string;
+        titleSlug: string;
+        timestamp: string;
+        statusDisplay: string;
+        lang: string;
+    }[]
+    theme: THEMETYPE
 }
