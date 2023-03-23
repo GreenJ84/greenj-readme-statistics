@@ -2,7 +2,8 @@
 
 import { Request, Response } from "express";
 import { LeetCodeGraphQLResponse } from "../leetcode/leetcodeTypes";
-import { preQuery } from '../leetcode/profile';
+import {cardDirect, parseDirect } from "../leetcode/leetcodeUtils";
+import { preQuery } from '../leetcode/query';
 import { GraphQLError } from "../utils/constants";
 import { preFlight } from "../utils/utils";
 
@@ -20,11 +21,20 @@ export const leetcodeProfile = async (req: Request, res: Response): Promise<void
 };
 
 export const leetcodeStats = async (req: Request, res: Response): Promise<void> => {
-    const data: LeetCodeGraphQLResponse = await preQuery(req, res)
+    const type = req.path.split("/")[2]!;
+    const data: LeetCodeGraphQLResponse = await preQuery(req, res, type)
         .then((data: LeetCodeGraphQLResponse | GraphQLError) => {
             return data as LeetCodeGraphQLResponse;
         });
-    res.status(200).send(data);
+    
+    const parse = parseDirect(type);
+    const parsedData = parse(data);
+
+    const createCard = cardDirect(type);
+    const card = createCard(req, parsedData);
+    console.log(parsedData)
+
+    res.status(200).send(card);
     return;
 }
 
