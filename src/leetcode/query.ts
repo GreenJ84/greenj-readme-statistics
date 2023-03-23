@@ -89,7 +89,7 @@ Promise<ProbeResponse> => {
 
 
 // Set up up query, credential retrieval, Server level error handling
-export const preQuery = async (req: Request, res: Response, t: string | null = null):
+export const preQuery = async (req: Request, res: Response, type: string):
     Promise<LeetCodeGraphQLResponse | GraphQLError> => {
 
     // Cross-site forgery credentials
@@ -97,7 +97,6 @@ export const preQuery = async (req: Request, res: Response, t: string | null = n
         .then((result) => result.toString());
 
     // Get correct query based on api called
-    const type = t !== null ? t : req.path.split("/")[2]!;
     const path = getGraph(type);
     const graphql = gql(
         fs.readFileSync(path, 'utf8')
