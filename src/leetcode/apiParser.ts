@@ -38,13 +38,13 @@ export const questionsSolvedParse = (data: QuesionsAnsweredResponse): QUESTIONDA
     const ranking = data.matchedUser.profile.ranking;
     const all = data.matchedUser.submitStats.acSubmissionNum[0]!.count;
     const totalAll = data.allQuestionsCount[0]!.count;
-    const hard = data.matchedUser.submitStats.acSubmissionNum[1]!.count;
-    const totalHard = data.allQuestionsCount[1]!.count;
+    const hard = data.matchedUser.submitStats.acSubmissionNum[3]!.count;
+    const totalHard = data.allQuestionsCount[3]!.count;
     const medium = data.matchedUser.submitStats.acSubmissionNum[2]!.count;
     const totalMedium = data.allQuestionsCount[2]!.count;
-    const easy = data.matchedUser.submitStats.acSubmissionNum[3]!.count;
-    const totalEasy = data.allQuestionsCount[3]!.count;
-    const acceptance = (all / data.matchedUser.submitStats.acSubmissionNum[0]!.submissions).toFixed(2);
+    const easy = data.matchedUser.submitStats.acSubmissionNum[1]!.count;
+    const totalEasy = data.allQuestionsCount[1]!.count;
+    const acceptance = (all / data.matchedUser.submitStats.acSubmissionNum[0]!.submissions * 100).toFixed(2);
 
 
 
@@ -74,7 +74,7 @@ export const recentQuestionsParse = (data: RecentSubmissionResponse): SUBMISSION
             }
         })
     return {
-        ...recentSubmissions,
+        recentSubmissionList: recentSubmissions.recentSubmissionList.slice(0,6),
         theme: theme
     };
 }
