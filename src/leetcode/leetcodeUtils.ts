@@ -1,5 +1,7 @@
 import { match } from "ts-pattern";
 import { badgesParse, questionsSolvedParse, recentQuestionsParse, statsParse } from "./apiParser";
+import { questionsCard } from "./cards/questions-card";
+import { recentCard } from "./cards/recent-card";
 import { statsCard } from "./cards/stats-card";
 import { PROFILEDATA } from "./leetcodeTypes";
 
@@ -32,8 +34,8 @@ export const cardDirect = (type: string): Function => {
     const parseFunc = match(type)
         .with("stats", () => {return statsCard})
         // .with("badges", () => {return })
-        // .with("questions_solved", () => {return })
-        // .with("recent-questions", () => {return })
+        .with("questions_solved", () => {return questionsCard})
+        .with("recent-questions", () => {return recentCard})
         // .with("daily-question", () => {return })
         .run()
     return parseFunc
