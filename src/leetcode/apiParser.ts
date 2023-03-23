@@ -1,21 +1,21 @@
 import { THEMES } from "../utils/themes";
-import { BADGEDATA, BadgeReponse, PROFILEDATA, ProfileResponse, QuesionsAnsweredResponse, QUESTIONDATA, RecentSubmissionResponse } from "./leetcodeTypes"
+import { BADGEDATA, BadgeReponse, PROFILEDATA, ProfileResponse, QuesionsAnsweredResponse, QUESTIONDATA, RecentSubmissionResponse, SUBMISSIONDATA } from "./leetcodeTypes"
+import { calculateRank } from "./leetcodeUtils";
+
+const theme = THEMES["black-ice"]!
 
 export const statsParse = (data: ProfileResponse): PROFILEDATA => {
-    const completion = (data.matchedUser.submitStats.acSubmissionNum[0]!.count / data.allQuestionsCount[0]!.count * 100).toFixed(2);
-    const reputation = data.matchedUser.profile.reputation;
-    const stars = data.matchedUser.profile.starRating;
-    const badges = data.matchedUser.badges.length;
-    const contributions = data.matchedUser.contributions.points;
-    const grade = "";
-    const theme = THEMES["black-ice"]!
+    const stats = {
+        completion: (data.matchedUser.submitStats.acSubmissionNum[0]!.count / data.allQuestionsCount[0]!.count * 100).toFixed(2),
+        reputation: data.matchedUser.profile.reputation,
+        stars: data.matchedUser.profile.starRating,
+        badges: data.matchedUser.badges.length,
+        contributions: data.matchedUser.contributions.points
+    } as PROFILEDATA;
+    const grade = calculateRank(stats);
 
     return {
-        completion: completion,
-        reputation: reputation,
-        stars: stars,
-        badges: badges,
-        contributions: contributions,
+        ...stats,
         grade: grade,
         theme: theme
     };
@@ -27,8 +27,10 @@ export const badgesParse = (data: BadgeReponse): BADGEDATA => {
         let { id, ...badgeData } = badge;
         badges.push(badgeData);
     }
+
     return {
-        badges: badges
+        badges: badges,
+        theme: theme
     };
 }
 
@@ -44,17 +46,20 @@ export const questionsSolvedParse = (data: QuesionsAnsweredResponse): QUESTIONDA
     const totalEasy = data.allQuestionsCount[3]!.count;
     const acceptance = (all / data.matchedUser.submitStats.acSubmissionNum[0]!.submissions).toFixed(2);
 
+
+
     return {
         ranking: ranking,
         all: [all, totalAll],
         hard: [hard, totalHard],
         medium: [medium, totalMedium],
         easy: [easy, totalEasy],
-        acceptance: acceptance
+        acceptance: acceptance,
+        theme: theme
     };
 }
 
-export const recentQuestionsParse = (data: RecentSubmissionResponse): RecentSubmissionResponse => {
+export const recentQuestionsParse = (data: RecentSubmissionResponse): SUBMISSIONDATA => {
     const recentSubmissions: RecentSubmissionResponse = { recentSubmissionList: [] }
     const seen: { [key: string]: number } = {}
     
@@ -68,5 +73,8 @@ export const recentQuestionsParse = (data: RecentSubmissionResponse): RecentSubm
                 }
             }
         })
-    return recentSubmissions;
+    return {
+        ...recentSubmissions,
+        theme: theme
+    };
 }
