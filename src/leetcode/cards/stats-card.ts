@@ -1,54 +1,35 @@
 import { PROFILEDATA } from "../leetcodeTypes";
 import { Request } from "express";
+import { baseCardThemeParse } from "../../utils/utils";
 
 export const statsCard = (req: Request, data: PROFILEDATA): string => {
     const { username } = req.params;
     const theme = data.theme;
+    baseCardThemeParse(req, theme);
+
     const {
         // Theme variables
-        background,
-        border,
-        hideBorder,
-        borderRadius,
-        stroke,
-        detailMain,
-        detailSub,
-        statsMain,
-        statsSub,
+        ring,
+        icons,
+        score,
+        stats,
         textMain,
         textSub,
-        dates,
-        locale,
         // Card variables
         title,
     } = req.query;
-        
-    if (background !== undefined) {
-        theme.background = ("#" + background) as string;
+
+    if (ring !== undefined) {
+        theme.detailMain = ("#" + ring) as string;
     }
-    if (border !== undefined) {
-        theme.border = ("#" + border) as string;
+    if (icons !== undefined) {
+        theme.detailSub = ("#" + icons) as string;
     }
-    if (hideBorder !== undefined) {
-        theme.hideBorder = true;
-    } 
-    if (borderRadius !== undefined) {
-        theme.borderRadius = parseInt(borderRadius as string);
+    if (score !== undefined) {
+        theme.statsMain = ("#" + score) as string;
     }
-    if (stroke !== undefined) {
-        theme.stroke = ("#" + stroke) as string;
-    }
-    if (detailMain !== undefined) {
-        theme.detailMain = ("#" + detailMain) as string;
-    }
-    if (detailSub !== undefined) {
-        theme.detailSub = ("#" + detailSub) as string;
-    }
-    if (statsMain !== undefined) {
-        theme.statsMain = ("#" + statsMain) as string;
-    }
-    if (statsSub !== undefined) {
-        theme.statsSub = ("#" + statsSub) as string;
+    if (stats !== undefined) {
+        theme.statsSub = ("#" + stats) as string;
     }
     if (textMain !== undefined) {
         theme.textMain = ("#" + textMain) as string;
@@ -56,17 +37,12 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
     if (textSub !== undefined) {
         theme.textSub = ("#" + textSub) as string;
     }
-    if (dates !== undefined) {
-        theme.dates = ("#" + dates) as string;
-    }
-    if (locale !== undefined) {
-        theme.locale = locale as string;
-    }
+
 
 
     if (title != undefined) {
         data.title = title as string;
-    } else { data.title = `${req.params.username!} Leetcode Stats` }
+    } else { data.title = `${username} Leetcode Stats` }
 
 
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr' role="img" aria-labelledby="descId">
