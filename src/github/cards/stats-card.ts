@@ -2,56 +2,34 @@
 
 import { Request } from "express";
 import { THEMETYPE } from "../../utils/themes";
+import { baseCardThemeParse } from "../../utils/utils";
 import { STATTYPE } from "../githubTypes";
 
 export const statsCardSetup = (req: Request, data: STATTYPE): string => {
     const theme: THEMETYPE = data.theme;
 
-    console.log(data, theme);
+    baseCardThemeParse(req, theme);
     const {
-        background,
-        border,
-        hideBorder,
-        borderRadius,
-        stroke,
-        detailMain,
-        detailSub,
-        statsMain,
-        statsSub,
+        scoreRing,
+        icons,
+        score,
+        stats,
         textMain,
         textSub,
-        dates,
-        locale,
-
-        title,
+        title
     } = req.query;
-        
-    if (background !== undefined) {
-        theme.background = ("#" + background) as string;
+
+    if (scoreRing !== undefined) {
+        theme.detailMain = ("#" + scoreRing) as string;
     }
-    if (border !== undefined) {
-        theme.border = ("#" + border) as string;
+    if (icons !== undefined) {
+        theme.detailSub = ("#" + icons) as string;
     }
-    if (hideBorder !== undefined) {
-        theme.hideBorder = true;
-    } 
-    if (borderRadius !== undefined) {
-        theme.borderRadius = parseInt(borderRadius as string);
+    if (score !== undefined) {
+        theme.statsMain = ("#" + score) as string;
     }
-    if (stroke !== undefined) {
-        theme.stroke = ("#" + stroke) as string;
-    }
-    if (detailMain !== undefined) {
-        theme.detailMain = ("#" + detailMain) as string;
-    }
-    if (detailSub !== undefined) {
-        theme.detailSub = ("#" + detailSub) as string;
-    }
-    if (statsMain !== undefined) {
-        theme.statsMain = ("#" + statsMain) as string;
-    }
-    if (statsSub !== undefined) {
-        theme.statsSub = ("#" + statsSub) as string;
+    if (stats !== undefined) {
+        theme.statsSub = ("#" + stats) as string;
     }
     if (textMain !== undefined) {
         theme.textMain = ("#" + textMain) as string;
@@ -59,22 +37,9 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
     if (textSub !== undefined) {
         theme.textSub = ("#" + textSub) as string;
     }
-    if (dates !== undefined) {
-        theme.dates = ("#" + dates) as string;
-    }
-    if (locale !== undefined) {
-        theme.locale = locale as string;
-    }
     if (title != undefined) {
         data.title = title as string;
     } else { data.title = "GreenJ84's GitHub Stats" }
-
-    const svgString: string = createStatsCard(data);
-    return svgString;
-};
-
-const createStatsCard = (data: STATTYPE): string => {
-    const theme: THEMETYPE = data.theme;
 
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr' role="img" aria-labelledby="descId">
         <title id="titleId">Jesse L. Greenough's GitHub Stats, Rank: A++</title>
