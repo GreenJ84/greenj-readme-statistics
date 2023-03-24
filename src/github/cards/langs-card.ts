@@ -1,54 +1,22 @@
 /** @format */
 
 import { Request } from "express";
+import { baseCardThemeParse } from "../../utils/utils";
 import { LANGTYPE } from "../githubTypes";
 
 export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
     const theme = data.theme;
+
+    baseCardThemeParse(req, theme);
     const {
-        background,
-        border,
-        hideBorder,
-        borderRadius,
-        stroke,
-        detailMain,
-        detailSub,
-        statsMain,
-        statsSub,
+        stats,
         textMain,
         textSub,
-        dates,
-        locale,
-
-        title,
+        title
     } = req.query;
-        
-    if (background !== undefined) {
-        theme.background = ("#" + background) as string;
-    }
-    if (border !== undefined) {
-        theme.border = ("#" + border) as string;
-    }
-    if (hideBorder !== undefined) {
-        theme.hideBorder = true;
-    }
-    if (borderRadius !== undefined) {
-        theme.borderRadius = parseInt(borderRadius as string);
-    }
-    if (stroke !== undefined) {
-        theme.stroke = ("#" + stroke) as string;
-    }
-    if (detailMain !== undefined) {
-        theme.detailMain = ("#" + detailMain) as string;
-    }
-    if (detailSub !== undefined) {
-        theme.detailSub = ("#" + detailSub) as string;
-    }
-    if (statsMain !== undefined) {
-        theme.statsMain = ("#" + statsMain) as string;
-    }
-    if (statsSub !== undefined) {
-        theme.statsSub = ("#" + statsSub) as string;
+
+    if (stats !== undefined) {
+        theme.statsMain = ("#" + stats) as string;
     }
     if (textMain !== undefined) {
         theme.textMain = ("#" + textMain) as string;
@@ -56,24 +24,13 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
     if (textSub !== undefined) {
         theme.textSub = ("#" + textSub) as string;
     }
-    if (dates !== undefined) {
-        theme.dates = ("#" + dates) as string;
-    }
-    if (locale !== undefined) {
-        theme.locale = locale as string;
-    }
-        
-    if (title != undefined) {
-        data.title = title as string;
+
+    if (title !== undefined) {
+        data.title = title as string
+    } else {
+        data.title = `${req.params.username!}'s Language Stats`
     }
 
-    const svgString: string = createStatsCard(data);
-    return svgString;
-};
-
-const createStatsCard = (data: LANGTYPE): string => {
-    const theme = data.theme;
-    theme;
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr' role="img" aria-labelledby="descId">
         <title id="titleId">${ data.title }</title>
         <style>
@@ -100,7 +57,7 @@ const createStatsCard = (data: LANGTYPE): string => {
             }
             .lang-stat {
                 font: 500 20px "Segoe UI", Ubuntu, Sans-Serif;
-                fill: ${ theme.detailMain };
+                fill: ${ theme.statsMain };
                 letter-spacing: 2px;
             }
             .stagger {
