@@ -11,7 +11,7 @@ export const addToBlackist = (newBlacklist: string) => {
     fs.writeFileSync(filename, JSON.stringify(blacklist));
 }
 
-export const checkBlacklistRequest = (req: Request, user: string = "DONTEVERBLOCKME") => {
+export const checkBlacklistRequest = (req: Request, user: string = "DONTEVERBLOCKME"): [boolean, string] => {
     if (blacklist.includes(req.headers['user-agent']!)) {
         return [false, "I do not like bots that cannot be nice. You have been excluded. 01000110 01110101 01100011 01101011 00100000 01101111 01100110 01100110 00100000 01100010 01100001 01100100 00100000 01100010 01101111 01110100"];
     }
