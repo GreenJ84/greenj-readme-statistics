@@ -1,54 +1,36 @@
 import { Request } from "express";
+import { baseCardThemeParse } from "../../utils/utils";
 import { SUBMISSIONDATA } from "../leetcodeTypes";
 
 export const recentCard = (req: Request, data: SUBMISSIONDATA) => {
     const { username } = req.params;
     const theme = data.theme;
+    baseCardThemeParse(req, theme);
+
     const {
         // Theme variables
-        background,
-        border,
-        hideBorder,
-        borderRadius,
-        stroke,
-        detailMain,
-        detailSub,
-        statsMain,
-        statsSub,
+        stats,
+        list,
+        difficulty,
+        language,
         textMain,
         textSub,
         dates,
-        locale,
         // Card variables
         title,
     } = req.query;
-        
-    if (background !== undefined) {
-        theme.background = ("#" + background) as string;
+
+    if (stats !== undefined) {
+        theme.detailMain = ("#" + stats) as string;
     }
-    if (border !== undefined) {
-        theme.border = ("#" + border) as string;
+    if (list !== undefined) {
+        theme.detailSub = ("#" + list) as string;
     }
-    if (hideBorder !== undefined) {
-        theme.hideBorder = true;
-    } 
-    if (borderRadius !== undefined) {
-        theme.borderRadius = parseInt(borderRadius as string);
+    if (difficulty !== undefined) {
+        theme.statsMain = ("#" + difficulty) as string;
     }
-    if (stroke !== undefined) {
-        theme.stroke = ("#" + stroke) as string;
-    }
-    if (detailMain !== undefined) {
-        theme.detailMain = ("#" + detailMain) as string;
-    }
-    if (detailSub !== undefined) {
-        theme.detailSub = ("#" + detailSub) as string;
-    }
-    if (statsMain !== undefined) {
-        theme.statsMain = ("#" + statsMain) as string;
-    }
-    if (statsSub !== undefined) {
-        theme.statsSub = ("#" + statsSub) as string;
+    if (language !== undefined) {
+        theme.statsSub = ("#" + language) as string;
     }
     if (textMain !== undefined) {
         theme.textMain = ("#" + textMain) as string;
@@ -58,9 +40,6 @@ export const recentCard = (req: Request, data: SUBMISSIONDATA) => {
     }
     if (dates !== undefined) {
         theme.dates = ("#" + dates) as string;
-    }
-    if (locale !== undefined) {
-        theme.locale = locale as string;
     }
 
 
