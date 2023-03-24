@@ -1,10 +1,23 @@
+import { match } from "ts-pattern";
 import { THEMES } from "../utils/themes";
 import { BADGEDATA, BadgeReponse, PROFILEDATA, ProfileResponse, QuesionsAnsweredResponse, QUESTIONDATA, RecentSubmissionResponse, SUBMISSIONDATA } from "./leetcodeTypes"
 import { calculateRank } from "./leetcodeUtils";
 
 const theme = THEMES["black-ice"]!
 
-export const statsParse = (data: ProfileResponse): PROFILEDATA => {
+// Returns the parse creation function depending on path
+export const parseDirect = (type: string): Function => {
+    const parseFunc = match(type)
+        .with("stats", () => {return statsParse})
+        .with("badges", () => {return badgesParse})
+        .with("questions_solved", () => {return questionsSolvedParse})
+        .with("recent-questions", () => {return recentQuestionsParse})
+        // .with("daily-question", () => {return })
+        .run()
+    return parseFunc
+}
+
+const statsParse = (data: ProfileResponse): PROFILEDATA => {
     const stats = {
         completion: (data.matchedUser.submitStats.acSubmissionNum[0]!.count / data.allQuestionsCount[0]!.count * 100).toFixed(2),
         reputation: data.matchedUser.profile.reputation,
@@ -21,7 +34,7 @@ export const statsParse = (data: ProfileResponse): PROFILEDATA => {
     };
 }
 
-export const badgesParse = (data: BadgeReponse): BADGEDATA => {
+const badgesParse = (data: BadgeReponse): BADGEDATA => {
     let badges = [];
     for (let badge of data.matchedUser.badges) {
         let { id, ...badgeData } = badge;
@@ -34,7 +47,7 @@ export const badgesParse = (data: BadgeReponse): BADGEDATA => {
     };
 }
 
-export const questionsSolvedParse = (data: QuesionsAnsweredResponse): QUESTIONDATA => {
+const questionsSolvedParse = (data: QuesionsAnsweredResponse): QUESTIONDATA => {
     const ranking = data.matchedUser.profile.ranking;
     const all = data.matchedUser.submitStats.acSubmissionNum[0]!.count;
     const totalAll = data.allQuestionsCount[0]!.count;
@@ -59,7 +72,7 @@ export const questionsSolvedParse = (data: QuesionsAnsweredResponse): QUESTIONDA
     };
 }
 
-export const recentQuestionsParse = (data: RecentSubmissionResponse): SUBMISSIONDATA => {
+const recentQuestionsParse = (data: RecentSubmissionResponse): SUBMISSIONDATA => {
     const recentSubmissions: RecentSubmissionResponse = { recentSubmissionList: [] }
     const seen: { [key: string]: number } = {}
     
