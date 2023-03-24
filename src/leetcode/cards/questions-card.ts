@@ -1,66 +1,41 @@
 import { Request } from "express";
+import { baseCardThemeParse } from "../../utils/utils";
 import { QUESTIONDATA } from "../leetcodeTypes";
 
 export const questionsCard = (req: Request, data: QUESTIONDATA): string => {
     const { username } = req.params;
     const theme = data.theme;
+    baseCardThemeParse(req, theme);
+
     const {
         // Theme variables
-        background,
-        border,
-        hideBorder,
-        borderRadius,
-        stroke,
-        detailMain,
-        detailSub,
-        statsMain,
-        statsSub,
+        ring,
+        totals,
+        score,
+        stats,
         textMain,
         textSub,
-        dates,
-        locale,
         // Card variables
         title,
     } = req.query;
         
-    if (background !== undefined) {
-        theme.background = ("#" + background) as string;
+    if (ring !== undefined) {
+        theme.detailMain = ("#" + ring) as string;
     }
-    if (border !== undefined) {
-        theme.border = ("#" + border) as string;
+    if (totals !== undefined) {
+        theme.detailSub = ("#" + totals) as string;
     }
-    if (hideBorder !== undefined) {
-        theme.hideBorder = true;
-    } 
-    if (borderRadius !== undefined) {
-        theme.borderRadius = parseInt(borderRadius as string);
+    if (score !== undefined) {
+        theme.statsMain = ("#" + score) as string;
     }
-    if (stroke !== undefined) {
-        theme.stroke = ("#" + stroke) as string;
-    }
-    if (detailMain !== undefined) {
-        theme.detailMain = ("#" + detailMain) as string;
-    }
-    if (detailSub !== undefined) {
-        theme.detailSub = ("#" + detailSub) as string;
-    }
-    if (statsMain !== undefined) {
-        theme.statsMain = ("#" + statsMain) as string;
-    }
-    if (statsSub !== undefined) {
-        theme.statsSub = ("#" + statsSub) as string;
+    if (stats !== undefined) {
+        theme.statsSub = ("#" + stats) as string;
     }
     if (textMain !== undefined) {
         theme.textMain = ("#" + textMain) as string;
     }
     if (textSub !== undefined) {
         theme.textSub = ("#" + textSub) as string;
-    }
-    if (dates !== undefined) {
-        theme.dates = ("#" + dates) as string;
-    }
-    if (locale !== undefined) {
-        theme.locale = locale as string;
     }
 
 
