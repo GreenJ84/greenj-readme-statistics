@@ -5,7 +5,7 @@ import { gql } from "graphql-tag";
 import { match } from 'ts-pattern';
 
 import { GraphQLQuery, GraphQLError, GIT_URL } from '../utils/constants';
-import { GraphQLResponse } from './githubTypes';
+import { GraphQLResponse, StreakProbe } from './githubTypes';
 
 const token = "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";
 
@@ -79,4 +79,42 @@ export const preQery = async (req: Request, res: Response, variables: {}): Promi
     }
     // Data to be returned will be of a valid response type
     return data as GraphQLResponse;
+}
+
+// Probes user creation date and years a member for streak query
+export const streakProbe = async (req: Request, res: Response): Promise<[string | boolean, number[]]> => {
+    const now = new Date().toISOString()
+    const today = now.slice(0, 19);
+    const year = now.slice(0,4)
+    const graphql = gql(
+        fs.readFileSync("src/github/graphql/streak-probe.graphql", 'utf8')
+    );
+    const variables = {
+        login: req.params.username!,
+        start: `${year}-01-01T00:00:00Z`,
+        end: today
+    }
+    const data = await githubGraphQL(
+        {
+            query: graphql,
+            variables: variables
+        })
+        .then((res) => res as GraphQLResponse)
+        .catch((err) => {
+            return {
+                message: "Internal server error",
+                error: err,
+                error_code: 500,
+            } as GraphQLError;
+        })
+    // Return API errors if they have occured and flag call termination
+    if ((data as GraphQLError).error !== undefined) {
+        res.status(400).send(data);
+        return [false, [0]];
+    } else {
+        return [
+            (data as unknown as StreakProbe).user.createdAt,
+            [...(data as unknown as StreakProbe).user.contributionsCollection.contributionYears].sort()];
+    }
+    
 }

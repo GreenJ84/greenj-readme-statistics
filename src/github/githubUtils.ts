@@ -1,64 +1,21 @@
-import fs from 'fs';
-import gql from "graphql-tag";
-import { Request, Response } from "express";
+import { Request } from "express";
 import { match } from 'ts-pattern';
 
 import { STATTYPE } from "./githubTypes";
-import { GraphQLResponse, StreakProbe } from "./githubTypes";
-import { GraphQLError } from '../utils/constants';
-import { githubGraphQL } from "./query";
 
 import { langsCardSetup } from "./cards/langs-card";
 import { statsCardSetup } from "./cards/stats-card";
-import { trophCardSetup } from "./cards/trophy-card";
+// import { trophCardSetup } from "./cards/trophy-card";
 
 // Returns the card creation function depending on path
 export const cardDirect = (req: Request): Function => {
     const type = req.path.split("/")[2]!;
     const parseFunc = match(type)
         .with("stats", () => {return statsCardSetup})
-        .with("trophies", () => {return trophCardSetup})
+        // .with("trophies", () => {return trophCardSetup})
         .with("languages", () => {return langsCardSetup})
         .run()
     return parseFunc
-}
-
-// Probes user creation date and years a member for streak query
-export const streakProbe = async (req: Request, res: Response): Promise<[string, number[]] | boolean> => {
-    const now = new Date().toISOString()
-    const today = now.slice(0, 19);
-    const year = now.slice(0,4)
-    const graphql = gql(
-        fs.readFileSync("src/github/graphql/streak-probe.graphql", 'utf8')
-    );
-    const variables = {
-        login: req.params.username!,
-        start: `${year}-01-01T00:00:00Z`,
-        end: today
-    }
-    const data = await githubGraphQL(
-        {
-            query: graphql,
-            variables: variables
-        })
-        .then((res) => res as GraphQLResponse)
-        .catch((err) => {
-            return {
-                message: "Internal server error",
-                error: err,
-                error_code: 500,
-            } as GraphQLError;
-        })
-    // Return API errors if they have occured and flag call termination
-    if ((data as GraphQLError).error !== undefined) {
-        res.status(400).send(data);
-        return false;
-    } else {
-        return [
-            (data as unknown as StreakProbe).user.createdAt,
-            [...(data as unknown as StreakProbe).user.contributionsCollection.contributionYears].sort()];
-    }
-    
 }
 
 // Maths......
