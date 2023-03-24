@@ -1,72 +1,50 @@
 /** @format */
 
 import { Request } from "express";
+import { baseCardThemeParse } from "../../utils/utils";
 import { STREAKTYPE } from "../githubTypes";
 
 export const streakCardSetup = (req: Request, data: STREAKTYPE): string => {
   const theme = data.theme;
+
+  baseCardThemeParse(req, theme);
   const {
-    background,
-    border,
-    hideBorder,
-    borderRadius,
-    stroke,
-    detailMain,
-    detailSub,
-    statsMain,
-    statsSub,
+    ringColor,
+    fireColor,
+    currStreak,
+    statsSide,
     textMain,
-    textSub,
+    textSide,
     dates,
-    locale,
+    title
   } = req.query;
-  if (background !== undefined) {
-    theme.background = ("#" + background) as string;
+  if (ringColor !== undefined) {
+    theme.detailMain = ("#" + ringColor) as string;
   }
-  if (border !== undefined) {
-    theme.border = ("#" + border) as string;
+  if (fireColor !== undefined) {
+    theme.detailSub = ("#" + fireColor) as string;
   }
-  if (hideBorder !== undefined) {
-    theme.hideBorder = true;
-  } else { theme.hideBorder = false; }
-  if (borderRadius !== undefined) {
-    theme.borderRadius = parseInt(borderRadius as string);
-  } else {
-    theme.borderRadius = 10;
+  if (currStreak !== undefined) {
+    theme.statsMain = ("#" + currStreak) as string;
   }
-  if (stroke !== undefined) {
-    theme.stroke = ("#" + stroke) as string;
-  }
-  if (detailMain !== undefined) {
-    theme.detailMain = ("#" + detailMain) as string;
-  }
-  if (detailSub !== undefined) {
-    theme.detailSub = ("#" + detailSub) as string;
-  }
-  if (statsMain !== undefined) {
-    theme.statsMain = ("#" + statsMain) as string;
-  }
-  if (statsSub !== undefined) {
-    theme.statsSub = ("#" + statsSub) as string;
+  if (statsSide !== undefined) {
+    theme.statsSub = ("#" + statsSide) as string;
   }
   if (textMain !== undefined) {
     theme.textMain = ("#" + textMain) as string;
   }
-  if (textSub !== undefined) {
-    theme.textSub = ("#" + textSub) as string;
+  if (textSide !== undefined) {
+    theme.textSub = ("#" + textSide) as string;
   }
   if (dates !== undefined) {
     theme.dates = ("#" + dates) as string;
   }
-  if (locale !== undefined) {
-    theme.locale = "en";
-  }
-  const svgString: string = createStreakCard(data);
-  return svgString;
-};
 
-const createStreakCard = (data: STREAKTYPE): string => {
-  const theme = data.theme;
+  if (title !== undefined) {
+    data.title = title as string
+  } else {
+    data.title = `${req.params.username!}'s Commit Streak`
+  }
 
   return `<!-- GitHub Streak SVG -->
     <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr'>
