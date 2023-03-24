@@ -1,20 +1,25 @@
 import { Request, Response } from "express";
-import { streakCardSetup } from "../github/cards/streak-card";
 
+// API Global imports
 import { GraphQLError } from "../utils/constants";
-import { preQery } from "../github/query";
-import {  GraphQLResponse, ReadMeData, StreakResponse, STREAKTYPE } from "../github/githubTypes";
 import { preFlight } from "../utils/utils";
 import { THEMES, THEMETYPE } from "../utils/themes";
+
+// GitHub specific imports
+import {  GraphQLResponse, ReadMeData, StreakResponse, STREAKTYPE } from "../github/githubTypes";
+import { preQery, streakProbe } from "../github/query";
 import { getResponseParse } from "../github/apiParser";
-import { cardDirect, streakProbe } from "../github/githubUtils";
+import { cardDirect } from "../github/githubUtils";
+import { streakCardSetup } from "../github/cards/streak-card";
 
 
-// Universal controller for all but one github route
+// GitHub controller for all GitHub routes except - Commit Streak Data
 export const getProfileStats = async (req: Request, res: Response) => {
     if (!preFlight(req, res)) {
         return;
     }
+
+    // Initialize data query
     let variables = { login: req.params.username! }
     const data = await preQery(req, res, variables)
         .then((data: GraphQLResponse | GraphQLError) => {
@@ -24,14 +29,13 @@ export const getProfileStats = async (req: Request, res: Response) => {
             return data as GraphQLResponse;
         })
 
-    // Get Function to parse data
+    // Get Function to parse data type
     const parse = getResponseParse(req);
     const parsedData: ReadMeData = parse(data)
 
-    // Get function to create correct card
+    // Get Function to create svg card for data type
     const createCard: Function = cardDirect(req);
     const card: string = createCard(req, parsedData);
-    card;
 
     // Send created card as svg string
     res.status(200).send(card);
@@ -39,26 +43,22 @@ export const getProfileStats = async (req: Request, res: Response) => {
 
 
 
+// GitHub Streak Controller
 export const getCommitStreak = async (req: Request, res: Response) => {
-    if (!preFlight(req, res)) {
+    if (!preFlight(req, res)) { // Username requirement, Blacklist checking
         return;
     }
-    const { username } = req.params;
-    // Minimal query probe to get query data
-    const [created, years] = await streakProbe(req, res)
-        .then((result: [string, number[]] | boolean): [string | boolean, number[]] => {
-            if (typeof(result) == 'boolean') {
-                return [result, [0]]
-            } else {
-                return result;
-            }
-        });
+
+    // Query user data for Creation Date and Years of membership
+    const [created, years] = await streakProbe(req, res);
+    /* 
+        - If the probe returns false, something disrupted the API call
+        - The probe itself sends out error data as a response
+    */
     if (typeof (created) == "boolean") {
         return;
     }
-    // Get Function to parse data
-    const parse = getResponseParse(req);
-    // Start data with defaults set
+    // Start data with defaults sets
     let streak: STREAKTYPE = {
         title: req.query.title !== undefined ?
             req.query.title as string : "GreenJ84's Streak",
@@ -81,6 +81,7 @@ export const getCommitStreak = async (req: Request, res: Response) => {
             } as THEMETYPE,
     }
     // starting template variables for query
+    const { username } = req.params;
     let variables = {login: username, start: "", end: ""};
 
     // Call data for each year
@@ -105,11 +106,13 @@ export const getCommitStreak = async (req: Request, res: Response) => {
                 }
                 return data as unknown as StreakResponse;
             })
+        
+        // Get Function to parse data
+        const parse = getResponseParse(req);
         // Parse that data with our current stats to update
         parse(streak, data)
     }
     
     const card: string = streakCardSetup(req, streak);
-    card;
     res.status(200).send(card);
 };
