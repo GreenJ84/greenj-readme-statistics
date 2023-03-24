@@ -4,6 +4,8 @@ import { THEMES } from '../utils/themes';
 import {  LangsResponse, LANGTYPE, Language, StatsResponse, STATTYPE, StreakResponse, STREAKTYPE } from './githubTypes';
 import { calculateRank } from './githubUtils';
 
+const theme = THEMES["black-ice"]!;
+
 
 export const getResponseParse = (req: Request): Function => {
     const type = req.path.split("/")[2]!;
@@ -89,7 +91,7 @@ const statsParse = (data: StatsResponse): STATTYPE => {
         contributedTo: data.user.repositoriesContributedTo.totalCount,
         repos: data.user.repositories.totalCount,
         theme: {
-            ...THEMES["black-ice"]!,
+            ...theme,
             hideborder: false,
             borderRadius: 10,
             locale: 'en'
@@ -158,7 +160,7 @@ const langsParse = (data: LangsResponse): LANGTYPE => {
         totalSize: totalSize,
         languages: topLangs,
         theme: {
-            ...THEMES["black-ice"]!,
+            ...theme,
             hideborder: false,
             borderRadius: 10,
             locale: 'en'
