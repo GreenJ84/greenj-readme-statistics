@@ -1,5 +1,4 @@
 import { match } from "ts-pattern";
-import { badgesParse, questionsSolvedParse, recentQuestionsParse, statsParse } from "./apiParser";
 import { questionsCard } from "./cards/questions-card";
 import { recentCard } from "./cards/recent-card";
 import { statsCard } from "./cards/stats-card";
@@ -15,18 +14,6 @@ export const getGraph = (type: string): string => {
         .with("daily-question", () => { return "src/leetcode/graphql/leetcode-daily-question.graphql" })
         .run()
     return graph
-}
-
-// Returns the parse creation function depending on path
-export const parseDirect = (type: string): Function => {
-    const parseFunc = match(type)
-        .with("stats", () => {return statsParse})
-        .with("badges", () => {return badgesParse})
-        .with("questions_solved", () => {return questionsSolvedParse})
-        .with("recent-questions", () => {return recentQuestionsParse})
-        // .with("daily-question", () => {return })
-        .run()
-    return parseFunc
 }
 
 // Returns the card creation function depending on path
