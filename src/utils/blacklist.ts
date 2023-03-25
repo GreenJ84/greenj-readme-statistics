@@ -1,15 +1,14 @@
 import fs from 'fs';
 import { Request } from 'express';
 
-const filename = 'blacklist.txt'
+const filename = 'src/utils/blacklist.txt'
 
-const data = fs.readFileSync(filename, 'utf8');
-let blacklist: string[] = JSON.parse(data);
+let blacklist: string[] = fs.readFileSync(filename, 'utf8').split('\n');
 
-export const addToBlackist = (newBlacklist: string) => {
+export const addToBlacklist = (newBlacklist: string) => {
     blacklist.push(newBlacklist);
-    fs.writeFileSync(filename, JSON.stringify(blacklist));
-}
+    fs.writeFileSync(filename, blacklist.join('\n'));
+};
 
 export const checkBlacklistRequest = (req: Request, user: string = "DONTEVERBLOCKME"): [boolean, string] => {
     if (blacklist.includes(req.headers['user-agent']!)) {
