@@ -53,13 +53,13 @@ export async function leetcodeGraphQL(query: GraphQLQuery, url: string, csrf: st
 
 // Set up for profile years probe query
 export const preProbe = async (req: Request, res: Response):
-Promise<ProbeResponse> => {
+Promise<[number[], string] | boolean> => {
     // Cross-site forgery credentials
     const csrf_credential: string = await get_csrf()
         .then((result) => result.toString());
-        const graphql = gql(
-            fs.readFileSync("src/leetcode/graphql/profile-years-probe.graphql", 'utf8')
-        );
+    const graphql = gql(
+        fs.readFileSync("src/leetcode/graphql/profile-years-probe.graphql", 'utf8')
+    );
     // Username which has to be there if preflight passed
     const { username } = req.params;
 
@@ -67,12 +67,12 @@ Promise<ProbeResponse> => {
     const data = await leetcode.leetcodeGraphQL(
         {
             query: graphql,
-            variables: { username: username! }
+            variables: { username: username!, year: parseInt(new Date().toISOString().slice(0, 4)) }
         },
         GRAPHQL_URL,
         csrf_credential
     )
-        .then((res) => res)
+        .then((res) => res as unknown as ProbeResponse)
         .catch((err) => {
             return {
                 message: "Internal server error",
@@ -81,10 +81,11 @@ Promise<ProbeResponse> => {
             } as GraphQLError;
         })
     // Return API errors if they have occured
-    if ((data as GraphQLError).error !== undefined) {
-        res.status(400).send(data);
+    if ((data as GraphQLError).error) {
+        res.status(400).send((data as unknown as GraphQLError));
+        return false;
     }
-    return data as unknown as ProbeResponse;
+    return [(data as ProbeResponse).matchedUser.userCalendar.activeYears, csrf_credential];
 }
 
 
