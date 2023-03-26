@@ -1,4 +1,4 @@
-query ($username: String!, $year: number!) {
+query ($username: String!, $year: Int!) {
     allQuestionsCount {
         difficulty
         count
