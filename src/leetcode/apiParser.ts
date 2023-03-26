@@ -1,6 +1,6 @@
 import { match } from "ts-pattern";
 import { THEMES } from "../utils/themes";
-import { BADGEDATA, BadgeReponse, PROFILEDATA, ProfileResponse, QuesionsAnsweredResponse, QUESTIONDATA, RecentSubmissionResponse, SUBMISSIONDATA } from "./leetcodeTypes"
+import { BADGEDATA, BadgeReponse, PROFILEDATA, ProfileResponse, QuesionsAnsweredResponse, QUESTIONDATA, RecentSubmissionResponse, STREAKDATA, StreakResponse, SUBMISSIONDATA } from "./leetcodeTypes"
 import { calculateRank } from "./leetcodeUtils";
 
 const theme = THEMES["black-ice"]!
@@ -13,6 +13,7 @@ export const parseDirect = (type: string): Function => {
         .with("questions_solved", () => {return questionsSolvedParse})
         .with("recent-questions", () => {return recentQuestionsParse})
         // .with("daily-question", () => {return })
+        .with("streak", () => {return streakParse})
         .run()
     return parseFunc
 }
@@ -72,6 +73,7 @@ const questionsSolvedParse = (data: QuesionsAnsweredResponse): QUESTIONDATA => {
     };
 }
 
+
 const recentQuestionsParse = (data: RecentSubmissionResponse): SUBMISSIONDATA => {
     const recentSubmissions: RecentSubmissionResponse = { recentSubmissionList: [] }
     const seen: { [key: string]: number } = {}
@@ -91,3 +93,24 @@ const recentQuestionsParse = (data: RecentSubmissionResponse): SUBMISSIONDATA =>
         theme: theme
     };
 }
+
+const streakParse = (streak: STREAKDATA, data: StreakResponse, year: number): void => {
+    const completion = (data.matchedUser.submitStats.acSubmissionNum[0]!.count / data.allQuestionsCount[0]!.count * 100).toFixed(2);
+    const completeQs = data.matchedUser.submitStats.acSubmissionNum[0]!.count;
+    const totalQs = data.allQuestionsCount[0]!.count;
+    const yearStreak = data.matchedUser.userCalendar.streak;
+    const yearsActiveDays = data.matchedUser.userCalendar.totalActiveDays;
+    
+    if (streak.streak[0] < yearStreak) {
+        streak.streak[0] = yearStreak;
+        streak.streak[1] = year;
+    }
+    streak.totalActive += yearsActiveDays
+    if (streak.mostActiveYear < yearsActiveDays) {
+        streak.mostActiveYear = yearsActiveDays;
+    }
+    streak.completion = (Math.max(parseFloat(streak.completion), parseFloat(completion))).toString();
+    streak.completionActuals = [completeQs, totalQs];
+    return;
+}
+
