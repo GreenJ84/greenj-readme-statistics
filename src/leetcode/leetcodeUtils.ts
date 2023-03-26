@@ -2,6 +2,7 @@ import { match } from "ts-pattern";
 import { questionsCard } from "./cards/questions-card";
 import { recentCard } from "./cards/recent-card";
 import { statsCard } from "./cards/stats-card";
+import { streakCard } from "./cards/streak-card";
 import { PROFILEDATA } from "./leetcodeTypes";
 
 // Returns the parse graph query file depending on path
@@ -12,6 +13,7 @@ export const getGraph = (type: string): string => {
         .with("questions_solved", () => {return "src/leetcode/graphql/leetcode-questions-answered.graphql"})
         .with("recent-questions", () => { return "src/leetcode/graphql/leetcode-recent-submissions.graphql" })
         .with("daily-question", () => { return "src/leetcode/graphql/leetcode-daily-question.graphql" })
+        .with("streak", () => { return "src/leetcode/graphql/leetcode-streak.graphql" })
         .run()
     return graph
 }
@@ -23,6 +25,7 @@ export const cardDirect = (type: string): Function => {
         // .with("badges", () => {return })
         .with("questions_solved", () => {return questionsCard})
         .with("recent-questions", () => {return recentCard})
+        .with("streak", () => {return streakCard})
         // .with("daily-question", () => {return })
         .run()
     return parseFunc
