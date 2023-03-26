@@ -6,7 +6,7 @@ export enum LeetCodeGraphQLResponse {
     ProfileResponse,
     QuesionsAnsweredResponse,
     BadgeReponse,
-    any
+    RecentSubmissionResponse
 }
 export interface ProbeResponse{
     matchedUser: {
@@ -28,7 +28,7 @@ export interface StreakResponse {
                 difficulty: string
                 count: number
                 submissions: number
-            }
+            }[]
         }
     }
 }
@@ -36,7 +36,9 @@ export interface STREAKDATA{
     title?: string
     streak: [number, number]
     totalActive: number
-    completion: number
+    mostActiveYear: number
+    completion: string
+    completionActuals: [number, number]
     theme: THEMETYPE
 }
 
