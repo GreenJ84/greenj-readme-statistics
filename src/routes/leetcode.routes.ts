@@ -6,6 +6,10 @@ export const LeetCodeRoutes = (app: express.Application) => {
     app.get('/leetcode/stats/:username',
         LeetcodeController.leetcodeProfile
     )
+    // Display LeetCode streak and activity
+    app.get('/leetcode/streak/:username',
+    LeetcodeController.leetcodeStreak
+    )
     // Display earned leetcode badges
     app.get('/leetcode/badges/:username',
         LeetcodeController.leetcodeProfile
