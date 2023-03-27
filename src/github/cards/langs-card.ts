@@ -106,78 +106,17 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
                 <mask id="rect-mask">
                     <rect x="0" y="0" width="500" height="15" fill="white" rx="5"/>
                 </mask>
-                <rect
-                    mask="url(#rect-mask)"
-                    data-testid="lang-progress"
-                    x="${data.languages[0]!.position}"
-                    y="0"
-                    width="${data.languages[0]!.width}"
-                    height="15"
-                    fill="${ data.languages[0]!.color}"
-                />
-                <rect
-                    mask="url(#rect-mask)"
-                    data-testid="lang-progress"
-                    x="${data.languages[1]!.position}"
-                    y="0"
-                    width="${data.languages[1]!.width}"
-                    height="15"
-                    fill="${ data.languages[1]!.color}"
-                />
-                <rect
-                    mask="url(#rect-mask)"
-                    data-testid="lang-progress"
-                    x="${data.languages[2]!.position}"
-                    y="0"
-                    width="${data.languages[2]!.width}"
-                    height="15"
-                    fill="${ data.languages[2]!.color}"
-                />
-                <rect
-                    mask="url(#rect-mask)"
-                    data-testid="lang-progress"
-                    x="${data.languages[3]!.position}"
-                    y="0"
-                    width="${data.languages[3]!.width}"
-                    height="15"
-                    fill="${ data.languages[3]!.color}"
-                />
-                <rect
-                    mask="url(#rect-mask)"
-                    data-testid="lang-progress"
-                    x="${data.languages[4]!.position}"
-                    y="0"
-                    width="${data.languages[4]!.width}"
-                    height="15"
-                    fill="${ data.languages[4]!.color}"
-                />
-                <rect
-                    mask="url(#rect-mask)"
-                    data-testid="lang-progress"
-                    x="${data.languages[5]!.position}"
-                    y="0"
-                    width="${data.languages[5]!.width}"
-                    height="15"
-                    fill="${ data.languages[5]!.color}"
-                />
-                <rect
-                    mask="url(#rect-mask)"
-                    data-testid="lang-progress"
-                    x="${data.languages[6]!.position}"
-                    y="0"
-                    width="${data.languages[6]!.width}"
-                    height="15"
-                    fill="${ data.languages[6]!.color}"
-                />
-                <rect
-                    mask="url(#rect-mask)"
-                    data-testid="lang-progress"
-                    x="${data.languages[7]!.position}"
-                    y="0"
-                    width="${data.languages[7]!.width}"
-                    height="15"
-                    fill="${ data.languages[7]!.color}"
-                />
+                ${data.languages.map((lang) => {
+                    return `<rect
+                        mask="url(#rect-mask)"
+                        data-testid="lang-progress"
+                        x="${lang.position}"
+                        y="0"
+                        width="${lang.width}"
+                        height="15"
+                        fill="${ lang.color}"
+                    />`
+                })}
                 
                 <g transform="translate(0, 40)">
                     <g transform="translate(0, 0)">

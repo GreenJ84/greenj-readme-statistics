@@ -42,9 +42,9 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
     } else { data.title = "GreenJ84's GitHub Stats" }
 
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr' role="img" aria-labelledby="descId">
-        <title id="titleId">Jesse L. Greenough's GitHub Stats, Rank: A++</title>
+        <title id="titleId">${data.title}, Rank: ${data.grade}</title>
         <desc id="descId">
-            Total Stars Earned: 0, Total Commits in 2023 : 0, Total PRs: 0, Total Issues: 0, Contributed to (last year): 0
+            Total Stars Earned: ${data.stars}, Total Commits : ${data.commits}, Total PRs: ${data.PR}, Total Issues: ${data.issues}, Contributed to: ${data.contributedTo}
         </desc>
         <style>
             .statText {
