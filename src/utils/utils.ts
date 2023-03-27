@@ -53,16 +53,25 @@ export const baseCardThemeParse = (req: Request, _theme: THEMETYPE) => {
     if (stroke !== undefined) {
         _theme.stroke = ("#" + stroke) as string;
     }
+    
     if (hideBorder !== undefined) {
         if (hideBorder == "true") {
             _theme.hideBorder = true;
         }
+    } else {
+        _theme.hideBorder = false;
     }
+
     if (borderRadius !== undefined) {
         _theme.borderRadius = parseInt(borderRadius as string);
+    } else {
+        _theme.borderRadius = 10;
     }
+
     if (locale !== undefined) {
         _theme.locale = locale as string;
+    } else {
+        _theme.locale = 'en-US';
     }
 }
 
