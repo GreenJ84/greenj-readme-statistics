@@ -46,7 +46,7 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
 
 
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr' role="img" aria-labelledby="descId">
-    <title id="titleId">${username}'s LeetCode Stats</title>
+    <title id="titleId">${data.title}</title>
     <style>
         .statText {
             font: 500 16px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif; 
@@ -74,12 +74,12 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
         .not_bold { font-weight: 400 }
         .bold { font-weight: 700 }
         .icon {
-            fill: ${theme.detailMain};
+            fill: ${theme.detailSub};
             display: block;
         }
         .st0{
             fill:none;
-            stroke: ${theme.detailMain};
+            stroke: ${theme.detailSub};
             stroke-width:2;
             stroke-linecap:round;
             stroke-linejoin:round;
@@ -87,16 +87,16 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
         }
 
         .rank-circle-rim {
-            stroke: ${theme.detailSub};
+            stroke: ${theme.detailMain};
             fill: none;
-            stroke-width: 12;
+            stroke-width: 10;
             opacity: 0.2;
         }
         .rank-circle {
             stroke: ${theme.detailMain};
-            stroke-dasharray: 250;
+            stroke-dasharray: 400;
             fill: none;
-            stroke-width: 18;
+            stroke-width: 14;
             stroke-linecap: round;
             opacity: 0.8;
             transform-origin: -10px 8px;
@@ -107,10 +107,10 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
         /* Animations */
         @keyframes rankAnimation {
             from {
-                stroke-dashoffset: 251.32741228718345;
+                stroke-dashoffset: 400;
             }
             to {
-                stroke-dashoffset: 106.04382276211012;
+                stroke-dashoffset: ${Math.max(data.grade[1]*3/8, 10)};
             }
         }
         @keyframes scaleInAnimation {
@@ -143,7 +143,7 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
 
         <!-- Title -->
         <g transform="translate(0,0)">
-            <text x="25" y="35" stroke-width="1" text-anchor="start" fill="${theme.textMain}" stroke="${theme.textMain}" font-family="Segoe UI, Ubuntu, sans-serif" font-weight="500" font-size="24px" font-style="normal" style="opacity: 0; animation: fadeInAnimation 0.5s linear forwards 0.7s; letter-spacing: 2px;">
+            <text x="18" y="35" stroke-width="1" text-anchor="start" fill="${theme.textMain}" stroke="${theme.textMain}" font-family="Segoe UI, Ubuntu, sans-serif" font-weight="500" font-size="24px" font-style="normal" style="opacity: 0; animation: fadeInAnimation 0.5s linear forwards 0.7s; letter-spacing: 2px;">
                 ${ data.title }
             </text>
         </g>
@@ -160,7 +160,7 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
                 dominant-baseline="central"
                 text-anchor="middle"
                 >
-                    ${data.grade}
+                    ${data.grade[0]}
                 </text>
             </g>
         </g>

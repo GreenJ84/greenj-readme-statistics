@@ -46,7 +46,38 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
 
     return `<!-- GitHub Streak SVG -->
     <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr'>
+        <title>${data.title}</title>
         <style>
+            .stats{
+                fill: ${theme.statsMain};
+                stroke: none;
+                font-family: "Segoe UI", Ubuntu, sans-serif; 
+                font-weight: 700;
+                font-size: 32px;
+                font-style:normal;
+                opacity: 0; 
+                animation: fadein 0.5s linear forwards 1.2s;
+            }
+            .labels{
+                fill: ${theme.textMain};
+                stroke: none;
+                font-family: "Segoe UI", Ubuntu, sans-serif;
+                font-weight: 400;
+                font-size: 14px;
+                font-style: normal;
+                opacity: 0;
+                animation: fadein 0.5s linear forwards 0.7s;
+            }
+            .subText{
+                fill: ${theme.textSub};
+                stroke: none;
+                font-family: "Segoe UI", Ubuntu, sans-serif;
+                font-weight: 400;
+                font-size: 12px;
+                font-style: normal;
+                opacity: 0;
+                animation: fadein 0.5s linear forwards 0.8s;
+            }
             @keyframes currstreak {
                 0% { font-size: 3px; opacity: 0.2; }
                 80% { font-size: 44px; opacity: 1; }
@@ -81,20 +112,20 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
             <g style='isolation: isolate'>
                 <!-- Total Active Days Number -->
                 <g transform='translate(1,48)'>
-                    <text x='92' y='50' stroke-width='0' text-anchor='middle' fill='${theme.statsMain}' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='700' font-size='30px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.6s'>
+                    <text x='92' y='50' stroke-width='0' text-anchor='middle' class="stats">
                         ${ data.totalActive } 
                     </text>
                 </g>
                 <!-- Total Active Days Label -->
                 <g transform='translate(1,84)'>
-                    <text x='92' y='55' stroke-width='0' text-anchor='middle' fill='${theme.textMain}' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='400' font-size='14px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.7s'>
+                    <text x='92' y='55' stroke-width='0' text-anchor='middle' class="labels">
                         Total Active Days
                     </text>
                 </g>
-                <!-- Most Active year -->
+                <!-- Current Active year -->
                 <g transform='translate(1,114)'>
-                    <text x='92' y='50' stroke-width='0' text-anchor='middle' fill='${theme.textSub}' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='400' font-size='12px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.8s'>
-                        Most Active: ${data.mostActiveYear}
+                    <text x='92' y='50' stroke-width='0' text-anchor='middle' class="subText">
+                        Current Year: ${data.mostActiveYear}
                     </text>
                 </g>
             </g>
@@ -102,19 +133,19 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
             <g style='isolation: isolate'>
                 <!-- Max Streak Number -->
                 <g transform='translate(0,48)'>
-                    <text x='276' y='66' stroke-width='0' text-anchor='middle' fill='${theme.statsMain}' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='700' font-size='46px' font-style='normal' style='animation: currstreak 0.6s linear forwards'>
+                    <text x='276' y='66' stroke-width='0' text-anchor='middle' class="stats">
                         ${data.streak[0]}
                     </text>
                 </g>
                 <!-- Max Streak Label -->
                 <g transform='translate(0,108)'>
-                    <text x='276' y='60' stroke-width='0' text-anchor='middle' fill='${theme.textMain}' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='700' font-size='18px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.9s'>
+                    <text x='276' y='60' stroke-width='0' text-anchor='middle' class="labels">
                         Max Streak
                     </text>
                 </g>
                 <!-- Max Streak Year -->
                 <g transform='translate(0,145)'>
-                    <text x='276' y='46' stroke-width='0' text-anchor='middle' fill='${theme.textSub}' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='400' font-size='12px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.9s'>
+                    <text x='276' y='46' stroke-width='0' text-anchor='middle' class="subText">
                         in ${data.streak[1]}
                     </text>
                 </g>
@@ -125,34 +156,34 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
                 </g>
                 <!-- Fire cutout -->
                 <g>
-                    <circle cx='276' cy='56' r='20' fill='${theme.detailMain}'
-                    stroke='#FB8C00' stroke-width='5' style='opacity: 0; animation: fadein 0.5s linear forwards 0.4s'>
+                    <circle cx='276' cy='56' r='20' fill='none'
+                    stroke='none' stroke-width='5' style='opacity: 0; animation: fadein 0.5s linear forwards 0.4s'>
                     </circle>
                 </g>
                 <!-- fire icon -->
                 <g stroke-opacity='0' style='opacity: 0; animation: fadein 0.5s linear forwards 0.6s' transform="translate(-21, 22) scale(1.2)">
                     <path d=' M 235.5 19.5 L 259.5 19.5 L 259.5 43.5 L 235.5 43.5 L 235.5 19.5 Z ' fill='none'/>
-                    <path d=' M 249 20.17 C 249 20.17 249.74 22.82 249.74 24.97 C 249.74 27.03 248.39 28.7 246.33 28.7 C 244.26 28.7 242.7 27.03 242.7 24.97 L 242.73 24.61 C 240.71 27.01 239.5 30.12 239.5 33.5 C 239.5 37.92 243.08 41.5 247.5 41.5 C 251.92 41.5 255.5 37.92 255.5 33.5 C 255.5 28.11 252.91 23.3 249 20.17 Z  M 247.21 38.5 C 245.43 38.5 243.99 37.1 243.99 35.36 C 243.99 33.74 245.04 32.6 246.8 32.24 C 248.57 31.88 250.4 31.03 251.42 29.66 C 251.81 30.95 252.01 32.31 252.01 33.7 C 252.01 36.35 249.86 38.5 247.21 38.5 Z ' fill='{$theme["fire"]}' stroke-opacity='0'/>
+                    <path d=' M 249 20.17 C 249 20.17 249.74 22.82 249.74 24.97 C 249.74 27.03 248.39 28.7 246.33 28.7 C 244.26 28.7 242.7 27.03 242.7 24.97 L 242.73 24.61 C 240.71 27.01 239.5 30.12 239.5 33.5 C 239.5 37.92 243.08 41.5 247.5 41.5 C 251.92 41.5 255.5 37.92 255.5 33.5 C 255.5 28.11 252.91 23.3 249 20.17 Z  M 247.21 38.5 C 245.43 38.5 243.99 37.1 243.99 35.36 C 243.99 33.74 245.04 32.6 246.8 32.24 C 248.57 31.88 250.4 31.03 251.42 29.66 C 251.81 30.95 252.01 32.31 252.01 33.7 C 252.01 36.35 249.86 38.5 247.21 38.5 Z ' fill='${theme.detailMain}' stroke-opacity='0'/>
                 </g>
             </g>
             <!-- Right Side -->
             <g style='isolation: isolate'>
                 <!-- Completion Percentage -->
                 <g transform='translate(0,48)'>
-                    <text x='460' y='50' stroke-width='0' text-anchor='middle' fill='${theme.statsMain}' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='700' font-size='32px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 1.2s'>
+                    <text x='460' y='50' stroke-width='0' text-anchor='middle' class="stats">
                         ${ data.completion }%
                     </text>
                 </g>
                 <!-- Completion Label -->
                 <g transform='translate(0,84)'>
-                    <text x='460' y='55' stroke-width='0' text-anchor='middle' fill='${theme.textMain}' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='400' font-size='14px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 1.3s'>
+                    <text x='460' y='55' stroke-width='0' text-anchor='middle' class="labels">
                         Platform Completion
                     </text>
                 </g>
                 <!-- Completion Actuals -->
                 <g transform='translate(0,114)'>
-                    <text x='460' y='50' stroke-width='0' text-anchor='middle' fill='${theme.textSub}' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='400' font-size='12px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 1.4s'>
-                        ${data.completionActuals[0]} / ${data.completionActuals[1]}
+                    <text x='460' y='50' stroke-width='0' text-anchor='middle' class="subText">
+                        ${data.completionActuals[0]} out of ${data.completionActuals[1]}
                     </text>
                 </g>
             </g>

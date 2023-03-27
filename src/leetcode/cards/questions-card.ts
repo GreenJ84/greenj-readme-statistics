@@ -47,14 +47,14 @@ export const questionsCard = (req: Request, data: QUESTIONDATA): string => {
 
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation: isolate" viewBox="0 0 552 215" width="552px" height="215px" direction="ltr">
     <style>
-        <title id="titleId">${username}'s LeetCode Question Stats</title>
+        <title id="titleId">${data.title}</title>
         .header {
-            font: 700 22px 'Segoe UI', Ubuntu, Sans-Serif;
+            font: 600 22px 'Segoe UI', Ubuntu, Sans-Serif;
             fill: ${theme.textMain};
             animation: fadeInAnimation 0.8s ease-in-out forwards;
         }
         .stat {
-            font: 600 14px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif;
+            font: 400 14px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif;
             fill: ${theme.textSub};
         }
         .num{
@@ -71,13 +71,13 @@ export const questionsCard = (req: Request, data: QUESTIONDATA): string => {
     
     .acceptance-text {
         font: 800 24px 'Segoe UI', Ubuntu, Sans-Serif;
-        fill: ${theme.textMain};
+        fill: ${theme.statsMain};
         animation: scaleInAnimation 0.3s ease-in-out forwards;
     }
     
     .acceptance-title {
         font: 600 14px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif;
-        fill: ${theme.textSub};
+        fill: ${theme.textMain};
         animation: scaleInAnimation 0.3s ease-in-out forwards;
     }
 
@@ -94,7 +94,7 @@ export const questionsCard = (req: Request, data: QUESTIONDATA): string => {
     
     .acceptance-circle {
         stroke: ${theme.detailMain};
-        stroke-dasharray: 377;
+        stroke-dasharray: 400;
         fill: none;
         stroke-width: 6;
         stroke-linecap: round;
@@ -106,10 +106,10 @@ export const questionsCard = (req: Request, data: QUESTIONDATA): string => {
     
     @keyframes acceptanceAnimation {
         from {
-        stroke-dashoffset: 377;
+        stroke-dashoffset: 400;
         }
         to {
-        stroke-dashoffset: 129.16020000000003;
+        stroke-dashoffset: ${400-parseInt(data.acceptance)*4};
         }
     }
     /* Animations */

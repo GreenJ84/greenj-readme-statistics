@@ -52,7 +52,7 @@ export const recentCard = (req: Request, data: SUBMISSIONDATA) => {
 
 
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation: isolate" viewBox="0 0 552 340" width="552px" height="340px" direction="ltr">
-    <title id="titleId">${username}'s Recent LeetCode Submissions </title>
+    <title id="titleId">${data.title}</title>
     <style>
     .header {
         font: 700 22px 'Segoe UI', Ubuntu, Sans-Serif;
