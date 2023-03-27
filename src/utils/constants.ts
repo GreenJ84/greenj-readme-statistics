@@ -9,6 +9,10 @@ export const USER_AGENT = "Mozilla/5.0 LeetCode API";
 //GitHub
 export const GIT_URL = "https://api.github.com/graphql";
 
+//WakaTime
+export const WAKA_TIME_URL = "https://wakatime.com/api/v1";
+export const WAKA_TIME_AUTH_URL = "https://wakatime.com/oauth/token";
+
 
 
 // Extras
