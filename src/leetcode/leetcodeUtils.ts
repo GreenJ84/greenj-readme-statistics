@@ -50,7 +50,7 @@ const normalcdf = (mean: number, sigma: number, to: number): number => {
 };
 
 // also Maths.... but that leads to words
-export const calculateRank = (stats: PROFILEDATA): string => {
+export const calculateRank = (stats: PROFILEDATA): [string, number] => {
     const COMPLETION_OFFSET = 1.85;
     const REP_OFFSET = 1;
     const STARS_OFFSET = 1.25;
@@ -95,5 +95,5 @@ export const calculateRank = (stats: PROFILEDATA): string => {
         return "B+";
     })();
 
-    return level;
+    return [level, normalizedScore];
 };

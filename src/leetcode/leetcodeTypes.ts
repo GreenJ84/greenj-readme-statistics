@@ -78,7 +78,7 @@ export interface PROFILEDATA {
     stars: number
     badges: number
     contributions: number
-    grade: string
+    grade: [string, number]
     theme: THEMETYPE
 }
 
