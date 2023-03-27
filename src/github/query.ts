@@ -1,4 +1,5 @@
 import fs from 'fs';
+import dotenv from 'dotenv';
 import { Request, Response } from 'express';
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { gql } from "graphql-tag";
@@ -7,7 +8,9 @@ import { match } from 'ts-pattern';
 import { GraphQLQuery, GraphQLError, GIT_URL } from '../utils/constants';
 import { GraphQLResponse, StreakProbe } from './githubTypes';
 
-const token = "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";
+dotenv.config()
+
+const token = process.env.GITHUB_TOKEN;
 
 // Get the GraphQL file location based on type
 const getGraph = (type: string): string => {
