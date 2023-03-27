@@ -106,7 +106,7 @@ const streakParse = (streak: STREAKDATA, data: StreakResponse, year: number): vo
         streak.streak[1] = year;
     }
     streak.totalActive += yearsActiveDays
-    if (streak.mostActiveYear < yearsActiveDays) {
+    if (year == new Date().getFullYear()) {
         streak.mostActiveYear = yearsActiveDays;
     }
     streak.completion = (Math.max(parseFloat(streak.completion), parseFloat(completion))).toString();
