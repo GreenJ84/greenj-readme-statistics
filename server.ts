@@ -2,9 +2,11 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from "express-rate-limit";
+import cacheControl from 'express-cache-controller';
 
 import { LeetCodeRoutes } from './src/routes/leetcode.routes';
 import { GithubRoutes } from './src/routes/github.routes';
+import { WakaTimeRoutes } from './src/routes/wakatime.routes';
 
 const PORT = 8000
 
@@ -22,19 +24,25 @@ app.use(
     }),
 );
 
+// Set svg content headers for all routes
 app.use((req: Request, res: Response, next: NextFunction) => {
-    console.log(req)
+    req;
     // Set response headers
     res.setHeader('Content-Type', 'image/svg+xml');
     next();
 });
 
-// Rate limiting
+// Rate limiting the api
 const limiter = rateLimit({
     windowMs: 60 * 60 * 1000,
     max: 100
 });
 app.use('/', limiter);
+
+// Cache api calls
+app.use(cacheControl({
+    maxAge: 60 * 20, // Dev Cache for 20 min
+}));
 
 // API security
 app.use(helmet({
@@ -57,8 +65,9 @@ app.use(helmet({
     },
 }))
 
-LeetCodeRoutes(app)
-GithubRoutes(app)
+LeetCodeRoutes(app);
+GithubRoutes(app);
+WakaTimeRoutes(app);
 
 app.listen(PORT,
     () => console.log(`Server is running on port ${PORT}`)
