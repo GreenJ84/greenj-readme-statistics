@@ -1,6 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr' role="img" aria-labelledby="descId">
-    <title id="titleId">Jesse L. Greenough's GitHub Stats, Rank: A++</title>
-    <desc id="descId">Total Stars Earned: 0, Total Commits in 2023 : 0, Total PRs: 0, Total Issues: 0, Contributed to (last year): 0</desc>
+    <title id="titleId"></title>
     <style>
         .stat {
             font: 600 16px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif; 
@@ -89,7 +88,7 @@
         <!-- Title -->
         <g transform="translate(0,0)">
             <text x="25" y="35" stroke-width="1" text-anchor="start" fill="#010101" stroke="#010101" font-family="Segoe UI, Ubuntu, sans-serif" font-weight="500" font-size="24px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.7s; letter-spacing: 2px;">
-                GreenJ84's WakaTime Stats
+                GreenJ84's WakaTime Insights
             </text>
         </g>
         <!-- Rank Circle -->
