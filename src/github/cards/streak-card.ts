@@ -91,7 +91,7 @@ export const streakCardSetup = (req: Request, data: STREAKTYPE): string => {
         </defs>
         <g clip-path='url(#outer_rectangle)'>
             <g style='isolation: isolate'>
-                <rect stroke='${theme.hideBorder ? "" : theme.border}' fill='${theme.background}' rx='${theme.borderRadius}' x='0.5' y='0.5' width='550' height='215'/>
+                <rect stroke='${theme.hideBorder ? "" : theme.border}' fill='${theme.background}' rx='${theme.borderRadius}' x="1.5" y="1.5" stroke-width="2" width="549" height="212"/>
             </g>
             <g style='isolation: isolate'>
                 <line x1='368' y1='48' x2='368' y2='196' vector-effect='non-scaling-stroke' stroke-width='1' stroke='${theme.stroke}' stroke-linejoin='miter' stroke-linecap='square' stroke-miterlimit='3'/>

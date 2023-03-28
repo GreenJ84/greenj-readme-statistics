@@ -92,7 +92,7 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
         <g clip-path="url(#outer_rectangle)">
             <!-- Background -->
             <g style="isolation: isolate">
-                <rect stroke="${ theme.hideBorder ? theme.background : theme.border }" fill="${ theme.background }" rx="${ theme.borderRadius }" x="0.5" y="0.5" width="552" height="215"/>
+                <rect stroke="${ theme.hideBorder ? theme.background : theme.border }" fill="${ theme.background }" rx="${ theme.borderRadius }" x="1.5" y="1.5" stroke-width="2" width="549" height="212"/>
                 <line x1="276" y1="80" x2="276" y2="202" vector-effect="non-scaling-stroke" stroke-width="1.5" stroke="${ theme.stroke }" stroke-linejoin="miter" stroke-linecap="square" stroke-miterlimit="3"/>
             </g>
     
