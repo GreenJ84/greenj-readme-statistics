@@ -91,7 +91,7 @@
     <g clip-path="url(#outer_rectangle)">
         <!-- Background -->
         <g style="isolation: isolate">
-            <rect stroke="#151515" fill="#FB8C00" rx="10" x="0.5" y="0.5" width="552" height="215"/>
+            <rect stroke="#151515" fill="#FB8C00" rx="10" x="1.5" y="1.5" stroke-width="2" width="549" height="212"/>
         </g>
 
         <!-- Title -->

@@ -138,7 +138,7 @@ export const questionsCard = (req: Request, data: QUESTIONDATA): string => {
         </clipPath>
     </defs>
     <g style='isolation: isolate'>
-            <rect stroke='${ theme.hideBorder ? theme.background : theme.border}' fill='${theme.background}' rx='${theme.borderRadius}' x='0.5' y='0.5' width='551' height='214'/>
+            <rect stroke='${ theme.hideBorder ? theme.background : theme.border}' fill='${theme.background}' rx='${theme.borderRadius}' x="1.5" y="1.5" stroke-width="2" width="549" height="212"/>
     </g>
     <g transform="translate(25, 35)">
         <g transform="translate(0, 0)">

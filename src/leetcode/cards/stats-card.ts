@@ -138,7 +138,7 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
     <g clip-path="url(#outer_rectangle)">
         <!-- Background -->
         <g style="isolation: isolate">
-            <rect stroke="${ theme.hideBorder ? theme.background : theme.border}" fill="${theme.background}" rx="${theme.borderRadius}" x="0.5" y="0.5" width="552" height="215"/>
+            <rect stroke="${ theme.hideBorder ? theme.background : theme.border}" fill="${theme.background}" rx="${theme.borderRadius}" x="1.5" y="1.5" stroke-width="2" width="549" height="212"/>
         </g>
 
         <!-- Title -->
