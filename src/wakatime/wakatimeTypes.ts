@@ -1,3 +1,5 @@
+import { THEMETYPE } from "../utils/themes"
+
 interface sectionObject {
     name: string
     total_seconds: number
@@ -68,10 +70,14 @@ export interface INSIGHTTYPE {
     topOS: sectionObject
     dependencies: sectionObject
     topMachine: sectionObject
+    title?: string
+    theme: THEMETYPE
 }
 
 export interface LANGTYPE {
     languages: sectionObject[]
+    title?: string
+    theme: THEMETYPE
 }
 
 export interface STATTYPE {
@@ -81,4 +87,6 @@ export interface STATTYPE {
     accountStart: string
     dailyAvg: number
     totalDevDays: number
+    title?: string
+    theme: THEMETYPE
 }
