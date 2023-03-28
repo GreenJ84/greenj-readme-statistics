@@ -3,7 +3,7 @@ import { THEMETYPE } from "../../utils/themes";
 import { baseCardThemeParse } from "../../utils/utils";
 import { STATTYPE } from "../wakatimeTypes";
 
-export const streakCardSetup = (req: Request, data: STATTYPE): string => {
+export const statsCardSetup = (req: Request, data: STATTYPE): string => {
     const theme: THEMETYPE = data.theme;
 
     baseCardThemeParse(req, theme);
