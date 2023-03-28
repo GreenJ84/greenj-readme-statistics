@@ -60,7 +60,7 @@ export interface wakaResponse {
     }
 }
 
-export interface STATTYPE {
+export interface INSIGHTTYPE {
     topCategory: sectionObject
     topProject: sectionObject
     topLanguage: sectionObject
@@ -74,11 +74,9 @@ export interface LANGTYPE {
     languages: sectionObject[]
 }
 
-export interface STREAKTYPE {
-    bestDay: {
-        totalSec: number
-        date: string
-    }
+export interface STATTYPE {
+    totalBest: number
+    bestDate: string
     totalDevSec: number
     accountStart: string
     dailyAvg: number
