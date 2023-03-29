@@ -40,7 +40,15 @@ const insightParse = (data: wakaResponse): INSIGHTTYPE => {
 }
 
 const languagesParse = (data: wakaResponse): LANGTYPE => {
-    const languages = data.languages;
+    const languages = data.languages.map(lang => {
+        return {
+            name: lang.name,
+            total_seconds: lang.total_seconds,
+            percent: lang.percent,
+            digital: lang.digital
+        }
+    });
+
     return {
         languages: languages,
         theme: theme

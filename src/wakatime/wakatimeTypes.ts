@@ -75,7 +75,12 @@ export interface INSIGHTTYPE {
 }
 
 export interface LANGTYPE {
-    languages: sectionObject[]
+    languages: {
+        name: string
+        total_seconds: number
+        percent: number
+        digital: string
+    }[]
     title?: string
     theme: THEMETYPE
 }
