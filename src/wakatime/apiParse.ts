@@ -1,6 +1,7 @@
 import { match } from "ts-pattern";
 import { THEMES } from "../utils/themes";
 import { INSIGHTTYPE, LANGTYPE, STATTYPE, wakaResponse } from "./wakatimeTypes";
+import { langColor } from "./wakatimeUtils";
 
 export const parseDirect = (type: string): Function => {
     const parseFunc: Function = match(type)
@@ -40,12 +41,16 @@ const insightParse = (data: wakaResponse): INSIGHTTYPE => {
 }
 
 const languagesParse = (data: wakaResponse): LANGTYPE => {
+    let topTotal = 0;
+    data.languages.map(lang => {
+        topTotal += lang.total_seconds
+    });
     const languages = data.languages.map(lang => {
         return {
             name: lang.name,
             total_seconds: lang.total_seconds,
-            percent: lang.percent,
-            digital: lang.digital
+            percent: parseInt((lang.total_seconds / topTotal).toFixed(2)),
+            color: langColor(lang.name)
         }
     });
 
