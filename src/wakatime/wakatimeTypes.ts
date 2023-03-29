@@ -79,7 +79,7 @@ export interface LANGTYPE {
         name: string
         total_seconds: number
         percent: number
-        digital: string
+        color: string
     }[]
     title?: string
     theme: THEMETYPE
