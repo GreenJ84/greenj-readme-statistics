@@ -2,24 +2,28 @@ import { Request } from 'express';
 import redis from 'redis';
 const client = redis.createClient();
 
-export const getKey = async (req: Request): Promise<any> => {
-
-    await client.get(
-        `${req.path.split("/")[1]!}:${req.params.username!}`
-    );
-}
-
-export const setKey = async (req: Request, data: any): Promise<[boolean, string | any]> => {
+export const getCacheData = async (req: Request): Promise<[boolean, object?]> => {
     try {
-        await client.set(
-            `${req.path.split("/")[1]!}:${req.params.username!}`,
-            JSON.stringify(data), {
-                "EX": (60 * 60 * 12)
-            }
-        )
+        const data = await client.get(
+            `${req.path.split("/")[1]!}:${req.params.username!}`
+        );
+        if (data == undefined) {
+            return [false]
+        }
+        return [true, JSON.parse(data)]
     }
     catch {
-        return [false, "Error with client cache retrieval."]
+        return [false]
     }
-    return [true, data]
 }
+
+export const setCacheData = async (req: Request, data: any): Promise<void> => {
+    await client.set(
+        `${req.path.split("/")[1]!}:${req.params.username!}`,
+        JSON.stringify(data), {
+            "EX": (60 * 60 * 6)
+        }
+    )
+    return;
+}
+
