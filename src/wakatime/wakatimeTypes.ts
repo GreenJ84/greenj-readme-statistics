@@ -85,11 +85,11 @@ export interface LANGTYPE {
 }
 
 export interface STATTYPE {
-    totalBest: number
+    totalBest: string
     bestDate: string
-    totalDevSec: number
+    totalDevSec: string
     accountStart: string
-    dailyAvg: number
+    dailyAvg: string
     totalDevDays: number
     title?: string
     theme: THEMETYPE
