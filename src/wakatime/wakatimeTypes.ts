@@ -63,13 +63,12 @@ export interface wakaResponse {
 }
 
 export interface INSIGHTTYPE {
+    dailyAverage: number
     topCategory: sectionObject
     topProject: sectionObject
     topLanguage: sectionObject
     topEditor: sectionObject
     topOS: sectionObject
-    dependencies: sectionObject
-    topMachine: sectionObject
     title?: string
     theme: THEMETYPE
 }
