@@ -132,7 +132,7 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
                         ${data.languages[0]!.name}
                     </text>
                     <text data-testid="lang-name" x="180" y="10" class="top-stat">
-                        ${data.languages[0]!.percent}
+                        ${data.languages[0]!.percent}%
                     </text>
                 </g>
             </g>
@@ -146,7 +146,7 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
                                     ${lang.name}
                                 </text>
                                 <text data-testid="lang-name" x="180" y="10" class="lang-stat">
-                                    ${lang.percent}
+                                    ${lang.percent}%
                                 </text>
                             </g>
                         </g>`
