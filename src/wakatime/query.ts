@@ -1,12 +1,12 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
 import { Request } from 'express';
-import { WAKA_TIME_URL } from '../utils/constants';
+import { Error, WAKA_TIME_URL } from '../utils/constants';
 import { wakaResponse } from './wakatimeTypes';
 
 dotenv.config()
 
-export const getUserStats = async (req: Request): Promise<wakaResponse> => {
+export const getUserStats = async (req: Request): Promise<wakaResponse | Error> => {
     const { username } = req.params;
 
     const config = axios.create({
@@ -18,13 +18,11 @@ export const getUserStats = async (req: Request): Promise<wakaResponse> => {
     const data = await config.get(`users/${username}/stats/all_time`, {
         params: {}
     })
-        .then(res => { return res.data })
+        .then(res => { return res.data as wakaResponse })
         .catch(err => { return {
             message: "Error accessing WakaTime API",
             error: err,
             error_code: 500
-        } })
-    
-    console.log(data);
+        } as Error })
     return data;
 }
