@@ -42,14 +42,15 @@ const insightParse = (data: wakaResponse): INSIGHTTYPE => {
 
 const languagesParse = (data: wakaResponse): LANGTYPE => {
     let topTotal = 0;
-    data.languages.map(lang => {
+    data.languages.slice(0,6).map(lang => {
         topTotal += lang.total_seconds
     });
-    const languages = data.languages.map(lang => {
+    console.log(topTotal)
+    const languages = data.languages.slice(0,6).map(lang => {
         return {
             name: lang.name,
             total_seconds: lang.total_seconds,
-            percent: parseInt((lang.total_seconds / topTotal).toFixed(2)),
+            percent: parseFloat((lang.total_seconds / topTotal * 100).toFixed(2)),
             color: langColor(lang.name)
         }
     });
@@ -61,11 +62,11 @@ const languagesParse = (data: wakaResponse): LANGTYPE => {
 }
 
 const statParse = (data: wakaResponse): STATTYPE => {
-    const totalBest = data.best_day.total_seconds;
+    const totalBest = (data.best_day.total_seconds / 60 / 60).toFixed(1);
     const bestDate = data.best_day.date;
-    const totalDevSec = data.total_seconds_including_other_language;
-    const accountStart = data.created_at;
-    const dailyAvg = data.daily_average_including_other_language;
+    const totalDevSec = (data.total_seconds_including_other_language / 60 / 60).toFixed(1);
+    const accountStart = data.created_at.slice(0,10);
+    const dailyAvg = (data.daily_average_including_other_language / 60 / 60).toFixed(1);
     const totalDevDays = data.days_minus_holidays;
 
     return {
