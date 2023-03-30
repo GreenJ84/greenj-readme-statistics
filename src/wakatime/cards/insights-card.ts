@@ -126,7 +126,7 @@ export const insightsCardSetup = (req: Request, data: INSIGHTTYPE): string => {
                     y="12.5"
                     data-testid="language"
                 >
-                    ${data.topLanguage}
+                    ${data.topLanguage.name} (${data.topLanguage.percent.toFixed(1)}%)
                 </text>
             </g>
         </g>
@@ -146,7 +146,7 @@ export const insightsCardSetup = (req: Request, data: INSIGHTTYPE): string => {
                     y="12.5"
                     data-testid="daily_average"
                 >
-                    ${data.dailyAverage} seconds
+                    ${data.dailyAverage} hrs
                 </text>
             </g>
         </g>
@@ -165,7 +165,7 @@ export const insightsCardSetup = (req: Request, data: INSIGHTTYPE): string => {
                     y="12.5"
                     data-testid="project"
                 >
-                    ${data.topProject}
+                    ${data.topProject.name}
                 </text>
             </g>
         </g>
@@ -184,16 +184,16 @@ export const insightsCardSetup = (req: Request, data: INSIGHTTYPE): string => {
                     y="12.5"
                     data-testid="category"
                 >
-                    ${data.topCategory}
+                    ${data.topCategory.name}(${data.topCategory.percent.toFixed(1)}%)
                 </text>
             </g>
         </g>
         <!-- Top Editor -->
         <g transform="translate(0, 160)">
             <g class="stagger" style="animation-delay: 1050ms" transform="translate(15, 0)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path class="st0" d="M8.25 3H3a1.5 1.5 0 0 0 -1.5 1.5v10.5a1.5 1.5 0 0 0 1.5 1.5h10.5a1.5 1.5 0 0 0 1.5 -1.5v-5.25"/>
-                    <path class="st0" d="M13.875 1.875a1.591 1.591 0 0 1 2.25 2.25L9 11.25l-3 0.75 0.75 -3 7.125 -7.125z"/>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="${theme.detailSub}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path fill="none" d="M8.25 3H3a1.5 1.5 0 0 0 -1.5 1.5v10.5a1.5 1.5 0 0 0 1.5 1.5h10.5a1.5 1.5 0 0 0 1.5 -1.5v-5.25"/>
+                    <path fill="none" d="M13.875 1.875a1.591 1.591 0 0 1 2.25 2.25L9 11.25l-3 0.75 0.75 -3 7.125 -7.125z"/>
                 </svg>
                 <text class="statText bold" x="25" y="12.5">
                     Top Editor:
@@ -204,7 +204,7 @@ export const insightsCardSetup = (req: Request, data: INSIGHTTYPE): string => {
                     y="12.5"
                     data-testid="editor"
                 >
-                    ${data.topEditor}
+                    ${data.topEditor.name} (${data.topEditor.percent.toFixed(1)}%)
                 </text>
             </g>
         </g>
@@ -223,7 +223,7 @@ export const insightsCardSetup = (req: Request, data: INSIGHTTYPE): string => {
                     y="12.5"
                     data-testid="os"
                 >
-                    ${data.topOS}
+                    ${data.topOS.name} (${data.topOS.percent.toFixed(1)}%)
                 </text>
             </g>
         </g>
