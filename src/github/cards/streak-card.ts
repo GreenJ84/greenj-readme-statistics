@@ -63,8 +63,8 @@ export const streakCardSetup = (req: Request, data: STREAKTYPE): string => {
             .label{
               fill: ${theme.statsMain};
               font-weight:700;
-              font-size:46px;
-              animation: currstreak 0.6s linear forwards 0.6s;
+              font-size:14px;
+              animation: fadein 0.6s linear forwards 0.6s;
             }
             .date{
               fill:${theme.dates};
@@ -105,7 +105,7 @@ export const streakCardSetup = (req: Request, data: STREAKTYPE): string => {
                     stroke="${theme.textMain}" 
                     font-family="Segoe UI, Ubuntu, sans-serif" font-weight="500" 
                     font-size="24px" font-style="normal" 
-                    style="opacity: 0; animation: fadeInAnimation 0.5s linear forwards 0.7s; letter-spacing: 2px;"
+                    style="opacity: 0; animation: fadein 0.5s linear forwards 0.7s; letter-spacing: 2px;"
                 >
                     ${ data.title }
                 </text>
