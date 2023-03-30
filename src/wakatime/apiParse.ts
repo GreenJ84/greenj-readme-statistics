@@ -27,7 +27,7 @@ const insightParse = (data: wakaResponse): INSIGHTTYPE => {
     const topCategory = data.categories[0];
     const topEditor = data.editors[0];
     const topOS = data.operating_systems[0];
-    const topMachine = data.machines[0];
+    const dailyAverage = data.daily_average_including_other_language;
 
     return {
         topLanguage: topLanguage,
@@ -35,7 +35,7 @@ const insightParse = (data: wakaResponse): INSIGHTTYPE => {
         topCategory: topCategory,
         topEditor: topEditor,
         topOS: topOS,
-        topMachine: topMachine,
+        dailyAverage: dailyAverage,
         theme: theme
     } as INSIGHTTYPE;
 }
