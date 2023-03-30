@@ -4,8 +4,7 @@ import { SUBMISSIONDATA } from "../leetcodeTypes";
 
 export const recentCard = (req: Request, data: SUBMISSIONDATA) => {
     const { username } = req.params;
-    const theme = data.theme;
-    baseCardThemeParse(req, theme);
+    const theme = baseCardThemeParse(req, data.theme);
 
     const {
         // Theme variables

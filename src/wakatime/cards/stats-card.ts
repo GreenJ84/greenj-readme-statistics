@@ -4,9 +4,8 @@ import { baseCardThemeParse } from "../../utils/utils";
 import { STATTYPE } from "../wakatimeTypes";
 
 export const statsCardSetup = (req: Request, data: STATTYPE): string => {
-    const theme: THEMETYPE = data.theme;
+    const theme: THEMETYPE = baseCardThemeParse(req, data.theme);
 
-    baseCardThemeParse(req, theme);
     const {
         ringColor,
         fireColor,
@@ -61,7 +60,7 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
         </style>
         <defs>
             <clipPath id="outer_rectangle">
-                <rect width="552" height="215" rx="10"/>
+                <rect width="552" height="215" rx="${theme.borderRadius}"/>
             </clipPath>
             <mask id="mask_out_ring_behind_fire">
                 <rect width="552" height="215" fill="white"/>

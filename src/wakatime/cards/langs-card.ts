@@ -4,11 +4,11 @@ import { baseCardThemeParse } from "../../utils/utils";
 import { LANGTYPE } from "../wakatimeTypes";
 
 export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
-    const theme: THEMETYPE = data.theme;
-
-    baseCardThemeParse(req, theme);
+    const theme: THEMETYPE = baseCardThemeParse(req, data.theme);
+    
     const {
         stats,
+        pieBackground,
         textMain,
         textSub,
         
@@ -24,6 +24,9 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
     if (textSub !== undefined) {
         theme.textSub = ("#" + textSub) as string;
     }
+    if (pieBackground !== undefined) {
+        theme.detailMain = ("#" + pieBackground) as string;
+    }
 
     if (title !== undefined) {
         data.title = title as string
@@ -31,7 +34,7 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
         data.title = `${req.params.username!}'s Language Stats`
     }
 
-    let pieOffset = 0;
+    let pieOffset = 0.0;
 
     return `
     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr' role="img" aria-labelledby="descId">
@@ -136,7 +139,7 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
             <g transform="translate(40, 50)">
                 <g transform="translate(0, 40)">
                     ${data.languages.slice(1, 6).map((lang, idx) => {
-                        `<g transform="translate(0, ${idx * 25})">
+                        return `<g transform="translate(0, ${idx * 25})">
                             <g class="stagger" style="animation-delay: 450ms">
                                 <circle cx="0" cy="4" r="6" fill="${lang.color}" />
                                 <text data-testid="lang-name" x="15" y="10" class="lang-name">
@@ -154,16 +157,16 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
                     transform="translate(380, 75)"
                 >
                     <!-- Percentage Chart -->
-                    <circle r="82" cx="0" cy="0" fill="${theme.background}"/>
-                        ${data.languages.map(lang => {
+                    <circle r="82" cx="0" cy="0" fill="${theme.detailMain}"/>
+                        ${data.languages.slice(0, 6).map(lang => {
                             let off = pieOffset;
                             pieOffset += lang.percent;
                             return `<circle r="40" cx="0" cy="0" 
                                 fill="none"
                                 stroke="${lang.color}"
                                 stroke-width="80"
-                                stroke-dasharray="calc(${lang.percent} * (251 / 100)) 502.655"
-                                transform="rotate(calc(${off}-90))"
+                                stroke-dasharray="calc(${lang.percent - .2} * (251 / 100)) 502.655"
+                                transform="rotate(${off/100*360 + .1})"
                             />`
                         })}
                 </g>

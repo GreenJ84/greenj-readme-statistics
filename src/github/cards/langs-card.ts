@@ -5,9 +5,8 @@ import { baseCardThemeParse } from "../../utils/utils";
 import { LANGTYPE } from "../githubTypes";
 
 export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
-    const theme = data.theme;
-
-    baseCardThemeParse(req, theme);
+    const theme = baseCardThemeParse(req, data.theme);
+    
     const {
         stats,
         textMain,

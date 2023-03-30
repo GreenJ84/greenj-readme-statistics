@@ -4,8 +4,7 @@ import { baseCardThemeParse } from "../../utils/utils";
 
 export const streakCard = (req: Request, data: STREAKDATA): string => {
     const { username } = req.params;
-    const theme = data.theme;
-    baseCardThemeParse(req, theme);
+    const theme = baseCardThemeParse(req, data.theme);
 
     const {
         ringColor,

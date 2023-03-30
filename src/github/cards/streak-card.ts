@@ -5,9 +5,8 @@ import { baseCardThemeParse } from "../../utils/utils";
 import { STREAKTYPE } from "../githubTypes";
 
 export const streakCardSetup = (req: Request, data: STREAKTYPE): string => {
-  const theme = data.theme;
-
-  baseCardThemeParse(req, theme);
+    const theme = baseCardThemeParse(req, data.theme);
+    
   const {
     ringColor,
     fireColor,

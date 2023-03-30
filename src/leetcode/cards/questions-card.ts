@@ -4,8 +4,7 @@ import { QUESTIONDATA } from "../leetcodeTypes";
 
 export const questionsCard = (req: Request, data: QUESTIONDATA): string => {
     const { username } = req.params;
-    const theme = data.theme;
-    baseCardThemeParse(req, theme);
+    const theme = baseCardThemeParse(req, data.theme);
 
     const {
         // Theme variables
