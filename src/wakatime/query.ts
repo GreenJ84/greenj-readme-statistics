@@ -18,7 +18,9 @@ export const getUserStats = async (req: Request): Promise<wakaResponse | Error> 
     const data = await config.get(`users/${username}/stats/all_time`, {
         params: {}
     })
-        .then(res => { return res.data as wakaResponse })
+        .then(res => {
+            return res.data.data as wakaResponse
+        })
         .catch(err => { return {
             message: "Error accessing WakaTime API",
             error: err,

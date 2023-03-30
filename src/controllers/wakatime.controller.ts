@@ -28,9 +28,10 @@ export const getProfileStats = async (req: Request, res: Response): Promise<void
     } 
     // parse needed data properly
     const parsedData = dataParse(data);
-
+    console.log((data as wakaResponse).languages)
+    console.log(parsedData)
     // create card from parsed data
-    const card = cardCreate(parsedData);
+    const card: string = cardCreate(req, parsedData);
 
     res.status(200).send(card);
 }

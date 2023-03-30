@@ -73,6 +73,7 @@ export const baseCardThemeParse = (req: Request, _theme: THEMETYPE) => {
     } else {
         _theme.locale = 'en-US';
     }
+    return _theme;
 }
 
 export function parse_cookie(cookie: string): Record<string, string> {
