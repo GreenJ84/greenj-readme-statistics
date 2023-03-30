@@ -22,6 +22,12 @@ export interface GraphQLError {
     error_code: number
 }
 
+export interface Error {
+    message: string,
+    error: any,
+    error_code: number
+}
+
 export interface GraphQLQuery {
     variables?: { [key: string]: unknown };
     query: DocumentNode;
