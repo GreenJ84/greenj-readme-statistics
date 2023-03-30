@@ -7,13 +7,13 @@ import { statsCardSetup } from "./cards/stats-card"
 export const cardDirect = (type: string): Function => {
     const cardFunc: Function = match(type)
         .with ("insights", () => {
-            return () => insightsCardSetup
+            return insightsCardSetup
         })
         .with("languages", () => {
-            return () => langsCardSetup
+            return langsCardSetup
         })
         .with("stats", () => {
-            return () => statsCardSetup
+            return statsCardSetup
         })
         .run()
     return cardFunc;
@@ -21,7 +21,7 @@ export const cardDirect = (type: string): Function => {
 
 export const langColor = (lang: string): string => {
     let colorCode = "";
-    if (lang in Object.keys(githubColorMapping)) {
+    if (githubColorMapping[lang] !== undefined) {
         colorCode = githubColorMapping[lang]!;
     } else {
         const random = Math.floor(Math.random()*COLORS.length-1);
