@@ -22,17 +22,17 @@ export const getProfileStats = async (req: Request, res: Response) => {
     // Initialize data query
     let variables = { login: req.params.username! }
     const data = await preQery(req, res, variables)
-        .then((data: GraphQLResponse | GraphQLError) => {
-            if ((data as GraphQLError).error !== undefined) {
-                res.status(400).send(data);
-            }
-            return data as GraphQLResponse;
-        })
+        .then((data) => { return data });
+
+    if ((data as GraphQLError).error !== undefined) {
+        res.status(400).send(data);
+        return;
+    }
 
     // Get Function to parse data type
     const parse = getResponseParse(req);
     const parsedData: ReadMeData = parse(data)
-
+    console.log(parsedData)
     // Get Function to create svg card for data type
     const createCard: Function = cardDirect(req);
     const card: string = createCard(req, parsedData);
@@ -115,4 +115,5 @@ export const getCommitStreak = async (req: Request, res: Response) => {
     
     const card: string = streakCardSetup(req, streak);
     res.status(200).send(card);
+    return;
 };
