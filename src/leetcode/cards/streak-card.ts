@@ -93,7 +93,6 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
             </clipPath>
         </defs>
         <g clip-path='url(#outer_rectangle)'>
-            
             <g style='isolation: isolate'>
                 <rect stroke='${theme.hideBorder ? theme.background : theme.border}' fill='${theme.background}' rx='${theme.borderRadius}' x="1.5" y="1.5" stroke-width="2" width="549" height="212"/>
             </g>
@@ -155,8 +154,7 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
                 </g>
                 <!-- Fire cutout -->
                 <g>
-                    <circle cx='276' cy='56' r='20' fill='none'
-                    stroke='none' stroke-width='5' style='opacity: 0; animation: fadein 0.5s linear forwards 0.4s'>
+                    <circle cx='276' cy='56' r='20' fill='${theme.background}' stroke='${theme.background}' stroke-width='5' style='opacity: 0; animation: fadein 0.5s linear forwards 0.4s'>
                     </circle>
                 </g>
                 <!-- fire icon -->
