@@ -2,6 +2,11 @@ import { Request } from 'express';
 import redis from 'redis';
 const client = redis.createClient();
 
+client.on("error", err => console.error(`Redis client error: ${err}`))
+
+client.connect()
+    .then(() => console.log("Redis connection created."))
+
 export const getCacheData = async (req: Request): Promise<[boolean, object?]> => {
     try {
         const data = await client.get(
