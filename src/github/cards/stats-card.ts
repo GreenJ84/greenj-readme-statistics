@@ -130,7 +130,7 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
                 <rect
                     stroke="${ theme.hideBorder ? theme.background : theme.border}" 
                     fill="${theme.background}" rx="${theme.borderRadius}" 
-                    x="1.5" y="1.5" stroke-width="2" width="549" height="212""
+                    x="1.5" y="1.5" stroke-width="2" width="549" height="212"
                 />
             </g>
 
