@@ -203,18 +203,6 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
                             </text>
                         </g>
                     </g>
-    
-                    <g transform="translate(0, 90)">
-                        <g class="stagger" style="animation-delay: 900ms">
-                            <circle cx="5" cy="6" r="5" fill="${ data.languages[7]!.color }" />
-                            <text data-testid="lang-name" x="15" y="10" class='lang-name'>
-                                ${ data.languages[7]!.name }
-                            </text>
-                            <text data-testid="lang-name" x="140" y="10" class='lang-stat'>
-                                ${ (data.languages[7]!.usage)}%
-                            </text>
-                        </g>
-                    </g>
                 </g>
             </g>
         </g>
