@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import { preFlight } from '../utils/utils';
-import { Error } from '../utils/constants';
+import { ResponseError } from '../utils/constants';
 
 import { getUserStats } from '../wakatime/query';
 import { parseDirect } from '../wakatime/apiParse';
@@ -21,11 +21,11 @@ export const getProfileStats = async (req: Request, res: Response): Promise<void
     const dataParse = parseDirect(type);
     const cardCreate = cardDirect(type);
 
-    const data: wakaResponse | Error = await getUserStats(req);
-    if ((data as Error).error !== undefined) {
-        console.error((data as Error).message)
-        console.error((data as Error).error)
-        res.status((data as Error).error_code).send(data);
+    const data: wakaResponse | ResponseError = await getUserStats(req);
+    if ((data as ResponseError).error !== undefined) {
+        console.error((data as ResponseError).message)
+        console.error((data as ResponseError).error)
+        res.status((data as ResponseError).error_code).send(data);
         return;
     } 
 
