@@ -1,4 +1,5 @@
 import express from "express";
+
 import * as wakatime from '../controllers/wakatime.controller';
 
 export const WakaTimeRoutes = (app: express.Application) => {

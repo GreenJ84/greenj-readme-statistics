@@ -1,4 +1,5 @@
 import express from "express";
+
 import * as Github from '../controllers/github.controller';
 
 export const GithubRoutes = (app: express.Application) => {

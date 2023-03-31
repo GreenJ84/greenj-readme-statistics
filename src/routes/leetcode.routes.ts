@@ -1,4 +1,5 @@
 import express from "express";
+
 import * as LeetcodeController from "../controllers/leetcode.controller";
 
 export const LeetCodeRoutes = (app: express.Application) => {
