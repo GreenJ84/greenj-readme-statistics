@@ -22,7 +22,7 @@ export const leetcodeStats = async (req: Request, res: Response): Promise<void> 
     }
     // Silo of streak to its own controller
     if (type == "streak") {
-        leetcodeStreak(req, res);
+        leetcodeStreak(req, res, type);
         return
     }
     const parse = parseDirect(type);
@@ -44,17 +44,17 @@ export const leetcodeStats = async (req: Request, res: Response): Promise<void> 
 }
 
 // User Streak specific controller
-const leetcodeStreak = async (req: Request, res: Response): Promise<void> => {
-    const parseStreak = parseDirect("streak");
-    const streakCard = cardDirect("streak")
-    const path = getGraph("streak");
+const leetcodeStreak = async (req: Request, res: Response, type: string): Promise<void> => {
+    const parseStreak = parseDirect(type);
+    const streakCard = cardDirect(type)
+    const path = getGraph(type);
     
     const preSet = await preProbe(req, res);
     if (preSet == false) {
         return;
     }
     const [membershipYears, csrf_credential] = preSet as [number[], string];
-    
+
     const { username } = req.params;
     const streakData: STREAKDATA = {
         streak: [0, 0],

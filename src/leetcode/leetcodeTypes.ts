@@ -1,13 +1,12 @@
 import { THEMETYPE } from "../utils/themes";
 
-export enum LeetCodeGraphQLResponse {
-    ProbeResponse,
-    StreakResponse,
-    ProfileResponse,
-    QuesionsAnsweredResponse,
-    BadgeReponse,
+export type LeetCodeGraphQLResponse =
+    ProbeResponse |
+    StreakResponse |
+    ProfileResponse |
+    QuesionsAnsweredResponse |
+    BadgeReponse |
     RecentSubmissionResponse
-}
 export interface ProbeResponse{
     matchedUser: {
         userCalendar: {

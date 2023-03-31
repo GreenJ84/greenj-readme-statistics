@@ -31,7 +31,7 @@ export const cardDirect = (type: string): Function => {
     return parseFunc
 }
 
-// Maths......
+// Maths...... <Will cite creator's reference as I did not build this stat gerating function myself>
 const normalcdf = (mean: number, sigma: number, to: number): number => {
     var z = (to - mean) / Math.sqrt(2 * sigma * sigma);
     var t = 1 / (1 + 0.3275911 * Math.abs(z));
@@ -49,7 +49,7 @@ const normalcdf = (mean: number, sigma: number, to: number): number => {
     return (1 / 2) * (1 + sign * erf);
 };
 
-// also Maths.... but that leads to words
+// also Maths.... but that leads to words <Will cite creator's reference as I did not build this stat gerating function myself>
 export const calculateRank = (stats: PROFILEDATA): [string, number] => {
     const COMPLETION_OFFSET = 1.85;
     const REP_OFFSET = 1;
