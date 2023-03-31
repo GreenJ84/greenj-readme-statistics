@@ -30,10 +30,8 @@ export const leetcodeStats = async (req: Request, res: Response): Promise<void> 
 
 
     const data = await preQuery(req, res, type)
-    if ((data as ResponseError).error !== undefined) {
-        console.error((data as ResponseError).message)
-        console.error((data as ResponseError).error)
-        res.status((data as ResponseError).error_code).send(data);
+    // Check for returned data
+    if (data == false) {
         return;
     } 
     
@@ -55,8 +53,8 @@ const leetcodeStreak = async (req: Request, res: Response): Promise<void> => {
     if (preSet == false) {
         return;
     }
-
     const [membershipYears, csrf_credential] = preSet as [number[], string];
+    
     const { username } = req.params;
     const streakData: STREAKDATA = {
         streak: [0, 0],
@@ -73,7 +71,6 @@ const leetcodeStreak = async (req: Request, res: Response): Promise<void> => {
 
     // Call the universal leetCode querier for each year
     for (let year of membershipYears) {
-
         const data = await leetcodeGraphQL({
             query: graphql,
             variables: { username: username!, year: year }
@@ -88,6 +85,11 @@ const leetcodeStreak = async (req: Request, res: Response): Promise<void> => {
                     error_code: 500,
                 } as ResponseError;
             });
+        // Send API errors if they have occured
+        if ((data as ResponseError).error !== undefined) {
+            res.status((data as ResponseError).error_code).send(data);
+            return;
+        }
 
         parseStreak(streakData, data, year);
     }
