@@ -1,4 +1,5 @@
 import { match } from "ts-pattern"
+
 import { COLORS, githubColorMapping } from "../utils/colors"
 import { insightsCardSetup } from "./cards/insights-card"
 import { langsCardSetup } from "./cards/langs-card"

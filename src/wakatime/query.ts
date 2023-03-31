@@ -1,13 +1,21 @@
+import { Request } from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
-import { Request } from 'express';
-import { Error, WAKA_TIME_URL } from '../utils/constants';
+
 import { wakaResponse } from './wakatimeTypes';
+import { Error, WAKA_TIME_URL } from '../utils/constants';
 
 dotenv.config()
 
 export const getUserStats = async (req: Request): Promise<wakaResponse | Error> => {
     const { username } = req.params;
+    if (process.env.WAKATIME_TOKEN == undefined) {
+        return {
+            message: "Error accessing WakaTime API Token",
+            error: "WakaTime Token ENV variable missing",
+            error_code: 500
+        } as Error
+    }
 
     const config = axios.create({
         baseURL: WAKA_TIME_URL,

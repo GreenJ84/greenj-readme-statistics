@@ -1,7 +1,8 @@
 import { match } from "ts-pattern";
+
 import { THEMES } from "../utils/themes";
-import { INSIGHTTYPE, LANGTYPE, STATTYPE, wakaResponse } from "./wakatimeTypes";
 import { langColor } from "./wakatimeUtils";
+import { INSIGHTTYPE, LANGTYPE, STATTYPE, wakaResponse } from "./wakatimeTypes";
 
 export const parseDirect = (type: string): Function => {
     const parseFunc: Function = match(type)

@@ -23,13 +23,15 @@ export const getProfileStats = async (req: Request, res: Response): Promise<void
 
     const data: wakaResponse | Error = await getUserStats(req);
     if ((data as Error).error !== undefined) {
+        console.error((data as Error).message)
+        console.error((data as Error).error)
         res.status((data as Error).error_code).send(data);
         return;
     } 
+
     // parse needed data properly
     const parsedData = dataParse(data);
-    console.log((data as wakaResponse).languages)
-    console.log(parsedData)
+
     // create card from parsed data
     const card: string = cardCreate(req, parsedData);
 
