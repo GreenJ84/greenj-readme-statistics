@@ -1,16 +1,15 @@
 import { THEMETYPE } from "../utils/themes"
 
-export enum GraphQLResponse {
-    StreakResponse,
-    StreakProbe,
+export type GraphQLResponse =
+    StreakResponse |
+    StreakProbe |
     StatsResponse
-}
 
-export enum ReadMeData {
-    STREAKTYPE,
-    STATTYPE,
+
+export type ReadMeData =
+    STREAKTYPE |
+    STATTYPE |
     LANGTYPE
-}
 
 // Streak Related Types
 export interface StreakProbe{
@@ -45,7 +44,7 @@ export interface StreakResponse {
         date: string
     }
 export interface STREAKTYPE {
-    title: string
+    title?: string
     total: number
     totalText: string
     totalRange: string[]

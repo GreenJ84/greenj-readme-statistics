@@ -57,8 +57,7 @@ export async function githubGraphQL(query: GraphQLQuery): Promise<GraphQLError |
 };
 
 // Decide GraphQL query before execution
-export const preQery = async (req: Request, res: Response, variables: {}): Promise<GraphQLError | GraphQLResponse> => {
-    const type = req.path.split("/")[2]!;
+export const preQery = async (res: Response, variables: {}, type: string): Promise<GraphQLResponse | Boolean> => {
     const path = getGraph(type);
     const graphql = gql(
         fs.readFileSync(path, 'utf8')
@@ -78,7 +77,8 @@ export const preQery = async (req: Request, res: Response, variables: {}): Promi
         })
     // Return API errors if they have occured
     if ((data as GraphQLError).error !== undefined) {
-        res.status(400).send(data);
+        res.status((data as GraphQLError).error_code).send(data);
+        return false;
     }
     // Data to be returned will be of a valid response type
     return data as GraphQLResponse;
@@ -110,14 +110,15 @@ export const streakProbe = async (req: Request, res: Response): Promise<[string 
                 error_code: 500,
             } as GraphQLError;
         })
+
     // Return API errors if they have occured and flag call termination
     if ((data as GraphQLError).error !== undefined) {
-        res.status(400).send(data);
+        res.status((data as GraphQLError).error_code).send(data);
         return [false, [0]];
     } else {
         return [
-            (data as unknown as StreakProbe).user.createdAt,
-            [...(data as unknown as StreakProbe).user.contributionsCollection.contributionYears].sort()];
+            (data as GraphQLResponse as StreakProbe).user.createdAt,
+            [...(data as GraphQLResponse as StreakProbe).user.contributionsCollection.contributionYears].sort()];
     }
     
 }
