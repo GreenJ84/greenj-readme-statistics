@@ -15,13 +15,8 @@
         <clipPath id="outer_rectangle">
             <rect width="552" height="215" rx="10"/>
         </clipPath>
-        <mask id="mask_out_ring_behind_fire">
-            <rect width="552" height="215" fill="white"/>
-            <ellipse id="mask-ellipse" cx="247.5" cy="32" rx="13" ry="18" fill="black"/>
-        </mask>
     </defs>
     <g clip-path="url(#outer_rectangle)">
-        
         <g style="isolation: isolate">
             <rect stroke="#151515" fill="#FB8C00" rx="10" x="1.5" y="1.5" stroke-width="2" width="549" height="212"/>
         </g>

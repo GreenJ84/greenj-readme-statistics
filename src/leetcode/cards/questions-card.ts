@@ -45,13 +45,8 @@ export const questionsCard = (req: Request, data: QUESTIONDATA): string => {
     }
 
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation: isolate" viewBox="0 0 552 215" width="552px" height="215px" direction="ltr">
+    <title id="titleId">${data.title}</title>
     <style>
-        <title id="titleId">${data.title}</title>
-        .header {
-            font: 600 22px 'Segoe UI', Ubuntu, Sans-Serif;
-            fill: ${theme.textMain};
-            animation: fadeInAnimation 0.8s ease-in-out forwards;
-        }
         .stat {
             font: 400 14px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif;
             fill: ${theme.textSub};
@@ -139,12 +134,12 @@ export const questionsCard = (req: Request, data: QUESTIONDATA): string => {
     <g style='isolation: isolate'>
             <rect stroke='${ theme.hideBorder ? theme.background : theme.border}' fill='${theme.background}' rx='${theme.borderRadius}' x="1.5" y="1.5" stroke-width="2" width="549" height="212"/>
     </g>
-    <g transform="translate(25, 35)">
-        <g transform="translate(0, 0)">
-            <text x="0" y="0" class="header">
-                ${data.title}
-            </text>
-        </g>
+
+    <!-- Title -->
+    <g transform="translate(90,0)">
+        <text x="120.5" y="28" stroke-width="0" text-anchor="middle" fill="${theme.textMain}" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="24px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.7s; letter-spacing: 4px; text-shadow: 1px 1px 2px black;">
+            ${data.title}
+        </text>
     </g>
 
     <g transform="translate(0, 55)">

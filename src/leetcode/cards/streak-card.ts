@@ -101,8 +101,8 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
                 <line x1='184' y1='48' x2='184' y2='196' vector-effect='non-scaling-stroke' stroke-width='1' stroke='${theme.stroke}' stroke-linejoin='miter' stroke-linecap='square' stroke-miterlimit='3'/>
             </g>
             <!-- Title -->
-            <g transform='translate(90,0)'>
-                <text x='120.5' y='28' stroke-width='0' text-anchor='middle' fill='${theme.textMain}' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='400' font-size='24px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.7s; letter-spacing: 4px; text-shadow: 1px 1px 2px black;'>
+            <g transform="translate(90,0)">
+                <text x="120.5" y="28" stroke-width="0" text-anchor="middle" fill="${theme.textMain}" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="24px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.7s; letter-spacing: 4px; text-shadow: 1px 1px 2px black;">
                     ${data.title}
                 </text>
             </g>

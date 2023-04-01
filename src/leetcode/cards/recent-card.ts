@@ -54,9 +54,16 @@ export const recentCard = (req: Request, data: SUBMISSIONDATA) => {
     <title id="titleId">${data.title}</title>
     <style>
     .header {
-        font: 700 22px 'Segoe UI', Ubuntu, Sans-Serif;
-        fill: ${theme.textMain};
-        animation: fadeInAnimation 0.8s ease-in-out forwards;
+        fill: ${theme.textMain}
+        stroke: none;
+        font-family: \'Segoe UI\', Ubuntu, sans-serif;
+        font-weight: 400;
+        font-size: 24px;
+        font-style: normal;
+        opacity: 0; 
+        animation: fadein 0.5s linear forwards 0.7s; 
+        letter-spacing: 4px; 
+        text-shadow: 1px 1px 2px black;
     }
     
     .question {
@@ -114,11 +121,12 @@ export const recentCard = (req: Request, data: SUBMISSIONDATA) => {
             <rect stroke='${theme.hideBorder ? theme.background : theme.border}' fill='${theme.background}' rx='${theme.borderRadius}' x='0.5' y='0.5' width='551' height='339'/>
     </g>
     <g transform="translate(25, 35)">
-        <g transform="translate(0, 0)">
-            <text x="0" y="0" class="header">
-                ${data.title}
-            </text>
-        </g>
+    <!-- Title -->
+    <g transform="translate(90,0)">
+        <text x="120.5" y="28" stroke-width="0" text-anchor="middle" class="header">
+            ${data.title}
+        </text>
+    </g>
     </g>
 
     <g transform="translate(0, 55)">

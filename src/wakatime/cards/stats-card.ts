@@ -9,6 +9,7 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
     const {
         ringColor,
         fireColor,
+        stroke,
         dayAvg,
         sideStats,
         textMain,
@@ -18,25 +19,28 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
         title
     } = req.query;
     if (ringColor !== undefined) {
-        theme.detailMain = ("#" + ringColor) as string;
+        theme.detailMain = ("#" + ringColor);
     }
     if (fireColor !== undefined) {
-        theme.detailSub = ("#" + fireColor) as string;
+        theme.detailSub = ("#" + fireColor);
+    }
+    if (stroke !== undefined) {
+        theme.stroke = ("#" + stroke);
     }
     if (dayAvg !== undefined) {
-        theme.statsMain = ("#" + dayAvg) as string;
+        theme.statsMain = ("#" + dayAvg);
     }
     if (sideStats !== undefined) {
-        theme.statsSub = ("#" + sideStats) as string;
+        theme.statsSub = ("#" + sideStats);
     }
     if (textMain !== undefined) {
-        theme.textMain = ("#" + textMain) as string;
+        theme.textMain = ("#" + textMain);
     }
     if (textSide !== undefined) {
-        theme.textSub = ("#" + textSide) as string;
+        theme.textSub = ("#" + textSide);
     }
     if (dates !== undefined) {
-        theme.dates = ("#" + dates) as string;
+        theme.dates = ("#" + dates);
     }
 
     if (title !== undefined) {
@@ -45,7 +49,7 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
         data.title = `${req.params.username!}'s WakaTime Stats`
     }
 
-    return `<!-- GitHub Streak SVG -->
+    return `<!-- WakaTime Stats SVG -->
     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation: isolate" viewBox="0 0 552 215" width="552px" height="215px" direction="ltr">
         <style>
             @keyframes currstreak {
@@ -62,10 +66,6 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
             <clipPath id="outer_rectangle">
                 <rect width="552" height="215" rx="${theme.borderRadius}"/>
             </clipPath>
-            <mask id="mask_out_ring_behind_fire">
-                <rect width="552" height="215" fill="white"/>
-                <ellipse id="mask-ellipse" cx="247.5" cy="32" rx="13" ry="18" fill="black"/>
-            </mask>
         </defs>
         <g clip-path="url(#outer_rectangle)">
             <g style="isolation: isolate">
