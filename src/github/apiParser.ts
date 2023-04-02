@@ -19,8 +19,9 @@ export const getResponseParse = (req: Request): Function => {
 
 const streakParse = (streak: STREAKTYPE, data: StreakResponse) => {
     const created = streak.totalRange[0];
-    const midnightToday = new Date()
-    midnightToday.setHours(0,0,0,0)
+
+    const today = new Date();
+    const midnightToday = new Date(today.toISOString().substr(0, 10) + 'T00:00:00.000Z');
 
     let total = streak.total;
     let curr = streak.curr;
@@ -56,7 +57,7 @@ const streakParse = (streak: STREAKTYPE, data: StreakResponse) => {
                     lE = cE
                 }
                 // If its in the future, break and end search
-                if (new Date(day.date).getTime() > midnightToday.getTime()) {
+                if (new Date(day.date).getTime() >= midnightToday.getTime()) {
                     past = false;
                     break;
                 }
