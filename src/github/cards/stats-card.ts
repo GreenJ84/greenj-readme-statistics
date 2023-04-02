@@ -6,7 +6,7 @@ import { baseCardThemeParse } from "../../utils/utils";
 import { STATTYPE } from "../githubTypes";
 
 export const statsCardSetup = (req: Request, data: STATTYPE): string => {
-    const theme: THEMETYPE = baseCardThemeParse(req, data.theme);
+    const theme: THEMETYPE = baseCardThemeParse(req);
     
     const {
         scoreRing,
