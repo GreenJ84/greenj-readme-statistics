@@ -1,0 +1,36 @@
+query ($username: String!) {
+    allQuestionsCount {
+        difficulty
+        count
+    }
+    matchedUser(username: $username) {
+        contributions {
+            points
+        }
+        profile {
+            starRating
+            reputation
+            ranking
+        }
+        submitStats {
+            acSubmissionNum {
+                difficulty
+                count
+                submissions
+            }
+        }
+        badges {
+            id
+            displayName
+            icon
+            creationDate
+        }
+    }
+    recentSubmissionList(username: $username, limit: 60) {
+        title
+        titleSlug
+        timestamp
+        statusDisplay
+        lang
+    }
+}
