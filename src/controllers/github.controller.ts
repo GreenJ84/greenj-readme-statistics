@@ -30,7 +30,6 @@ export const getProfileStats = async (req: Request, res: Response) => {
     // Get Function to parse data type
     const parse = getResponseParse(req);
     const parsedData: ReadMeData = parse(data)
-    console.log(parsedData)
 
     // Get Function to create svg card for data type
     const createCard: Function = cardDirect(req);

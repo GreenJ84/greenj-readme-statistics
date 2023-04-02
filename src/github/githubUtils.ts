@@ -37,7 +37,7 @@ const normalcdf = (mean: number, sigma: number, to: number): number => {
 };
 
 // also Maths.... but that leads to words
-export const calculateRank = (stats: STATTYPE): string => {
+export const calculateRank = (stats: STATTYPE): [string, number] => {
     const COMMITS_OFFSET = 1.65;
     const CONTRIBS_OFFSET = 1.65;
     const ISSUES_OFFSET = 1;
@@ -87,5 +87,5 @@ export const calculateRank = (stats: STATTYPE): string => {
         return "B+";
     })();
 
-    return level;
+    return [level, normalizedScore];
 };
