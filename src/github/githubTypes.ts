@@ -91,7 +91,7 @@ export interface StatsResponse{
 }
 export interface STATTYPE{
     title?: string
-    grade?: string
+    grade?: [string, number]
     stars: number
     followers: number
     commits: number
