@@ -1,10 +1,9 @@
 import { Request } from 'express';
 import { match } from 'ts-pattern';
-import { THEMES } from '../utils/themes';
+
 import {  LangsResponse, LANGTYPE, Language, StatsResponse, STATTYPE, StreakResponse, STREAKTYPE } from './githubTypes';
 import { calculateRank } from './githubUtils';
 
-const theme = THEMES["black-ice"]!;
 
 
 export const getResponseParse = (req: Request): Function => {
@@ -90,12 +89,6 @@ const statsParse = (data: StatsResponse): STATTYPE => {
         issues: data.user.issues.totalCount,
         contributedTo: data.user.repositoriesContributedTo.totalCount,
         repos: data.user.repositories.totalCount,
-        theme: {
-            ...theme,
-            hideborder: false,
-            borderRadius: 10,
-            locale: 'en'
-        },
     }
     return {...stats, grade: calculateRank(stats)}
 }
@@ -159,12 +152,6 @@ const langsParse = (data: LangsResponse): LANGTYPE => {
         title: "GreenJ84's Languages Used",
         totalSize: totalSize,
         languages: topLangs,
-        theme: {
-            ...theme,
-            hideborder: false,
-            borderRadius: 10,
-            locale: 'en'
-        }
     }
 
     return stats;

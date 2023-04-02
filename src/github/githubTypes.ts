@@ -54,7 +54,7 @@ export interface STREAKTYPE {
     longest: number
     longestText: string
     longestDate: string[]
-    theme: THEMETYPE
+    theme?: THEMETYPE
 }
 
 
@@ -99,7 +99,7 @@ export interface STATTYPE{
     issues: number
     contributedTo: number,
     repos: number
-    theme: THEMETYPE
+    theme?: THEMETYPE
 }
 
 
@@ -133,5 +133,5 @@ export interface LANGTYPE {
     title?: string
     totalSize: number
     languages: Language[]
-    theme: THEMETYPE
+    theme?: THEMETYPE
 }
