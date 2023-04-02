@@ -87,6 +87,7 @@ const leetcodeStreak = async (req: Request, res: Response, type: string): Promis
             });
         // Send API errors if they have occured
         if ((data as ResponseError).error !== undefined) {
+            console.error(data as ResponseError)
             res.status((data as ResponseError).error_code).send(data);
             return;
         }

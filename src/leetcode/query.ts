@@ -7,7 +7,6 @@ import { USER_AGENT, GraphQLQuery, GRAPHQL_URL, ResponseError } from "../utils/c
 import { LeetCodeGraphQLResponse, ProbeResponse } from "./leetcodeTypes";
 
 import { get_csrf } from '../utils/credentials';
-import { getGraph } from './leetcodeUtils';
 import * as leetcode from '../leetcode/query';
 
 
@@ -55,15 +54,14 @@ export async function leetcodeGraphQL(query: GraphQLQuery, url: string, csrf: st
 // Set up up query, credential retrieval, Server level error handling
 export const preQuery = async (req: Request, res: Response, type: string):
 Promise<LeetCodeGraphQLResponse | Boolean> => {
-    
+    type;
     // Retrieve Cross-site forgery credentials
     const csrf_credential: string = await get_csrf()
     .then((result) => result.toString());
     
     // Get correct query based on api called
-    const path = getGraph(type);
     const graphql = gql(
-        fs.readFileSync(path, 'utf8')
+        fs.readFileSync('src/leetcode/graphql/leetcode-all-profile.graphql', 'utf8')
     );
     
     // Username which has to be there if preflight passed
@@ -88,7 +86,8 @@ Promise<LeetCodeGraphQLResponse | Boolean> => {
             } as ResponseError;
         })
         // Send API errors if they have occured
-        if ((data as ResponseError).error !== undefined) {
+    if ((data as ResponseError).error !== undefined) {
+            console.error(data as ResponseError)
             res.status((data as ResponseError).error_code).send(data);
             return false;
         }
