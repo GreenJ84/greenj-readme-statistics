@@ -1,9 +1,7 @@
 import { match } from "ts-pattern";
-import { THEMES } from "../utils/themes";
+
 import { BADGEDATA, BadgeReponse, PROFILEDATA, ProfileResponse, QuesionsAnsweredResponse, QUESTIONDATA, RecentSubmissionResponse, STREAKDATA, StreakResponse, SUBMISSIONDATA } from "./leetcodeTypes"
 import { calculateRank } from "./leetcodeUtils";
-
-const theme = THEMES["black-ice"]!
 
 // Returns the parse creation function depending on path
 export const parseDirect = (type: string): Function => {
@@ -31,7 +29,6 @@ const statsParse = (data: ProfileResponse): PROFILEDATA => {
     return {
         ...stats,
         grade: grade,
-        theme: theme
     };
 }
 
@@ -44,7 +41,6 @@ const badgesParse = (data: BadgeReponse): BADGEDATA => {
 
     return {
         badges: badges,
-        theme: theme
     };
 }
 
@@ -69,7 +65,6 @@ const questionsSolvedParse = (data: QuesionsAnsweredResponse): QUESTIONDATA => {
         medium: [medium, totalMedium],
         easy: [easy, totalEasy],
         acceptance: acceptance,
-        theme: theme
     };
 }
 
@@ -90,7 +85,6 @@ const recentQuestionsParse = (data: RecentSubmissionResponse): SUBMISSIONDATA =>
         })
     return {
         recentSubmissionList: recentSubmissions.recentSubmissionList.slice(0,6),
-        theme: theme
     };
 }
 

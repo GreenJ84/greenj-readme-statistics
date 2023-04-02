@@ -7,6 +7,7 @@ export type LeetCodeGraphQLResponse =
     QuesionsAnsweredResponse |
     BadgeReponse |
     RecentSubmissionResponse
+
 export interface ProbeResponse{
     matchedUser: {
         userCalendar: {
@@ -38,7 +39,7 @@ export interface STREAKDATA{
     mostActiveYear: number
     completion: string
     completionActuals: [number, number]
-    theme: THEMETYPE
+    theme?: THEMETYPE
 }
 
 
@@ -78,7 +79,7 @@ export interface PROFILEDATA {
     badges: number
     contributions: number
     grade: [string, number]
-    theme: THEMETYPE
+    theme?: THEMETYPE
 }
 
 
@@ -98,7 +99,7 @@ export interface BADGEDATA {
         icon: string;
         creationDate: string;
     }[]
-    theme: THEMETYPE
+    theme?: THEMETYPE
 }
 
 
@@ -125,7 +126,7 @@ export interface QUESTIONDATA {
     medium: [number, number]
     easy: [number, number]
     acceptance: string
-    theme: THEMETYPE
+    theme?: THEMETYPE
 }
 
 
@@ -149,5 +150,5 @@ export interface SUBMISSIONDATA {
         statusDisplay: string;
         lang: string;
     }[]
-    theme: THEMETYPE
+    theme?: THEMETYPE
 }
