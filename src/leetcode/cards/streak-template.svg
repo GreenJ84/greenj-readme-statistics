@@ -75,6 +75,9 @@
                 <text x='276' y='46' stroke-width='0' text-anchor='middle' fill='#151515' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='400' font-size='12px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.9s'>
                     date - date
                 </text>
+                <text x='460' y='65' stroke-width='0' text-anchor='middle' fill='#151515' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='400' font-size='12px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 1.4s'>
+                    total
+                </text>
             </g>
             <!-- ring around number -->
             <g mask='url(#mask_out_ring_behind_fire)'>
