@@ -1,6 +1,5 @@
 import { match } from "ts-pattern";
 
-import { THEMES } from "../utils/themes";
 import { langColor } from "./wakatimeUtils";
 import { INSIGHTTYPE, LANGTYPE, STATTYPE, wakaResponse } from "./wakatimeTypes";
 
@@ -20,7 +19,6 @@ export const parseDirect = (type: string): Function => {
     return parseFunc;
 }
 
-const theme = THEMES["black-ice"]!
 
 const insightParse = (data: wakaResponse): INSIGHTTYPE => {
     const topLanguage = data.languages[0];
@@ -37,7 +35,6 @@ const insightParse = (data: wakaResponse): INSIGHTTYPE => {
         topEditor: topEditor,
         topOS: topOS,
         dailyAverage: dailyAverage,
-        theme: theme
     } as INSIGHTTYPE;
 }
 
@@ -58,7 +55,6 @@ const languagesParse = (data: wakaResponse): LANGTYPE => {
 
     return {
         languages: languages,
-        theme: theme
     } as LANGTYPE
 }
 
@@ -77,6 +73,5 @@ const statParse = (data: wakaResponse): STATTYPE => {
         accountStart: accountStart,
         dailyAvg: dailyAvg,
         totalDevDays: totalDevDays,
-        theme: theme
     } as STATTYPE
 }

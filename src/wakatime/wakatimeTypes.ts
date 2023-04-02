@@ -70,7 +70,7 @@ export interface INSIGHTTYPE {
     topEditor: sectionObject
     topOS: sectionObject
     title?: string
-    theme: THEMETYPE
+    theme?: THEMETYPE
 }
 
 export interface LANGTYPE {
@@ -81,7 +81,7 @@ export interface LANGTYPE {
         color: string
     }[]
     title?: string
-    theme: THEMETYPE
+    theme?: THEMETYPE
 }
 
 export interface STATTYPE {
@@ -92,5 +92,5 @@ export interface STATTYPE {
     dailyAvg: string
     totalDevDays: number
     title?: string
-    theme: THEMETYPE
+    theme?: THEMETYPE
 }
