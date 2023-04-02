@@ -9,17 +9,18 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
     const theme: THEMETYPE = baseCardThemeParse(req);
     
     const {
-        scoreRing,
+        ring,
         icons,
         score,
         stats,
         textMain,
         textSub,
+
         title
     } = req.query;
 
-    if (scoreRing !== undefined) {
-        theme.detailMain = ("#" + scoreRing) as string;
+    if (ring !== undefined) {
+        theme.detailMain = ("#" + ring) as string;
     }
     if (icons !== undefined) {
         theme.detailSub = ("#" + icons) as string;
@@ -36,9 +37,10 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
     if (textSub !== undefined) {
         theme.textSub = ("#" + textSub) as string;
     }
+
     if (title != undefined) {
         data.title = title as string;
-    } else { data.title = "GreenJ84's GitHub Stats" }
+    } else { data.title = `${req.params.username!.length < 10 ? `${req.params.username!}'s`: "My"} GitHub Stats` }
 
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr' role="img" aria-labelledby="descId">
         <title id="titleId">${data.title}, Rank: ${data.grade}</title>
@@ -82,24 +84,24 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
                 opacity: 0.2;
             }
             .rank-circle {
-                stroke: ${ theme.detailMain };
-                stroke-dasharray: 250;
+                stroke: ${theme.detailMain};
+                stroke-dasharray: calc(${(100 - data.grade![1])} * (377 / 100)) 376.991;
                 fill: none;
-                stroke-width: 18;
-                stroke-linecap: round;
-                opacity: 0.8;
+                stroke-width: 14;
+                stroke-linecap: butt;
                 transform-origin: -10px 8px;
-                transform: rotate(-90deg);
                 animation: rankAnimation 1s forwards ease-in-out;
             }
             
             /* Animations */
             @keyframes rankAnimation {
                 from {
-                    stroke-dashoffset: 251.32741228718345;
+                    stroke-dashoffset: -200;
+                    transform: rotate(90deg);
                 }
                 to {
-                    stroke-dashoffset: 106.04382276211012;
+                    stroke-dashoffset: 0;
+                    transform: rotate(-90deg);
                 }
             }
             @keyframes scaleInAnimation {
@@ -125,7 +127,7 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
             </clipPath>
         </defs>
         <g clip-path="url(#outer_rectangle)">
-            <!-- Background -->
+        <!-- Background -->
             <g style="isolation: isolate">
                 <rect
                     stroke="${ theme.hideBorder ? theme.background : theme.border}" 
@@ -134,13 +136,14 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
                 />
             </g>
 
-            <!-- Title -->
+        <!-- Title -->
             <g transform="translate(90,0)">
-                <text x="120.5" y="28" stroke-width="0" text-anchor="middle" fill="${theme.textMain}" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="24px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.7s; letter-spacing: 4px; text-shadow: 1px 1px 2px black;">
+                <text x="120.5" y="28" stroke-width="0" text-anchor="middle" fill="${theme.textMain}" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="24px" font-style="normal" style="opacity: 0; animation: fadeInAnimation 0.5s linear forwards 0.7s; letter-spacing: 4px; text-shadow: 1px 1px 2px black;">
                     ${data.title}
                 </text>
             </g>
-            <!-- Rank Circle -->
+
+        <!-- Rank Circle -->
             <g
                 data-testid="rank-circle"
                 transform="translate(460.5, 100)"
@@ -153,7 +156,7 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
                     dominant-baseline="central"
                     text-anchor="middle"
                     >
-                        ${ data.grade }
+                        ${ data.grade![0] }
                     </text>
                 </g>
             </g>
