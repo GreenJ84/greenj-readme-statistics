@@ -1,6 +1,6 @@
 import { match } from "ts-pattern";
 
-import { BADGEDATA, BadgeReponse, PROFILEDATA, ProfileResponse, QuesionsAnsweredResponse, QUESTIONDATA, RecentSubmissionResponse, STREAKDATA, StreakResponse, SUBMISSIONDATA } from "./leetcodeTypes"
+import { ProfileResponse, BADGEDATA, PROFILEDATA, QUESTIONDATA, STREAKDATA, StreakResponse, SUBMISSIONDATA } from "./leetcodeTypes"
 import { calculateRank } from "./leetcodeUtils";
 
 // Returns the parse creation function depending on path
@@ -32,7 +32,7 @@ const statsParse = (data: ProfileResponse): PROFILEDATA => {
     };
 }
 
-const badgesParse = (data: BadgeReponse): BADGEDATA => {
+const badgesParse = (data: ProfileResponse): BADGEDATA => {
     let badges = [];
     for (let badge of data.matchedUser.badges) {
         let { id, ...badgeData } = badge;
@@ -44,7 +44,7 @@ const badgesParse = (data: BadgeReponse): BADGEDATA => {
     };
 }
 
-const questionsSolvedParse = (data: QuesionsAnsweredResponse): QUESTIONDATA => {
+const questionsSolvedParse = (data: ProfileResponse): QUESTIONDATA => {
     const ranking = data.matchedUser.profile.ranking;
     const all = data.matchedUser.submitStats.acSubmissionNum[0]!.count;
     const totalAll = data.allQuestionsCount[0]!.count;
@@ -69,8 +69,8 @@ const questionsSolvedParse = (data: QuesionsAnsweredResponse): QUESTIONDATA => {
 }
 
 
-const recentQuestionsParse = (data: RecentSubmissionResponse): SUBMISSIONDATA => {
-    const recentSubmissions: RecentSubmissionResponse = { recentSubmissionList: [] }
+const recentQuestionsParse = (data: ProfileResponse): SUBMISSIONDATA => {
+    const recentSubmissions: SUBMISSIONDATA = { recentSubmissionList: [] }
     const seen: { [key: string]: number } = {}
     
     // Throttle repeated questions from appearing excessively

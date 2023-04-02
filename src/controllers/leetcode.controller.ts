@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import gql from "graphql-tag";
 
 import { ResponseError, GRAPHQL_URL } from "../utils/constants";
-import { STREAKDATA } from "../leetcode/leetcodeTypes";
+import { ProfileResponse, STREAKDATA } from "../leetcode/leetcodeTypes";
 
 import { THEMES } from '../utils/themes';
 import { preFlight } from "../utils/utils";
@@ -35,7 +35,7 @@ export const leetcodeStats = async (req: Request, res: Response): Promise<void> 
         return;
     } 
     
-    const parsedData = parse(data);
+    const parsedData = parse(data as ProfileResponse);
 
     const card = createCard(req, parsedData);
 

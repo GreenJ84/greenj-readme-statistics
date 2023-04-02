@@ -3,10 +3,7 @@ import { THEMETYPE } from "../utils/themes";
 export type LeetCodeGraphQLResponse =
     ProbeResponse |
     StreakResponse |
-    ProfileResponse |
-    QuesionsAnsweredResponse |
-    BadgeReponse |
-    RecentSubmissionResponse
+    ProfileResponse
 
 export interface ProbeResponse{
     matchedUser: {
@@ -17,7 +14,10 @@ export interface ProbeResponse{
 }
 
 export interface StreakResponse {
-    allQuestionsCount: AllQuestionsCount[];
+    allQuestionsCount: {
+        difficulty: string;
+        count: number;
+    }[];
     matchedUser: {
         userCalendar: {
             streak: number
@@ -46,7 +46,10 @@ export interface STREAKDATA{
 
 
 export interface ProfileResponse {
-    allQuestionsCount: AllQuestionsCount[];
+    allQuestionsCount: {
+        difficulty: string;
+        count: number;
+    }[];
     matchedUser: {
         contributions: {
             points: number
@@ -54,6 +57,7 @@ export interface ProfileResponse {
         profile: {
             starRating: number
             reputation: number
+            ranking: number
         }
         submitStats: {
             acSubmissionNum: {
@@ -63,14 +67,22 @@ export interface ProfileResponse {
             }[]
         }
         badges: {
-            id: string
-        }[];
+            id: string;
+            displayName: string;
+            icon: string;
+            creationDate: string;
+        }[]
     }
+    recentSubmissionList: {
+        title: string;
+        titleSlug: string;
+        timestamp: string;
+        statusDisplay: string;
+        lang: string;
+    }[]
 }
-    interface AllQuestionsCount {
-        difficulty: string;
-        count: number;
-    }
+
+
 export interface PROFILEDATA {
     title?: string
     completion: string
@@ -81,18 +93,6 @@ export interface PROFILEDATA {
     grade: [string, number]
     theme?: THEMETYPE
 }
-
-
-export interface BadgeReponse {
-    matchedUser: {
-        badges: {
-            id: string;
-            displayName: string;
-            icon: string;
-            creationDate: string;
-        }[]
-    }
-}
 export interface BADGEDATA {
     badges: {
         displayName: string;
@@ -102,22 +102,6 @@ export interface BADGEDATA {
     theme?: THEMETYPE
 }
 
-
-export interface QuesionsAnsweredResponse {
-    allQuestionsCount: AllQuestionsCount[]
-    matchedUser: {
-        submitStats: {
-            acSubmissionNum: {
-                difficulty: string
-                count: number
-                submissions: number
-            }[]
-        }
-        profile: {
-            ranking: number
-        }
-    }
-}
 export interface QUESTIONDATA {
     title?:string
     ranking: number
@@ -127,18 +111,6 @@ export interface QUESTIONDATA {
     easy: [number, number]
     acceptance: string
     theme?: THEMETYPE
-}
-
-
-
-export interface RecentSubmissionResponse {
-    recentSubmissionList: {
-        title: string;
-        titleSlug: string;
-        timestamp: string;
-        statusDisplay: string;
-        lang: string;
-    }[]
 }
 
 export interface SUBMISSIONDATA {
