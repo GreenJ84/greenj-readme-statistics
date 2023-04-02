@@ -39,7 +39,7 @@ function normalizeParam(param: string): string {
     return param.toLowerCase().replace("_", "-");
 }
 
-export const baseCardThemeParse = (req: Request, _theme: THEMETYPE) => {
+export const baseCardThemeParse = (req: Request) => {
     const {
         theme,
         background,
@@ -51,16 +51,13 @@ export const baseCardThemeParse = (req: Request, _theme: THEMETYPE) => {
         locale,
     } = req.query;
 
+    let _theme: THEMETYPE = THEMES["default"]!
     // Set all properties base to theme first
     if (theme != undefined) {
         const normTheme = normalizeParam(theme as string)
         if ((normTheme as string) in THEMES) {
             _theme = THEMES[normTheme]!
-        } else {
-            _theme = THEMES["default"]!
         }
-    } else {
-        _theme = THEMES["default"]!
     }
 
     if (background !== undefined) {
