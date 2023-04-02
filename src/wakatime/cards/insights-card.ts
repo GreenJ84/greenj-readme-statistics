@@ -5,7 +5,7 @@ import { INSIGHTTYPE } from "../wakatimeTypes";
 
 
 export const insightsCardSetup = (req: Request, data: INSIGHTTYPE): string => {
-    const theme: THEMETYPE = baseCardThemeParse(req, data.theme);
+    const theme: THEMETYPE = baseCardThemeParse(req);
     
     const {
         icons,

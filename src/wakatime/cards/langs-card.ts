@@ -4,7 +4,7 @@ import { baseCardThemeParse } from "../../utils/utils";
 import { LANGTYPE } from "../wakatimeTypes";
 
 export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
-    const theme: THEMETYPE = baseCardThemeParse(req, data.theme);
+    const theme: THEMETYPE = baseCardThemeParse(req);
     
     const {
         stats,
