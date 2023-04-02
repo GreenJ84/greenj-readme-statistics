@@ -4,7 +4,7 @@ import { baseCardThemeParse } from "../../utils/utils";
 
 export const statsCard = (req: Request, data: PROFILEDATA): string => {
     const { username } = req.params;
-    const theme = baseCardThemeParse(req, data.theme);
+    const theme = baseCardThemeParse(req);
 
     const {
         // Theme variables
