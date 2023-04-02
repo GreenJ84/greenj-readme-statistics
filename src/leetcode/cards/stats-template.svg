@@ -105,8 +105,8 @@
             data-testid="rank-circle"
             transform="translate(460.5, 100)"
         >
-            <circle class="rank-circle-rim" cx="-10" cy="8" r="55" />
-            <circle class="rank-circle" cx="-10" cy="8" r="55" />
+            <circle class="rank-circle-rim" cx="-10" cy="8" r="60" />
+            <circle class="rank-circle" cx="-10" cy="8" r="60" />
             <g class="rank-text">
                 <text x="-5" y="3"
                 alignment-baseline="central"

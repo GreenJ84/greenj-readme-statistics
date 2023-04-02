@@ -3,15 +3,14 @@ import { Request } from "express";
 import { baseCardThemeParse } from "../../utils/utils";
 
 export const statsCard = (req: Request, data: PROFILEDATA): string => {
-    const { username } = req.params;
     const theme = baseCardThemeParse(req);
 
     const {
         // Theme variables
         ring,
-        icons,
+        icon,
         score,
-        stats,
+        stat,
         textMain,
         textSub,
         // Card variables
@@ -21,14 +20,14 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
     if (ring !== undefined) {
         theme.detailMain = ("#" + ring) as string;
     }
-    if (icons !== undefined) {
-        theme.detailSub = ("#" + icons) as string;
+    if (icon !== undefined) {
+        theme.detailSub = ("#" + icon) as string;
     }
     if (score !== undefined) {
         theme.statsMain = ("#" + score) as string;
     }
-    if (stats !== undefined) {
-        theme.statsSub = ("#" + stats) as string;
+    if (stat !== undefined) {
+        theme.statsSub = ("#" + stat) as string;
     }
     if (textMain !== undefined) {
         theme.textMain = ("#" + textMain) as string;
@@ -38,10 +37,9 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
     }
 
 
-
     if (title != undefined) {
         data.title = title as string;
-    } else { data.title = `${username} Leetcode Stats` }
+    } else { data.title = `${req.params.username!.length < 10 ? req.params.username! : "My"} Leetcode Stats` }
 
 
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr' role="img" aria-labelledby="descId">
@@ -61,7 +59,6 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
         /* Selector detects Firefox */
             .stat { font-size:12px; }
         }
-      
         .stagger {
             opacity: 0;
             animation: fadeInAnimation 0.3s ease-in-out forwards;
@@ -88,28 +85,28 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
         .rank-circle-rim {
             stroke: ${theme.detailMain};
             fill: none;
-            stroke-width: 10;
+            stroke-width: 8;
             opacity: 0.2;
         }
         .rank-circle {
             stroke: ${theme.detailMain};
-            stroke-dasharray: 400;
+            stroke-dasharray: calc(${(100 - data.grade[1])} * (377 / 100)) 376.991;
             fill: none;
             stroke-width: 14;
-            stroke-linecap: round;
-            opacity: 0.8;
+            stroke-linecap: butt;
             transform-origin: -10px 8px;
-            transform: rotate(-90deg);
             animation: rankAnimation 1s forwards ease-in-out;
         }
         
         /* Animations */
         @keyframes rankAnimation {
             from {
-                stroke-dashoffset: 400;
+                stroke-dashoffset: -200;
+                transform: rotate(90deg);
             }
             to {
-                stroke-dashoffset: ${Math.max(data.grade[1]*3/8, 10)};
+                stroke-dashoffset: 0;
+                transform: rotate(-90deg);
             }
         }
         @keyframes scaleInAnimation {
@@ -135,24 +132,26 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
         </clipPath>
     </defs>
     <g clip-path="url(#outer_rectangle)">
-        <!-- Background -->
+
+    <!-- Background -->
         <g style="isolation: isolate">
             <rect stroke="${ theme.hideBorder ? theme.background : theme.border}" fill="${theme.background}" rx="${theme.borderRadius}" x="1.5" y="1.5" stroke-width="2" width="549" height="212"/>
         </g>
 
-        <!-- Title -->
+    <!-- Title -->
         <g transform="translate(90,0)">
-            <text x="120.5" y="28" stroke-width="0" text-anchor="middle" fill="${theme.textMain}" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="24px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.7s; letter-spacing: 4px; text-shadow: 1px 1px 2px black;">
+            <text x="120.5" y="28" stroke-width="0" text-anchor="middle" fill="${theme.textMain}" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="24px" font-style="normal" style="opacity: 0; animation: fadeInAnimation 0.5s linear forwards 0.7s; letter-spacing: 4px; text-shadow: 1px 1px 2px black;">
                 ${data.title}
             </text>
         </g>
-        <!-- Rank Circle -->
+
+    <!-- Rank Circle -->
         <g 
             data-testid="rank-circle"
-            transform="translate(460.5, 100)"
+            transform="translate(460.5, 120)"
         >
-            <circle class="rank-circle-rim" cx="-10" cy="8" r="55" />
-            <circle class="rank-circle" cx="-10" cy="8" r="55" />
+            <circle class="rank-circle-rim" cx="-10" cy="8" r="60" />
+            <circle class="rank-circle" cx="-10" cy="8" r="60" />
             <g class="rank-text">
                 <text x="-5" y="3"
                 alignment-baseline="central"
@@ -163,7 +162,8 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
                 </text>
             </g>
         </g>
-        <!-- Completion -->
+
+    <!-- Completion -->
         <g transform="translate(0, 60)">
             <g class="stagger" style="animation-delay: 600ms" transform="translate(15, 0)">
                 <svg data-testid="icon" class="icon" viewBox="0 0 16 16" version="1.1" width="16" height="16">
@@ -182,7 +182,8 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
                 </text>
             </g>
         </g>
-        <!-- Reputation -->
+
+    <!-- Reputation -->
         <g transform="translate(0, 90)">
             <g class="stagger" style="animation-delay: 600ms" transform="translate(15, 0)">
                 <svg data-testid="icon" class="icon" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="15px" viewBox="0 0 16 15" enable-background="new 0 0 256 240" xml:space="preserve">
@@ -201,7 +202,8 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
                 </text>
             </g>
         </g>
-        <!-- Stars -->
+
+    <!-- Stars -->
         <g transform="translate(0, 120)">
             <g class="stagger" style="animation-delay: 750ms" transform="translate(15, 0)">
                 <svg data-testid="icon" class="icon" version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16" xml:space="preserve" width="16" height="16">
@@ -230,7 +232,8 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
                 </text>
             </g>
         </g>
-        <!-- Badges -->
+
+    <!-- Badges -->
         <g transform="translate(0, 150)">
             <g class="stagger" style="animation-delay: 1050ms" transform="translate(15, 0)">
                 <svg data-testid="icon" class="icon" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16 16" style="enable-background:new 0 0 511.999 511.999;" xml:space="preserve" width="16" height="16">
@@ -256,7 +259,8 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
                 </text>
             </g>
         </g>
-        <!-- Contributions -->
+
+    <!-- Contributions -->
         <g transform="translate(0, 180)">
             <g class="stagger" style="animation-delay: 1050ms" transform="translate(15, 0)">
                 <svg data-testid="icon" class="icon" viewBox="0 0 16 16" version="1.1" width="16" height="16">
