@@ -1,27 +1,28 @@
 /** @format */
 
 import { Request } from "express";
-import { baseCardThemeParse } from "../../utils/utils";
+import { baseCardThemeParse, getFormatDate } from "../../utils/utils";
 import { STREAKTYPE } from "../githubTypes";
 
 export const streakCardSetup = (req: Request, data: STREAKTYPE): string => {
-    const theme = baseCardThemeParse(req);
-    
+  const theme = baseCardThemeParse(req);
+
   const {
-    ringColor,
-    fireColor,
+    ring,
+    fire,
     currStreak,
     statsSide,
     textMain,
     textSide,
     dates,
-    title
+
+    title,
   } = req.query;
-  if (ringColor !== undefined) {
-    theme.detailMain = ("#" + ringColor) as string;
+  if (ring !== undefined) {
+    theme.detailMain = ("#" + ring) as string;
   }
-  if (fireColor !== undefined) {
-    theme.detailSub = ("#" + fireColor) as string;
+  if (fire !== undefined) {
+    theme.detailSub = ("#" + fire) as string;
   }
   if (currStreak !== undefined) {
     theme.statsMain = ("#" + currStreak) as string;
@@ -40,9 +41,16 @@ export const streakCardSetup = (req: Request, data: STREAKTYPE): string => {
   }
 
   if (title !== undefined) {
-    data.title = title as string
+    data.title = title as string;
   } else {
-    data.title = `${req.params.username!}'s Commit Streak`
+    data.title = `${req.params.username!.length < 10 ? `${req.params.username!}'s` : "My"} Commit Streak`;
+  }
+
+  function checkDate(date: string): string {
+    if (new Date(date) == new Date()) {
+      return "Present"
+    }
+    return getFormatDate(date, theme.locale!);
   }
 
   return `<!-- GitHub Streak SVG -->
@@ -89,22 +97,26 @@ export const streakCardSetup = (req: Request, data: STREAKTYPE): string => {
             </clipPath>
         </defs>
         <g clip-path='url(#outer_rectangle)'>
+        <!-- Background -->
             <g style='isolation: isolate'>
                 <rect stroke='${theme.hideBorder ? "" : theme.border}' fill='${theme.background}' rx='${theme.borderRadius}' x="1.5" y="1.5" stroke-width="2" width="549" height="212"/>
             </g>
             <g style='isolation: isolate'>
+        <!-- Seperators -->
                 <line x1='368' y1='48' x2='368' y2='196' vector-effect='non-scaling-stroke' stroke-width='1' stroke='${theme.stroke}' stroke-linejoin='miter' stroke-linecap='square' stroke-miterlimit='3'/>
                 <line x1='184' y1='48' x2='184' y2='196' vector-effect='non-scaling-stroke' stroke-width='1' stroke='${theme.stroke}' stroke-linejoin='miter' stroke-linecap='square' stroke-miterlimit='3'/>
             </g>
-            <!-- Title -->
-            <g transform="translate(90,0)">
-                <text x="120.5" y="28" stroke-width="0" text-anchor="middle" fill="${theme.textMain}" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="24px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.7s; letter-spacing: 4px; text-shadow: 1px 1px 2px black;">
+
+        <!-- Title -->
+            <g>
+                <text x="20.5" y="28" stroke-width="0" text-anchor="start" fill="${theme.textMain}" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="24px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.7s; letter-spacing: 4px; text-shadow: 1px 1px 2px black;">
                     ${data.title}
                 </text>
             </g>
-            <!-- Left Side -->
+
+          <!-- Left Side -->
             <g style='isolation: isolate'>
-                <!-- Total Contributions Big Number -->
+                <!-- Total Contributions Number -->
                 <g transform='translate(1,48)'>
                     <text x='92' y='50' stroke-width='0' text-anchor='middle' class="stat">
                         ${data.total}
@@ -119,11 +131,11 @@ export const streakCardSetup = (req: Request, data: STREAKTYPE): string => {
                 <!-- total contributions range -->
                 <g transform='translate(1,114)'>
                     <text x='92' y='50' stroke-width='0' text-anchor='middle' class="date">
-                        ${data.totalRange[0]}-${data.totalRange[1]}
+                        ${ getFormatDate(data.totalRange[0]!, theme.locale!)} - Present
                     </text>
                 </g>
             </g>
-            <!-- Middle -->
+          <!-- Middle -->
             <g style='isolation: isolate'>
                 <!-- Current Streak Big Number -->
                 <g transform='translate(0,48)'>
@@ -140,9 +152,11 @@ export const streakCardSetup = (req: Request, data: STREAKTYPE): string => {
                 <!-- Current Streak Range -->
                 <g transform='translate(0,145)'>
                     <text x='276' y='46' stroke-width='0' text-anchor='middle' class="date">
-                    ${data.currDate[0]}-${data.currDate[1]}
+                    ${checkDate(data.currDate[0]!)} - ${checkDate(data.currDate[1]!)}
                     </text>
                 </g>
+
+            <!-- Ring detail -->
                 <!-- ring around number -->
                 <g mask='url(#mask_out_ring_behind_fire)'>
                     <circle cx='276' cy='102' r='38' fill='none' stroke='${theme.detailMain}' stroke-width='4' style='opacity: 0; animation: fadein 0.5s linear forwards 0.4s'>
@@ -159,7 +173,8 @@ export const streakCardSetup = (req: Request, data: STREAKTYPE): string => {
                     <path d=' M 249 20.17 C 249 20.17 249.74 22.82 249.74 24.97 C 249.74 27.03 248.39 28.7 246.33 28.7 C 244.26 28.7 242.7 27.03 242.7 24.97 L 242.73 24.61 C 240.71 27.01 239.5 30.12 239.5 33.5 C 239.5 37.92 243.08 41.5 247.5 41.5 C 251.92 41.5 255.5 37.92 255.5 33.5 C 255.5 28.11 252.91 23.3 249 20.17 Z  M 247.21 38.5 C 245.43 38.5 243.99 37.1 243.99 35.36 C 243.99 33.74 245.04 32.6 246.8 32.24 C 248.57 31.88 250.4 31.03 251.42 29.66 C 251.81 30.95 252.01 32.31 252.01 33.7 C 252.01 36.35 249.86 38.5 247.21 38.5 Z ' fill='${theme.detailSub}' stroke-opacity='0'/>
                 </g>
             </g>
-            <!-- Right Side -->
+
+        <!-- Right Side -->
             <g style='isolation: isolate'>
                 <!-- Longest Streak Big Number -->
                 <g transform='translate(0,48)'>
@@ -176,7 +191,7 @@ export const streakCardSetup = (req: Request, data: STREAKTYPE): string => {
                 <!-- Longest Streak Range -->
                 <g transform='translate(0,114)'>
                     <text x='460' y='50' stroke-width='0' text-anchor='middle' class="date">
-                    ${data.longestDate[0]}-${data.longestDate[1]}
+                    ${checkDate(data.longestDate[0]!)} - ${checkDate(data.longestDate[1]!)}
                     </text>
                 </g>
             </g>
