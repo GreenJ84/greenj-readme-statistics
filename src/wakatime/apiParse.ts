@@ -66,7 +66,7 @@ const statParse = (data: wakaResponse): STATTYPE => {
     const totalBest = (data.best_day.total_seconds / 60 / 60).toFixed(1);
     const bestDate = data.best_day.date;
     const totalDevSec = (data.total_seconds_including_other_language / 60 / 60).toFixed(1);
-    const accountStart = data.created_at.slice(0,10);
+    const accountStart = data.start.slice(0,10);
     const dailyAvg = (data.daily_average_including_other_language / 60 / 60).toFixed(1);
     const totalDevDays = data.days_minus_holidays;
 

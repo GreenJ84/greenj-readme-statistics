@@ -15,7 +15,6 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
         textMain,
         textSide,
         date,
-        locale,
 
         title
     } = req.query;
@@ -42,11 +41,6 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
     }
     if (date !== undefined) {
         theme.dates = ("#" + date);
-    }
-    if (locale !== undefined) {
-        theme.locale = (locale as string);
-    } else {
-        theme.locale = "en-US"
     }
 
     if (title !== undefined) {
@@ -113,7 +107,7 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
                 <!-- Best Day date -->
                 <g transform="translate(1,114)">
                     <text x="92" y="50" stroke-width="0" text-anchor="middle" fill="${theme.dates}" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="12px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.8s">
-                        ${getFormatDate(data.bestDate, theme.locale)}
+                        ${getFormatDate(data.bestDate, theme.locale!)}
                     </text>
                 </g>
             </g>
@@ -141,7 +135,7 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
                         ${data.totalDevDays} active Waka days
                     </text>
                 </g>
-            <-- Main Stat Details -->
+            <!-- Main Stat Details -->
 
                 <!-- Ring around number -->
                 <g>
@@ -182,7 +176,7 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
                 <!-- Total Development Range -->
                 <g transform="translate(0,114)">
                     <text x="460" y="50" stroke-width="0" text-anchor="middle" fill="${theme.dates}" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="12px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 1.4s">
-                        ${getFormatDate(data.accountStart, theme.locale)} - Present
+                        ${getFormatDate(data.accountStart, theme.locale!)} - Present
                     </text>
                 </g>
             </g>
