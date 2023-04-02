@@ -22,7 +22,7 @@ export interface GraphQLError {
     error_code: number
 }
 
-export interface Error {
+export interface ResponseError {
     message: string,
     error: any,
     error_code: number
