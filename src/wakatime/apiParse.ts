@@ -46,7 +46,7 @@ const languagesParse = (data: wakaResponse): LANGTYPE => {
     data.languages.slice(0,6).map(lang => {
         topTotal += lang.total_seconds
     });
-    console.log(topTotal)
+    
     const languages = data.languages.slice(0,6).map(lang => {
         return {
             name: lang.name,
