@@ -7,11 +7,13 @@ import { ResponseError, GRAPHQL_URL } from "../utils/constants";
 import { LeetCodeGraphQLResponse, ProfileResponse, STREAKDATA } from "../leetcode/leetcodeTypes";
 
 import { THEMES } from '../utils/themes';
-import { preFlight } from "../utils/utils";
+import { preFlight, sleep } from "../utils/utils";
 import { parseDirect } from "../leetcode/apiParser";
 import {cardDirect, getGraph } from "../leetcode/leetcodeUtils";
 import { leetcodeGraphQL, preProbe, preQuery } from '../leetcode/query';
 import { getCacheData, setCacheData } from '../utils/cache';
+
+let sleepMod = -2;
 
 // Main Controller for GitHub
 export const leetcodeStats = async (req: Request, res: Response): Promise<void> => {
@@ -29,6 +31,9 @@ export const leetcodeStats = async (req: Request, res: Response): Promise<void> 
 
     const parse = parseDirect(subRoute);
     const createCard = cardDirect(subRoute);
+
+    sleepMod = (sleepMod + 2) % 10
+    await sleep(sleepMod);
 
     let data: LeetCodeGraphQLResponse;
     const [success, cacheData] = await getCacheData(key);

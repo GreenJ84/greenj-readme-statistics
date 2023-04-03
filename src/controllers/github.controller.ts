@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
 // API Global imports
-import { preFlight } from "../utils/utils";
+import { preFlight, sleep } from "../utils/utils";
 import { THEMES, THEMETYPE } from "../utils/themes";
 
 // GitHub specific imports
@@ -12,6 +12,7 @@ import { cardDirect } from "../github/githubUtils";
 import { streakCardSetup } from "../github/cards/streak-card";
 import { getCacheData, setCacheData } from "../utils/cache";
 
+let sleepMod = -2;
 
 // GitHub controller for all GitHub routes except - Commit Streak Data
 export const getProfileStats = async (req: Request, res: Response) => {
@@ -20,6 +21,9 @@ export const getProfileStats = async (req: Request, res: Response) => {
     }
     const type = req.path.split("/")[2]!;
     const key = `github:${req.params.username!}:profile`;
+
+    sleepMod = (sleepMod + 2) % 10
+    await sleep(sleepMod);
 
     let data: GraphQLResponse;
     const [success, cacheData] = await getCacheData(key);

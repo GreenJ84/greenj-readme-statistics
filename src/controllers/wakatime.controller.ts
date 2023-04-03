@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { preFlight } from '../utils/utils';
+import { preFlight, sleep } from '../utils/utils';
 import { ResponseError } from '../utils/constants';
 
 import { getUserStats } from '../wakatime/query';
@@ -8,6 +8,8 @@ import { parseDirect } from '../wakatime/apiParse';
 import { cardDirect } from '../wakatime/wakatimeUtils';
 import { wakaResponse } from '../wakatime/wakatimeTypes';
 import { getCacheData, setCacheData } from '../utils/cache';
+
+let sleepMod = -2;
 
 export const getProfileStats = async (req: Request, res: Response): Promise<void> => {
     // Ensure caller is viable
@@ -21,6 +23,9 @@ export const getProfileStats = async (req: Request, res: Response): Promise<void
     // Get data processing functionality for subRoute
     const dataParse = parseDirect(subRoute);
     const cardCreate = cardDirect(subRoute);
+
+    sleepMod = (sleepMod + 2) % 10
+    await sleep(sleepMod);
 
     // Try for cached data, Query API if not present
     let data: wakaResponse;
