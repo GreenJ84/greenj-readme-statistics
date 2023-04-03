@@ -7,6 +7,7 @@ import { getUserStats } from '../wakatime/query';
 import { parseDirect } from '../wakatime/apiParse';
 import { cardDirect } from '../wakatime/wakatimeUtils';
 import { wakaResponse } from '../wakatime/wakatimeTypes';
+import { getCacheData, setCacheData } from '../utils/cache';
 
 export const getProfileStats = async (req: Request, res: Response): Promise<void> => {
     // Ensure caller is viable
@@ -14,26 +15,35 @@ export const getProfileStats = async (req: Request, res: Response): Promise<void
         return;
     }
 
-    // Get API Route subtype
-    const type = req.path.split("/")[2]!;
+    const subRoute = req.path.split("/")[2]!;
+    const cacheKey = `wakatime:${req.params.username!}`
 
-    // Get data processing functionality for subtype
-    const dataParse = parseDirect(type);
-    const cardCreate = cardDirect(type);
+    // Get data processing functionality for subRoute
+    const dataParse = parseDirect(subRoute);
+    const cardCreate = cardDirect(subRoute);
 
-    const data: wakaResponse | ResponseError = await getUserStats(req);
-    if ((data as ResponseError).error !== undefined) {
-        console.error((data as ResponseError).message)
-        console.error((data as ResponseError).error)
-        res.status((data as ResponseError).error_code).send(data);
-        return;
-    } 
+    // Try for cached data, Query API if not present
+    let data: wakaResponse;
+    const [success, cacheData] = await getCacheData(cacheKey);
+    if (!success) {
+        // Query WakaTime api
+        const queryRepsonse: wakaResponse | ResponseError = await getUserStats(req);
+        if ((queryRepsonse as ResponseError).error !== undefined) {
+            res.status((queryRepsonse as ResponseError).error_code).send(queryRepsonse);
+            return;
+        } 
+        // Add new query data to cache
+        setCacheData(cacheKey, queryRepsonse as wakaResponse)
 
-    // parse needed data properly
+        data = queryRepsonse as wakaResponse;
+    }
+    else {
+        data = cacheData as wakaResponse;
+    }
+
+    // Parse Data, Build Card, and Send
     const parsedData = dataParse(data);
-
-    // create card from parsed data
     const card: string = cardCreate(req, parsedData);
-
     res.status(200).send(card);
+    return;
 }
