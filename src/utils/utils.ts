@@ -293,3 +293,8 @@ export const getFormatDate = (dateString: string, locale: string, format: string
         else return ""
     });
 }
+
+export function sleep(mod: number): Promise<void> {
+    const randomWait = Math.floor(Math.random() * (1000 * mod));
+    return new Promise((resolve) => {setTimeout(resolve, randomWait)});
+}
