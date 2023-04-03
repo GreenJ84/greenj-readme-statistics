@@ -17,7 +17,7 @@ export function sanitizeText(value: string): string {
 
 // Match CSS color name or 6-character hex code
 export function sanitizeColor(value: string): string {
-    const match = value.match(/^[a-z]{3,}(?:\s[a-z]{3,})?$|^#[0-9a-fA-F]{6}$/);
+    const match = value.match(/^[a-z]{3,}(?:\s[a-z]{3,})?$|^[0-9a-fA-F]{6}$/);
     if (match) {
         return match[0];
     } else {
@@ -66,7 +66,9 @@ export const preFlight = (req: Request, res: Response): boolean => {
             });
         return false;
     }
-    let accessCheck = checkBlacklistRequest(req, req.params.username!)
+    req.params.username = sanitizeUsername(req.params.username!)
+
+    let accessCheck = checkBlacklistRequest(req, req.params.username)
     if (!accessCheck[0]) {
         res.status(403).send(
             {
