@@ -7,6 +7,8 @@ import cacheControl from 'express-cache-controller';
 import { LeetCodeRoutes } from './src/routes/leetcode.routes';
 import { GithubRoutes } from './src/routes/github.routes';
 import { WakaTimeRoutes } from './src/routes/wakatime.routes';
+import { manageLimiter } from './src/utils/blacklist';
+import { ResponseError } from './src/utils/constants';
 
 const PORT = 8000
 
@@ -35,7 +37,11 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // Rate limiting the api
 const limiter = rateLimit({
     windowMs: 60 * 60 * 1000,
-    max: 100
+    max: 100,
+    handler: async (req, res) => {
+        const err: ResponseError = await manageLimiter(req);
+        res.status(err.error_code).send(err);
+    }
 });
 app.use('/', limiter);
 
