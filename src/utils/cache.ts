@@ -1,7 +1,11 @@
 import { RedisClientType, createClient } from 'redis';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 const client: RedisClientType = process.env.NODE_ENV === "production" ?
     createClient({
-            url: `redis://${process.env.REDIS_USER!}:${process.env.REDIS_PASS!}@${process.env.PROD_HOST!}:${parseInt(process.env.PROD_PORT!)}`
+            url: `redis://${process.env.REDIS_USER}:${process.env.REDIS_PASS}@${process.env.PROD_HOST}:${process.env.PROD_PORT}`
         })
     :
     createClient();
