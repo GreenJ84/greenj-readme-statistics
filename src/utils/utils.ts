@@ -5,7 +5,57 @@ import { createIntl, createIntlCache } from '@formatjs/intl';
 import { checkBlacklistRequest } from "./blacklist";
 import { THEMES, THEMETYPE } from "./themes";
 
+export function sanitizeText(value: string): string {
+    // Match letters, digits, underscores, and spaces
+    const match = value.match(/^[a-zA-Z_\s]+$/);
+    if (match) {
+        return match[0];
+    } else {
+        throw new Error(`Invalid text value: ${value}`);
+    }
+}
 
+// Match CSS color name or 6-character hex code
+export function sanitizeColor(value: string): string {
+    const match = value.match(/^[a-z]{3,}(?:\s[a-z]{3,})?$|^#[0-9a-fA-F]{6}$/);
+    if (match) {
+        return match[0];
+    } else {
+        throw new Error(`Invalid color value: ${value}`);
+    }
+}
+
+// Match any number
+export function sanitizeNumber(value: string): number {
+    const match = value.match(/^-?\d+(?:\.\d+)?$/);
+    if (match) {
+        return parseFloat(match[0]);
+    } else {
+        throw new Error(`Invalid number value: ${value}`);
+    }
+}
+
+// Match 'true' or 'false'
+export function sanitizeBoolean(value: string): boolean {
+    const match = value.match(/^(true|false)$/i);
+    if (match) {
+        return match[0].toLowerCase() === 'true';
+    } else {
+        throw new Error(`Invalid boolean value: ${value}`);
+    }
+}
+
+// Match alphanumeric characters and hyphens, with length between 1 and 39
+export function sanitizeUsername(value: string): string {
+    const match = value.match(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,39}$/i);
+    if (match) {
+        return match[0];
+    } else {
+        throw new Error(`Invalid username value: ${value}`);
+    }
+}
+
+// API Security
 export const preFlight = (req: Request, res: Response): boolean => {
     if (req.params.username == undefined) {
         res.status(400).send(
