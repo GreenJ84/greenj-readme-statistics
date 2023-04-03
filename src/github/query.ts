@@ -19,6 +19,7 @@ const getGraph = (type: string): string => {
         .with("trophies", () => {return "src/github/graphql/github-stats.graphql"})
         .with("languages", () => {return "src/github/graphql/github-langs.graphql"})
         .with("streak", () => { return "src/github/graphql/github-streak.graphql" })
+        .with("all", () => { return "src/github/graphql/github-all-profile.graphql" })
         .run()
     return graph
 }
@@ -58,7 +59,8 @@ export async function githubGraphQL(query: GraphQLQuery): Promise<GraphQLError |
 
 // Decide GraphQL query before execution
 export const preQery = async (res: Response, variables: {}, type: string): Promise<GraphQLResponse | Boolean> => {
-    const path = getGraph(type);
+    type;
+    const path = getGraph("all");
     const graphql = gql(
         fs.readFileSync(path, 'utf8')
     );
