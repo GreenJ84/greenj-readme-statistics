@@ -8,7 +8,7 @@ export const recentCard = (req: Request, data: SUBMISSIONDATA) => {
     const {
         // Theme variables
         question,
-        language,
+        sideStat,
         textMain,
         textSub,
         line,
@@ -19,8 +19,8 @@ export const recentCard = (req: Request, data: SUBMISSIONDATA) => {
     if (question !== undefined) {
         theme.statsMain = ("#" + question) as string;
     }
-    if (language !== undefined) {
-        theme.statsSub = ("#" + language) as string;
+    if (sideStat !== undefined) {
+        theme.statsSub = ("#" + sideStat) as string;
     }
     if (textMain !== undefined) {
         theme.textMain = ("#" + textMain) as string;

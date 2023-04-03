@@ -9,9 +9,9 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
         ring,
         fire,
         currStreak,
-        statsSide,
+        sideStat,
         textMain,
-        textSide,
+        textSub,
         dates,
 
         title
@@ -26,14 +26,14 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
     if (currStreak !== undefined) {
         theme.statsMain = ("#" + currStreak) as string;
     }
-    if (statsSide !== undefined) {
-        theme.statsSub = ("#" + statsSide) as string;
+    if (sideStat !== undefined) {
+        theme.statsSub = ("#" + sideStat) as string;
     }
     if (textMain !== undefined) {
         theme.textMain = ("#" + textMain) as string;
     }
-    if (textSide !== undefined) {
-        theme.textSub = ("#" + textSide) as string;
+    if (textSub !== undefined) {
+        theme.textSub = ("#" + textSub) as string;
     }
     if (dates !== undefined) {
         theme.dates = ("#" + dates) as string;

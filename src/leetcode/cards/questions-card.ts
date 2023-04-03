@@ -3,15 +3,14 @@ import { baseCardThemeParse } from "../../utils/utils";
 import { QUESTIONDATA } from "../leetcodeTypes";
 
 export const questionsCard = (req: Request, data: QUESTIONDATA): string => {
-    const { username } = req.params;
     const theme = baseCardThemeParse(req);
 
     const {
         // Theme variables
         ring,
-        totals,
         score,
         stats,
+        sideStat,
         textMain,
         textSub,
         // Card variables
@@ -21,8 +20,8 @@ export const questionsCard = (req: Request, data: QUESTIONDATA): string => {
     if (ring !== undefined) {
         theme.detailMain = ("#" + ring) as string;
     }
-    if (totals !== undefined) {
-        theme.detailSub = ("#" + totals) as string;
+    if (sideStat !== undefined) {
+        theme.detailSub = ("#" + sideStat) as string;
     }
     if (score !== undefined) {
         theme.statsMain = ("#" + score) as string;

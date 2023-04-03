@@ -13,7 +13,7 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
         dayAvg,
         sideStat,
         textMain,
-        textSide,
+        textSub,
         date,
 
         title
@@ -36,8 +36,8 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
     if (textMain !== undefined) {
         theme.textMain = ("#" + textMain);
     }
-    if (textSide !== undefined) {
-        theme.textSub = ("#" + textSide);
+    if (textSub !== undefined) {
+        theme.textSub = ("#" + textSub);
     }
     if (date !== undefined) {
         theme.dates = ("#" + date);

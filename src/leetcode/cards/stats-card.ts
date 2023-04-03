@@ -8,9 +8,9 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
     const {
         // Theme variables
         ring,
-        icon,
+        icons,
         score,
-        stat,
+        stats,
         textMain,
         textSub,
         // Card variables
@@ -20,14 +20,14 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
     if (ring !== undefined) {
         theme.detailMain = ("#" + ring) as string;
     }
-    if (icon !== undefined) {
-        theme.detailSub = ("#" + icon) as string;
+    if (icons !== undefined) {
+        theme.detailSub = ("#" + icons) as string;
     }
     if (score !== undefined) {
         theme.statsMain = ("#" + score) as string;
     }
-    if (stat !== undefined) {
-        theme.statsSub = ("#" + stat) as string;
+    if (stats !== undefined) {
+        theme.statsSub = ("#" + stats) as string;
     }
     if (textMain !== undefined) {
         theme.textMain = ("#" + textMain) as string;
