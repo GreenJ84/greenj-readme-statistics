@@ -14,7 +14,7 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
         sideStat,
         textMain,
         textSub,
-        date,
+        dates,
 
         title
     } = req.query;
