@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { preFlight, normalizeLocaleCode, normalizeParam, sanitizeText, sanitizeColor, sanitizeNumber, sanitizeBoolean, sanitizeUsername } from '../../src/utils/utils';
+import { preFlight, normalizeLocaleCode, normalizeParam, sanitizeText, sanitizeColor, sanitizeNumber, sanitizeBoolean, sanitizeUsername, sanitizeQuery } from '../../src/utils/utils';
 
 
 describe('sanitizeText', () => {
@@ -9,8 +9,8 @@ describe('sanitizeText', () => {
     expect(sanitizeText('synthwave')).toEqual('synthwave');
     expect(sanitizeText('buefy_dark')).toEqual('buefy_dark');
     // Titles
-    expect(sanitizeText('Commit Statistics')).toEqual('Commit Statistics');
-    expect(sanitizeText('My GitHub')).toEqual('My GitHub');
+    expect(sanitizeText('Commit_Statistics')).toEqual('Commit_Statistics');
+    expect(sanitizeText('My_GitHub')).toEqual('My_GitHub');
     });
 
     it('throws an error for invalid input', () => {
@@ -32,7 +32,7 @@ describe('sanitizeColor', () => {
     expect(sanitizeColor('abcdef')).toEqual('abcdef');
     expect(sanitizeColor('E4E2E2')).toEqual('E4E2E2');
     expect(sanitizeColor('FF3860')).toEqual('FF3860');
-    expect(sanitizeColor('2F97C1')).toEqual('2F97C1');
+    expect(sanitizeColor('9E9E9E')).toEqual('9E9E9E');
     expect(sanitizeColor('00AEFF')).toEqual('00AEFF');
     });
 
@@ -47,8 +47,8 @@ describe('sanitizeColor', () => {
 
 describe('sanitizeNumber', () => {
     it('returns the sanitized value for valid input', () => {
-    expect(sanitizeNumber('123')).toEqual(123);
-    expect(sanitizeNumber('-3.14')).toEqual(-3.14);
+    expect(sanitizeNumber('123')).toEqual("123");
+    expect(sanitizeNumber('-3.14')).toEqual("-3.14");
     });
 
     it('throws an error for invalid input', () => {
@@ -61,8 +61,8 @@ describe('sanitizeNumber', () => {
 
 describe('sanitizeBoolean', () => {
     it('returns the sanitized value for valid input', () => {
-    expect(sanitizeBoolean('true')).toEqual(true);
-    expect(sanitizeBoolean('FALSE')).toEqual(false);
+    expect(sanitizeBoolean('true')).toEqual("true");
+    expect(sanitizeBoolean('FALSE')).toEqual("false");
     });
 
     it('throws an error for invalid input', () => {
@@ -87,6 +87,94 @@ describe('sanitizeUsername', () => {
     });
     expect(() => sanitizeUsername('"<script>alert("Broken");</script>"')).toThrowError('Invalid username value: "<script>alert("Broken");</script>"');
     expect(() => sanitizeUsername('"axios.get("http://my.trojan.net")"')).toThrowError('Invalid username value: "axios.get("http://my.trojan.net")"');
+});
+
+describe('sanitizeQuery', () => {
+    const mockRequest = {
+        query: {}
+    } as Request;
+    it('returns the sanitized value for valid input', () => {
+        let request = { ...mockRequest } as Request;
+        request.query = {
+            "background": "151515",
+            "border": "E4E2E2",
+            "stroke": "E4E2E2",
+            "fire": "FB8C00",
+            "icons": "FB8C00",
+            "stats": "FEFEFE",
+            "textMain": "FB8C00",
+            "textSub": "FEFEFE",
+            "dates": "9E9E9E",
+        }
+        sanitizeQuery(request)
+        console.log(request.query)
+        expect(request.query).toEqual({
+            "background": "151515",
+            "border": "E4E2E2",
+            "stroke": "E4E2E2",
+            "fire": "FB8C00",
+            "icons": "FB8C00",
+            "stats": "FEFEFE",
+            "textMain": "FB8C00",
+            "textSub": "FEFEFE",
+            "dates": "9E9E9E",
+        });
+        request = { ...mockRequest } as Request;
+        request.query = {
+            "background": "151515",
+            "textMain": "FB8C00",
+            "textSub": "FEFEFE",
+            "dates": "9E9E9E",
+            "title": "My_New_Streak",
+            "borderRadius": "14",
+            "hideBorder": "true"
+        }
+        sanitizeQuery(request)
+        expect(request.query).toEqual({
+            "background": "151515",
+            "textMain": "FB8C00",
+            "textSub": "FEFEFE",
+            "dates": "9E9E9E",
+            "title": "My_New_Streak",
+            "borderRadius": "14",
+            "hideBorder": "true"
+        });
+    });
+
+    const iMock = {
+        query: {}
+    } as Request;
+
+    it('throws an error for invalid input', () => {
+        let request = { ...iMock } as Request;
+        request.query = {
+            "background": "151515",
+            "border": "E4E2E2",
+            "stroke": "E4E2 E2",
+            "fire": "FB/8C00",
+            "icons": "FB8$C00",
+            "stats": 'axios.get("http://my.trojan.net")"',
+            "textMain": "<script></script>",
+            "textSub": "<FEFEFE>",
+            "dates": "9^E9E",
+        }
+        sanitizeQuery(request)
+        expect(request.query).toEqual({
+            "background": "151515",
+            "border": "E4E2E2",
+        });
+        request = { ...iMock } as Request;
+        request.query = {
+            "background": "<script></script>",
+            "textMain": "FB8C$0",
+            "textSub": "FEF EFE",
+            "dates": "green yellow",
+            "borderRadius": "fourteen",
+            "hideBorder": "hidden"
+        }
+        sanitizeQuery(request)
+        expect(request.query).toEqual({});
+    });
 });
 
 
