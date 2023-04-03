@@ -1,6 +1,6 @@
 import express from "express";
 
-import {leetcodeStats} from "../controllers/leetcode.controller";
+import {leetcodeDaily, leetcodeStats} from "../controllers/leetcode.controller";
 
 export const LeetCodeRoutes = (app: express.Application) => {
     // Stars, contribution points, reputaion, rating
@@ -25,6 +25,6 @@ export const LeetCodeRoutes = (app: express.Application) => {
     )
     // Get a random leetcode problem title
     app.get('/leetcode/daily-question',
-        leetcodeStats
+        leetcodeDaily
     )
 }
