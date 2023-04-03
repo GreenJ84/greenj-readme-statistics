@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { THEMES } from '../../src/utils/themes';
-import { preFlight, normalizeLocaleCode, normalizeParam, sanitizeText, sanitizeColor, sanitizeNumber, sanitizeBoolean, sanitizeUsername, sanitizeQuery, baseCardThemeParse, parse_cookie } from '../../src/utils/utils';
+import { preFlight, normalizeLocaleCode, normalizeParam, sanitizeText, sanitizeColor, sanitizeNumber, sanitizeBoolean, sanitizeUsername, sanitizeQuery, baseCardThemeParse, parse_cookie, getFormatDate } from '../../src/utils/utils';
 
 
 describe('sanitizeText', () => {
@@ -323,5 +323,49 @@ describe("parse_cookie", () => {
     const cookie = "";
     const parsedCookie = parse_cookie(cookie);
     expect(parsedCookie).toEqual({});
+    });
+});
+
+describe('getFormatDate', () => {
+    const dateString = '2022-03-15T14:30:00.000Z';
+    
+    it('should format date with month and day only if current year', () => {
+        expect(getFormatDate(
+            new Date().getFullYear().toString() + dateString.slice(4),
+            'en-US')
+        ).toEqual('Mar 15');
+    });
+
+    it('should format date with year if not current year', () => {
+        expect(getFormatDate(dateString, 'en-US', 'MMM dd, yyyy')).toEqual('Mar 15, 2022');
+    });
+
+    it('should format date according to specified format', () => {
+        expect(getFormatDate(dateString, 'en-US', 'MM/dd/yyyy')).toEqual('03/15/2022');
+    });
+
+    it('formats the date correctly in French', () => {
+        const result = getFormatDate(dateString, 'fr-FR');
+        expect(result).toEqual('15 mars 2022');
+    });
+
+    it('formats the date correctly in German', () => {
+        const result = getFormatDate(dateString, 'de-DE');
+        expect(result).toEqual('15. März 2022');
+    });
+
+    it('formats the date correctly in Italian', () => {
+        const result = getFormatDate(dateString, 'it-IT');
+        expect(result).toEqual('15 mar 2022');
+    });
+
+    it('formats the date correctly in Spanish', () => {
+        const result = getFormatDate(dateString, 'es-ES');
+        expect(result).toEqual('15 mar 2022');
+    });
+
+    it('formats the date correctly in Portuguese with formatting', () => {
+        const result = getFormatDate(dateString, 'pt-PT', 'dd MMM yyyy');
+        expect(result).toEqual('15 Mar 2022');
     });
 });
