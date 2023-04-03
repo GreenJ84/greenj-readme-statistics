@@ -1,7 +1,16 @@
 import { RedisClientType, createClient } from 'redis';
 import dotenv from 'dotenv';
+import { LeetCodeGraphQLResponse } from '../leetcode/leetcodeTypes';
+import { GraphQLResponse } from '../github/githubTypes';
+import { wakaResponse } from '../wakatime/wakatimeTypes';
 
 dotenv.config();
+
+type cacheType = 
+    LeetCodeGraphQLResponse |
+    GraphQLResponse |
+    wakaResponse |
+    { times: number }
 
 const client: RedisClientType = process.env.NODE_ENV === "production" ?
     createClient({
@@ -15,7 +24,7 @@ client.on("error", err => console.error(`Redis client error: ${err}`))
 client.connect()
     .then(() => console.log("Redis connection created."))
 
-export const getCacheData = async (key: string): Promise<[boolean, object | null]> => {
+export const getCacheData = async (key: string): Promise<[boolean, cacheType | null]> => {
     try {
         const data = await client.get(
             key
