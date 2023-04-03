@@ -4,6 +4,7 @@ import { createIntl, createIntlCache } from '@formatjs/intl';
 
 import { checkBlacklistRequest } from "./blacklist";
 import { THEMES, THEMETYPE } from "./themes";
+import { COLORS } from './colors';
 
 export function sanitizeText(value: string): string {
     // Match letters, digits, underscores, and spaces
@@ -19,10 +20,16 @@ export function sanitizeText(value: string): string {
 export function sanitizeColor(value: string): string {
     const match = value.match(/^[a-z]{3,}(?:[a-z]{3,})?$|^[0-9a-fA-F]{6}$/);
     if (match) {
-        return match[0];
-    } else {
-        throw new Error(`Invalid color value: ${value}`);
+        if (COLORS.includes(match[0])) {
+            return match[0];
+        } else {
+            let hex = match[0].match(/^[0-9a-fA-F]{6}$/)
+            if (hex) {
+                return `#${hex[0]}`
+            }
+        }
     }
+    throw new Error(`Invalid color value: ${value}`);
 }
 
 // Match any number
@@ -189,13 +196,13 @@ export const baseCardThemeParse = (req: Request) => {
     }
 
     if (background !== undefined) {
-        _theme.background = ("#" + background) as string;
+        _theme.background = background as string;
     }
     if (border !== undefined) {
-        _theme.border = ("#" + border) as string;
+        _theme.border = border as string;
     }
     if (stroke !== undefined) {
-        _theme.stroke = ("#" + stroke) as string;
+        _theme.stroke = stroke as string;
     }
     
     if (hideBorder !== undefined) {

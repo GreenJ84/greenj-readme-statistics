@@ -30,11 +30,11 @@ describe('sanitizeColor', () => {
     expect(sanitizeColor('darkslateblue')).toEqual('darkslateblue');
     expect(sanitizeColor('palevioletred')).toEqual('palevioletred');
     // Hex Codes
-    expect(sanitizeColor('abcdef')).toEqual('abcdef');
-    expect(sanitizeColor('E4E2E2')).toEqual('E4E2E2');
-    expect(sanitizeColor('FF3860')).toEqual('FF3860');
-    expect(sanitizeColor('9E9E9E')).toEqual('9E9E9E');
-    expect(sanitizeColor('00AEFF')).toEqual('00AEFF');
+    expect(sanitizeColor('abcdef')).toEqual('#abcdef');
+    expect(sanitizeColor('E4E2E2')).toEqual('#E4E2E2');
+    expect(sanitizeColor('FF3860')).toEqual('#FF3860');
+    expect(sanitizeColor('9E9E9E')).toEqual('#9E9E9E');
+    expect(sanitizeColor('00AEFF')).toEqual('#00AEFF');
     });
 
     it('throws an error for invalid input', () => {
@@ -110,16 +110,17 @@ describe('sanitizeQuery', () => {
         sanitizeQuery(request)
         console.log(request.query)
         expect(request.query).toEqual({
-            "background": "151515",
-            "border": "E4E2E2",
-            "stroke": "E4E2E2",
-            "fire": "FB8C00",
-            "icons": "FB8C00",
-            "stats": "FEFEFE",
-            "textMain": "FB8C00",
-            "textSub": "FEFEFE",
-            "dates": "9E9E9E",
+            "background": "#151515",
+            "border": "#E4E2E2",
+            "stroke": "#E4E2E2",
+            "fire": "#FB8C00",
+            "icons": "#FB8C00",
+            "stats": "#FEFEFE",
+            "textMain": "#FB8C00",
+            "textSub": "#FEFEFE",
+            "dates": "#9E9E9E",
         });
+
         request = { ...mockRequest } as Request;
         request.query = {
             "background": "151515",
@@ -132,10 +133,10 @@ describe('sanitizeQuery', () => {
         }
         sanitizeQuery(request)
         expect(request.query).toEqual({
-            "background": "151515",
-            "textMain": "FB8C00",
-            "textSub": "FEFEFE",
-            "dates": "9E9E9E",
+            "background": "#151515",
+            "textMain": "#FB8C00",
+            "textSub": "#FEFEFE",
+            "dates": "#9E9E9E",
             "title": "My_New_Streak",
             "borderRadius": "14",
             "hideBorder": "true"
@@ -160,9 +161,10 @@ describe('sanitizeQuery', () => {
         }
         sanitizeQuery(request)
         expect(request.query).toEqual({
-            "background": "151515",
-            "border": "E4E2E2",
+            "background": "#151515",
+            "border": "#E4E2E2",
         });
+
         request = { ...iMock } as Request;
         request.query = {
             "background": "<script></script>",
@@ -250,9 +252,9 @@ describe('basicCardThemeParse', () => {
         });
 
         mockRequest.query = {
-            "background": "151515",
-            "border": "E4E2E2",
-            "stroke": "E4E2E2",
+            "background": "#151515",
+            "border": "#E4E2E2",
+            "stroke": "#E4E2E2",
             "hideBorder": "true"
         }
         card = baseCardThemeParse(mockRequest)
