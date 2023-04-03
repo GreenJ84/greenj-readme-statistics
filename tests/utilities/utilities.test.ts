@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { preFlight, normalizeLocaleCode, normalizeParam, sanitizeText, sanitizeColor, sanitizeNumber, sanitizeBoolean, sanitizeUsername, sanitizeQuery } from '../../src/utils/utils';
+import { THEMES } from '../../src/utils/themes';
+import { preFlight, normalizeLocaleCode, normalizeParam, sanitizeText, sanitizeColor, sanitizeNumber, sanitizeBoolean, sanitizeUsername, sanitizeQuery, baseCardThemeParse } from '../../src/utils/utils';
 
 
 describe('sanitizeText', () => {
@@ -229,5 +230,51 @@ describe('normalize Locale Code', () => {
     it('returns "en" if locale code is invalid', () => {
         expect(normalizeLocaleCode('')).toBe('en');
         expect(normalizeLocaleCode('invalidCode')).toBe('en');
+    });
+});
+
+describe('basicCardThemeParse', () => {
+    const defaultTheme = {
+        ...THEMES["default"]!,
+        hideBorder: false,
+        borderRadius: 10,
+        locale: 'en-US'
+    }
+    let mockRequest = {
+        query: {}
+    } as Request;
+    it('parses Theme Correctly from Request', () => {
+        mockRequest.query = {}
+        let card = baseCardThemeParse(mockRequest)
+        expect(card).toEqual({
+            ...defaultTheme
+        });
+
+        mockRequest.query = {
+            "background": "151515",
+            "border": "E4E2E2",
+            "stroke": "E4E2E2",
+            "hideBorder": "true"
+        }
+        card = baseCardThemeParse(mockRequest)
+        expect(card).toEqual({
+            ...defaultTheme,
+            background: "#151515",
+            border: "#E4E2E2",
+            stroke: "#E4E2E2",
+            hideBorder: true
+        });
+
+        mockRequest.query = {
+            "theme": "black-ice",
+            "borderRadius": "14",
+            "hideBorder": "true"
+        }
+        card = baseCardThemeParse(mockRequest)
+        expect(card).toEqual({
+            ...THEMES["black-ice"]!,
+            borderRadius: 14,
+            hideBorder: true
+        });
     });
 });
