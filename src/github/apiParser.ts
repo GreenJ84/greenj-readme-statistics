@@ -98,12 +98,11 @@ const statsParse = (data: StatsResponse): STATTYPE => {
 const langsParse = (data: LangsResponse): LANGTYPE => {
     let langs = {} as {[key:string]: Language}
     let repoNodes = data.user.repositories.nodes;
-    let hiddenRepos = ["Wed_Level4","Guessing_Game","Sun_Level4","Thur_Level4"]
-    let hiddenLangs = ["C", "C++","Cython","PowerShell"]
+    let hiddenLangs = ["C++","Cython","PowerShell"]
     // Filter non-language repos
     repoNodes
         .filter((node) => node.languages.edges.length > 0)
-        .filter((node) => !hiddenRepos.includes(node.name))
+        // .filter((node) => !hiddenRepos.includes(node.name))
     // Map them to an onject holding languages data
     .map((node) => {
         for (let lang of node.languages.edges) {
@@ -133,6 +132,7 @@ const langsParse = (data: LangsResponse): LANGTYPE => {
         .sort((a, b) => (langs[b]!.usage as number) - (langs[a]!.usage as number))
     sortedLangs
         .map(key => {
+
             totalSize += langs[key]!.usage as number
         })
     
@@ -150,7 +150,6 @@ const langsParse = (data: LangsResponse): LANGTYPE => {
         })
 
     let stats = {
-        title: "GreenJ84's Languages Used",
         totalSize: totalSize,
         languages: topLangs,
     }

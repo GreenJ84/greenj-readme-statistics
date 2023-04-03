@@ -11,6 +11,7 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
         stats,
         textMain,
         textSub,
+
         title
     } = req.query;
 
@@ -97,7 +98,7 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
     
             <!-- Title -->
             <g transform="translate(90,0)">
-                <text x="120.5" y="28" stroke-width="0" text-anchor="middle" fill="${theme.textMain}" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="24px" font-style="normal" style="opacity: 0; animation: fadein 0.5s linear forwards 0.7s; letter-spacing: 4px; text-shadow: 1px 1px 2px black;">
+                <text x="120.5" y="28" stroke-width="0" text-anchor="middle" fill="${theme.textMain}" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="24px" font-style="normal" style="opacity: 0; animation: fadeInAnimation 0.5s linear forwards 0.7s; letter-spacing: 4px; text-shadow: 1px 1px 2px black;">
                     ${data.title}
                 </text>
             </g>
@@ -119,91 +120,32 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
                 })}
                 
                 <g transform="translate(0, 40)">
-                    <g transform="translate(0, 0)">
+                ${data.languages.slice(0,4).map((lang, idx) => { return `<g transform="translate(0, ${idx * 30})">
                         <g class="stagger" style="animation-delay: 450ms">
-                            <circle cx="5" cy="6" r="5" fill="${ data.languages[0]!.color}" />
+                            <circle cx="5" cy="6" r="5" fill="${ lang.color}" />
                             <text data-testid="lang-name" x="15" y="10" class='lang-name'>
-                                ${ data.languages[0]!.name }
+                                ${ lang.name }
                             </text>
                             <text data-testid="lang-name" x="140" y="10" class='lang-stat'>
-                                ${( data.languages[0]!.usage)}%
+                                ${( lang.usage)}%
                             </text>
                         </g>
-                    </g>
-    
-                    <g transform="translate(0, 30)">
-                        <g class="stagger" style="animation-delay: 600ms">
-                            <circle cx="5" cy="6" r="5" fill="${ data.languages[1]!.color }" />
-                            <text data-testid="lang-name" x="15" y="10" class='lang-name'>
-                                ${ data.languages[1]!.name }
-                            </text>
-                            <text data-testid="lang-name" x="140" y="10" class='lang-stat'>
-                                ${ (data.languages[1]!.usage) }%
-                            </text>
-                        </g>
-                    </g>
-    
-                    <g transform="translate(0, 60)">
-                        <g class="stagger" style="animation-delay: 750ms">
-                            <circle cx="5" cy="6" r="5" fill="${ data.languages[2]!.color }" />
-                            <text data-testid="lang-name" x="15" y="10" class='lang-name'>
-                                ${ data.languages[2]!.name }
-                            </text>
-                            <text data-testid="lang-name" x="140" y="10" class='lang-stat'>
-                                ${ (data.languages[2]!.usage)}%
-                            </text>
-                        </g>
-                    </g>
-    
-                    <g transform="translate(0, 90)">
-                        <g class="stagger" style="animation-delay: 900ms">
-                            <circle cx="5" cy="6" r="5" fill="${ data.languages[3]!.color }" />
-                            <text data-testid="lang-name" x="15" y="10" class='lang-name'>
-                                ${ data.languages[3]!.name }
-                            </text>
-                            <text data-testid="lang-name" x="140" y="10" class='lang-stat'>
-                                ${ (data.languages[3]!.usage) }%
-                            </text>
-                        </g>
-                    </g>
-                </g>
-    
+                    </g>`
+                })}
+
                 <g transform="translate(270, 40)">
-                    <g transform="translate(0, 0)">
-                            <g class="stagger" style="animation-delay: 450ms">
-                            <circle cx="5" cy="6" r="5" fill="${ data.languages[4]!.color }" />
-                            <text data-testid="lang-name" x="15" y="10" class='lang-name'>
-                                ${ data.languages[4]!.name }
-                            </text>
-                            <text data-testid="lang-name" x="140" y="10" class='lang-stat'>
-                                ${ (data.languages[4]!.usage) }%
-                            </text>
-                        </g>
+                ${data.languages.slice(4,8).map((lang, idx) => { return `<g transform="translate(0, ${(idx - 1) * 30 - 12.5})">
+                    <g class="stagger" style="animation-delay: 450ms">
+                        <circle cx="5" cy="6" r="5" fill="${ lang.color}" />
+                        <text data-testid="lang-name" x="15" y="10" class='lang-name'>
+                            ${ lang.name }
+                        </text>
+                        <text data-testid="lang-name" x="140" y="10" class='lang-stat'>
+                            ${( lang.usage)}%
+                        </text>
                     </g>
-    
-                    <g transform="translate(0, 30)">
-                            <g class="stagger" style="animation-delay: 600ms">
-                            <circle cx="5" cy="6" r="5" fill="${ data.languages[5]!.color }" />
-                            <text data-testid="lang-name" x="15" y="10" class='lang-name'>
-                                ${ data.languages[5]!.name }
-                            </text>
-                            <text data-testid="lang-name" x="140" y="10" class='lang-stat'>
-                                ${ (data.languages[5]!.usage)}%
-                            </text>
-                        </g>
-                    </g>
-    
-                    <g transform="translate(0, 60)">
-                        <g class="stagger" style="animation-delay: 750ms">
-                            <circle cx="5" cy="6" r="5" fill="${ data.languages[6]!.color }" />
-                            <text data-testid="lang-name" x="15" y="10" class='lang-name'>
-                                ${ data.languages[6]!.name }
-                            </text>
-                            <text data-testid="lang-name" x="140" y="10" class='lang-stat'>
-                                ${ (data.languages[6]!.usage)}%
-                            </text>
-                        </g>
-                    </g>
+                </g>`
+                })}
                 </g>
             </g>
         </g>
