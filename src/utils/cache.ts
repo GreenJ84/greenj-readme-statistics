@@ -12,23 +12,23 @@ client.connect()
     .then(() => console.log("Redis connection created."))
 
 export const getCacheData = async (key: string): Promise<[boolean, object | null]> => {
-    console.log("Getting cache");
     try {
         const data = await client.get(
             key
         );
         if (data == undefined) {
+            console.warn("Empty Cache");
             return [false, null]
         }
         return [true, JSON.parse(data)]
     }
     catch {
+        console.error("Cache retrieval Error");
         return [false, null]
     }
 }
 
 export const setCacheData = async (key: string, data: any): Promise<void> => {
-    console.log("Setting cache");
     await client.set(
         key,
         JSON.stringify(data), {
