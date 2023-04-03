@@ -59,8 +59,7 @@ export async function githubGraphQL(query: GraphQLQuery): Promise<GraphQLError |
 
 // Decide GraphQL query before execution
 export const preQery = async (res: Response, variables: {}, type: string): Promise<GraphQLResponse | Boolean> => {
-    type;
-    const path = getGraph("all");
+    const path = getGraph(type === "streak" ? type : "all");
     const graphql = gql(
         fs.readFileSync(path, 'utf8')
     );
