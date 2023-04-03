@@ -1,0 +1,43 @@
+query userInfo($login: String!) {
+    user(login: $login) {
+        name
+        contributionsCollection {
+            totalCommitContributions
+            restrictedContributionsCount
+        }
+        repositoriesContributedTo(first: 1, contributionTypes: [COMMIT, ISSUE, PULL_REQUEST, REPOSITORY]) {
+            totalCount
+        }
+        pullRequests(first: 1) {
+            totalCount
+        }
+        issues(first: 1, states: [OPEN, CLOSED]) {
+            totalCount
+        }
+        followers(first: 1) {
+            totalCount
+        }
+        repositories(first: 100, ownerAffiliations: [OWNER], orderBy: {direction: DESC, field: STARGAZERS} ) {
+            totalCount
+            nodes {
+                name
+                stargazers {
+                    totalCount
+                }
+                languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
+                    edges {
+                        size
+                        node {
+                            color
+                            name
+                        }
+                    }
+                }
+            }
+            pageInfo {
+                hasNextPage
+                endCursor
+            }
+        }
+    }
+}
