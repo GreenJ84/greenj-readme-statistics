@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { THEMES } from '../../src/utils/themes';
-import { preFlight, normalizeLocaleCode, normalizeParam, sanitizeText, sanitizeColor, sanitizeNumber, sanitizeBoolean, sanitizeUsername, sanitizeQuery, baseCardThemeParse } from '../../src/utils/utils';
+import { preFlight, normalizeLocaleCode, normalizeParam, sanitizeText, sanitizeColor, sanitizeNumber, sanitizeBoolean, sanitizeUsername, sanitizeQuery, baseCardThemeParse, parse_cookie } from '../../src/utils/utils';
 
 
 describe('sanitizeText', () => {
@@ -145,7 +145,6 @@ describe('sanitizeQuery', () => {
     const iMock = {
         query: {}
     } as Request;
-
     it('throws an error for invalid input', () => {
         let request = { ...iMock } as Request;
         request.query = {
@@ -276,5 +275,53 @@ describe('basicCardThemeParse', () => {
             borderRadius: 14,
             hideBorder: true
         });
+    });
+});
+
+describe("parse_cookie", () => {
+    it("should parse a valid cookie string", () => {
+    const cookie = "foo=bar;baz=qux;abc=def";
+    const parsedCookie = parse_cookie(cookie);
+    expect(parsedCookie).toEqual({
+        foo: "bar",
+        baz: "qux",
+        abc: "def"
+    });
+    });
+
+    it("should parse a cookie with spaces around keys and values", () => {
+    const cookie = " foo = bar ; baz = qux ; abc = def ";
+    const parsedCookie = parse_cookie(cookie);
+    expect(parsedCookie).toEqual({
+        foo: "bar",
+        baz: "qux",
+        abc: "def"
+    });
+    });
+
+    it("should ignore cookies with no values", () => {
+    const cookie = "foo=bar;;baz=qux;abc=def;;";
+    const parsedCookie = parse_cookie(cookie);
+    expect(parsedCookie).toEqual({
+        foo: "bar",
+        baz: "qux",
+        abc: "def"
+    });
+    });
+
+    it("should handle cookies with special characters", () => {
+    const cookie = "foo=bar;baz=%20qux%20;abc=%3Ddef%3D";
+    const parsedCookie = parse_cookie(cookie);
+    expect(parsedCookie).toEqual({
+        foo: "bar",
+        baz: "qux",
+        abc: "=def="
+    });
+    });
+
+    it("should return an empty object for an empty string", () => {
+    const cookie = "";
+    const parsedCookie = parse_cookie(cookie);
+    expect(parsedCookie).toEqual({});
     });
 });

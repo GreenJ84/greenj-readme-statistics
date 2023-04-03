@@ -223,20 +223,15 @@ export const baseCardThemeParse = (req: Request) => {
 export function parse_cookie(cookie: string): Record<string, string> {
     return cookie
         .split(";")
-        .map((x) => x.trim().split("="))
+        .map((x) => x.split("="))
         .reduce((acc, x) => {
             if (x.length === 2) {
-                let idx = x[0]!.toString();
-                acc[idx] = x[1]!;
+                let idx = x[0]!.toString().trim();
+                acc[idx] = decodeURIComponent(x[1]!).trim();
             }
             return acc
         }, {} as Record<string, string>);
 }
-
-export function sleep(ms: number, val: unknown = null): Promise<unknown> {
-    return new Promise((resolve) => setTimeout(() => resolve(val), ms));
-}
-
 
 /**
     Convert date from Y-M-D to more human-readable format
