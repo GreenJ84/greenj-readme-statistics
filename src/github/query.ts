@@ -77,6 +77,7 @@ export const preQery = async (res: Response, variables: {}, type: string): Promi
         })
     // Return API errors if they have occured
     if ((data as GraphQLError).error !== undefined) {
+        console.error((data as GraphQLError));
         res.status((data as GraphQLError).error_code).send(data);
         return false;
     }
