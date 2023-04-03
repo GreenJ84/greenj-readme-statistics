@@ -132,9 +132,10 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
                         </g>
                     </g>`
                 })}
+                </g>
 
                 <g transform="translate(270, 40)">
-                ${data.languages.slice(4,8).map((lang, idx) => { return `<g transform="translate(0, ${(idx - 1) * 30 - 12.5})">
+                ${data.languages.slice(4,8).map((lang, idx) => { return `<g transform="translate(0, ${idx * 30})">
                     <g class="stagger" style="animation-delay: 450ms">
                         <circle cx="5" cy="6" r="5" fill="${ lang.color}" />
                         <text data-testid="lang-name" x="15" y="10" class='lang-name'>
