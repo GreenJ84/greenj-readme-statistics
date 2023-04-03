@@ -18,7 +18,7 @@ export const preFlight = (req: Request, res: Response): boolean => {
     }
     let accessCheck = checkBlacklistRequest(req, req.params.username!)
     if (!accessCheck[0]) {
-        res.status(400).send(
+        res.status(403).send(
             {
                 message: accessCheck[1],
                 error: "Caller Black Listed",
@@ -34,7 +34,7 @@ export const preFlight = (req: Request, res: Response): boolean => {
  *  @param param param name
  *  @return Normalized param name
  */
-function normalizeParam(param: string): string {
+export function normalizeParam(param: string): string {
     // Convert to lower and ensure kebab case
     return param.toLowerCase().replace("_", "-");
 }
@@ -59,7 +59,7 @@ export function normalizeLocaleCode(localeCode: string): string {
     // convert region to uppercase
     region = region.toUpperCase();
     // combine language, script, and region using underscores
-    return [language, script, region].filter(Boolean).join("_");
+    return [language, script, region].filter(Boolean).join("-");
 }
 
 export const baseCardThemeParse = (req: Request) => {
