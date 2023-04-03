@@ -39,6 +39,29 @@ function normalizeParam(param: string): string {
     return param.toLowerCase().replace("_", "-");
 }
 
+/**
+  * Normalize a locale code
+  * @param localeCode Locale code
+  * @return Normalized locale code
+*/
+export function normalizeLocaleCode(localeCode: string): string {
+    const matches = localeCode.match(/^([a-z]{2,3})(?:[_-]([a-z]{4}))?(?:[_-]([0-9]{3}|[a-z]{2}))?$/i);
+    if (!matches) {
+        return "en";
+    }
+    let language = matches[1] ?? "";
+    let script = matches[2] ?? "";
+    let region = matches[3] ?? "";
+    // convert language to lowercase
+    language = language.toLowerCase();
+    // convert script to title case
+    script = script.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+    // convert region to uppercase
+    region = region.toUpperCase();
+    // combine language, script, and region using underscores
+    return [language, script, region].filter(Boolean).join("_");
+}
+
 export const baseCardThemeParse = (req: Request) => {
     const {
         theme,
@@ -85,7 +108,7 @@ export const baseCardThemeParse = (req: Request) => {
     }
 
     if (locale !== undefined) {
-        _theme.locale = normalizeParam(locale as string);
+        _theme.locale = normalizeLocaleCode(locale as string);
     } else {
         _theme.locale = 'en-US';
     }
