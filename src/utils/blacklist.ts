@@ -1,5 +1,7 @@
 import fs from 'fs';
 import { Request } from 'express';
+import { ResponseError } from './constants';
+import { getCacheData, setCacheData } from './cache';
 
 const filename = 'src/utils/blacklist.txt'
 
@@ -24,3 +26,43 @@ export const checkBlacklistRequest = (req: Request, user: string = "DONTEVERBLOC
     }
 }
 
+export const manageLimiter = async (req: Request): Promise<ResponseError> => {
+    let errors = [];
+
+    const ipKey = `limit_exceeded:${req.ip}`;
+    const [ipSuccess, ipCache] = await getCacheData(ipKey);
+    if (!ipSuccess) {
+        errors.push(`Ip address(${req.ip}) has just exceeded the rate limit`);
+        setCacheData(ipKey, { times: 1 })
+    } else {
+        //Increment and reset cache data
+        const data = ipCache as { times: number };
+        errors.push(`Ip address(${req.ip}) has violated the rate limit ${data.times + 1} times`);
+        if (data.times + 1 > 6) {
+            addToBlacklist(req.ip as string)
+        }
+        setCacheData(ipKey, {times: data.times + 1})
+    }
+
+    if (req.params.username !== undefined) {
+        const userKey = `limit_exceeded:${req.params.username!}`;
+        const [userSuccess, userCache] = await getCacheData(userKey);
+        if (!userSuccess) {
+            errors.push(`Current user(${req.params.username!}) has just exceeded the rate limit`);
+            setCacheData(userKey, { times: 1 })
+        } else {
+            //Increment and reset cache data
+            const data = userCache as { times: number };
+            errors.push(`Current user(${req.params.username!}) has violated the rate limit ${data.times + 1} times`);
+            if (data.times + 1 > 6) {
+                addToBlacklist(req.params.username! as string)
+            }
+            setCacheData(userKey, {times: data.times + 1})
+        }
+    }
+    return {
+        error: 'Exceeded Rate Limit',
+        error_code: 429,
+        message: errors.join(".\n"),
+    } as ResponseError;
+}
