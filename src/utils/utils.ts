@@ -7,7 +7,7 @@ import { THEMES, THEMETYPE } from "./themes";
 
 export function sanitizeText(value: string): string {
     // Match letters, digits, underscores, and spaces
-    const match = value.match(/^[a-zA-Z_\s]+$/);
+    const match = value.match(/^[a-zA-Z_]+$/);
     if (match) {
         return match[0];
     } else {
@@ -17,7 +17,7 @@ export function sanitizeText(value: string): string {
 
 // Match CSS color name or 6-character hex code
 export function sanitizeColor(value: string): string {
-    const match = value.match(/^[a-z]{3,}(?:\s[a-z]{3,})?$|^[0-9a-fA-F]{6}$/);
+    const match = value.match(/^[a-z]{3,}(?:[a-z]{3,})?$|^[0-9a-fA-F]{6}$/);
     if (match) {
         return match[0];
     } else {
@@ -26,20 +26,20 @@ export function sanitizeColor(value: string): string {
 }
 
 // Match any number
-export function sanitizeNumber(value: string): number {
+export function sanitizeNumber(value: string): string {
     const match = value.match(/^-?\d+(?:\.\d+)?$/);
     if (match) {
-        return parseFloat(match[0]);
+        return match[0];
     } else {
         throw new Error(`Invalid number value: ${value}`);
     }
 }
 
 // Match 'true' or 'false'
-export function sanitizeBoolean(value: string): boolean {
+export function sanitizeBoolean(value: string): string {
     const match = value.match(/^(true|false)$/i);
     if (match) {
-        return match[0].toLowerCase() === 'true';
+        return match[0].toLowerCase();
     } else {
         throw new Error(`Invalid boolean value: ${value}`);
     }
@@ -55,6 +55,57 @@ export function sanitizeUsername(value: string): string {
     }
 }
 
+// Loop through all query parameters and sanitize them accordingly
+export function sanitizeQuery(req: Request): void {
+    const color: string[] = [
+        "background", "border", "stroke", "ring", "fire", "dayAvg", "pieBG", "icons", "logo", "currStreak", "question", "score", "stats", "sideStat", "textMain", "textSub", "dates",
+    ];
+    const number: string[] = ["borderRadius"];
+    const text: string[] = ["theme", "locale", "title"];
+    const boolean: string[] = ["hideBorder"];
+
+
+    const sanitizedParams: Record<string, any> = {};
+    for (const param in req.query) {
+        const value = req.query[param];
+
+        switch (true) {
+            case color.includes(param):
+                try{
+                    sanitizedParams[param] = sanitizeColor(value as string);
+                } catch (error) {
+                    console.error(error);
+                }
+                break;
+            case number.includes(param):
+                try{
+                    sanitizedParams[param] = sanitizeNumber(value as string);
+                } catch (error) {
+                    console.error(error);
+                }
+                break;
+            case text.includes(param):
+                try{
+                    sanitizedParams[param] = sanitizeText(value as string);
+                } catch (error) {
+                    console.error(error);
+                }
+                break;
+            case boolean.includes(param):
+                try{
+                    sanitizedParams[param] = sanitizeBoolean(value as string);
+                } catch (error) {
+                    console.error(error);
+                }
+                break;
+            // Remove all unwarrented parameters
+            default:
+                break;
+        }
+    }
+    req.query = sanitizedParams;
+}
+
 // API Security
 export const preFlight = (req: Request, res: Response): boolean => {
     if (req.params.username == undefined) {
@@ -66,7 +117,7 @@ export const preFlight = (req: Request, res: Response): boolean => {
             });
         return false;
     }
-    req.params.username = sanitizeUsername(req.params.username!)
+    req.params.username = sanitizeUsername(req.params.username!);
 
     let accessCheck = checkBlacklistRequest(req, req.params.username)
     if (!accessCheck[0]) {
@@ -78,6 +129,8 @@ export const preFlight = (req: Request, res: Response): boolean => {
             });
         return false;
     }
+
+
     return true;
 }
 
