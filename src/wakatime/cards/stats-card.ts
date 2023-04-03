@@ -19,28 +19,28 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
         title
     } = req.query;
     if (ring !== undefined) {
-        theme.detailMain = ("#" + ring);
+        theme.detailMain = ring as string;
     }
     if (fire !== undefined) {
-        theme.detailSub = ("#" + fire);
+        theme.detailSub = fire as string;
     }
     if (stroke !== undefined) {
-        theme.stroke = ("#" + stroke);
+        theme.stroke = stroke as string;
     }
     if (dayAvg !== undefined) {
-        theme.statsMain = ("#" + dayAvg);
+        theme.statsMain = dayAvg as string;
     }
     if (sideStat !== undefined) {
-        theme.statsSub = ("#" + sideStat);
+        theme.statsSub = sideStat as string;
     }
     if (textMain !== undefined) {
-        theme.textMain = ("#" + textMain);
+        theme.textMain = textMain as string;
     }
     if (textSub !== undefined) {
-        theme.textSub = ("#" + textSub);
+        theme.textSub = textSub as string;
     }
-    if (date !== undefined) {
-        theme.dates = ("#" + date);
+    if (dates !== undefined) {
+        theme.dates = dates as string;
     }
 
     if (title !== undefined) {

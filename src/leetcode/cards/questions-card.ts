@@ -18,22 +18,22 @@ export const questionsCard = (req: Request, data: QUESTIONDATA): string => {
     } = req.query;
         
     if (ring !== undefined) {
-        theme.detailMain = ("#" + ring) as string;
+        theme.detailMain = ring as string;
     }
     if (sideStat !== undefined) {
-        theme.detailSub = ("#" + sideStat) as string;
+        theme.detailSub = sideStat as string;
     }
     if (score !== undefined) {
-        theme.statsMain = ("#" + score) as string;
+        theme.statsMain = score as string;
     }
     if (stats !== undefined) {
-        theme.statsSub = ("#" + stats) as string;
+        theme.statsSub = stats as string;
     }
     if (textMain !== undefined) {
-        theme.textMain = ("#" + textMain) as string;
+        theme.textMain = textMain as string;
     }
     if (textSub !== undefined) {
-        theme.textSub = ("#" + textSub) as string;
+        theme.textSub = textSub as string;
     }
 
 

@@ -18,19 +18,19 @@ export const insightsCardSetup = (req: Request, data: INSIGHTTYPE): string => {
     } = req.query;
 
     if (icons !== undefined) {
-        theme.detailSub = ("#" + icons) as string;
+        theme.detailSub = icons as string;
     }
     if (logo !== undefined) {
-        theme.detailMain = ("#" + logo) as string;
+        theme.detailMain = logo as string;
     }
     if (stats !== undefined) {
-        theme.statsMain = ("#" + stats) as string;
+        theme.statsMain = stats as string;
     }
     if (textMain !== undefined) {
-        theme.textMain = ("#" + textMain) as string;
+        theme.textMain = textMain as string;
     }
     if (textSub !== undefined) {
-        theme.textSub = ("#" + textSub) as string;
+        theme.textSub = textSub as string;
     }
     if (title != undefined) {
         data.title = title as string;

@@ -17,19 +17,19 @@ export const recentCard = (req: Request, data: SUBMISSIONDATA) => {
     } = req.query;
 
     if (question !== undefined) {
-        theme.statsMain = ("#" + question) as string;
+        theme.statsMain = question as string;
     }
     if (sideStat !== undefined) {
-        theme.statsSub = ("#" + sideStat) as string;
+        theme.statsSub = sideStat as string;
     }
     if (textMain !== undefined) {
-        theme.textMain = ("#" + textMain) as string;
+        theme.textMain = textMain as string;
     }
     if (textSub !== undefined) {
-        theme.textSub = ("#" + textSub) as string;
+        theme.textSub = textSub as string;
     }
     if (line !== undefined) {
-        theme.stroke = ("#" + line) as string;
+        theme.stroke = line as string;
     }
 
 

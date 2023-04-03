@@ -16,16 +16,16 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
     } = req.query;
 
     if (stats !== undefined) {
-        theme.statsMain = ("#" + stats) as string;
+        theme.statsMain = stats as string;
     }
     if (textMain !== undefined) {
-        theme.textMain = ("#" + textMain) as string;
+        theme.textMain = textMain as string;
     }
     if (textSub !== undefined) {
-        theme.textSub = ("#" + textSub) as string;
+        theme.textSub = textSub as string;
     }
     if (pieBG !== undefined) {
-        theme.stroke = ("#" + pieBG) as string;
+        theme.stroke = pieBG as string;
     }
 
     if (title !== undefined) {

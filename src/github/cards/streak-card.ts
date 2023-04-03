@@ -19,22 +19,22 @@ export const streakCardSetup = (req: Request, data: STREAKTYPE): string => {
     title,
   } = req.query;
   if (ring !== undefined) {
-    theme.detailMain = ("#" + ring) as string;
+    theme.detailMain = ring as string;
   }
   if (fire !== undefined) {
-    theme.detailSub = ("#" + fire) as string;
+    theme.detailSub = fire as string;
   }
   if (currStreak !== undefined) {
-    theme.statsMain = ("#" + currStreak) as string;
+    theme.statsMain = currStreak as string;
   }
   if (sideStat !== undefined) {
-    theme.statsSub = ("#" + sideStat) as string;
+    theme.statsSub = sideStat as string;
   }
   if (textMain !== undefined) {
-    theme.textMain = ("#" + textMain) as string;
+    theme.textMain = textMain as string;
   }
   if (textSub !== undefined) {
-    theme.textSub = ("#" + textSub) as string;
+    theme.textSub = textSub as string;
   }
   if (dates !== undefined) {
     theme.dates = ("#" + dates) as string;
