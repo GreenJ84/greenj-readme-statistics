@@ -42,7 +42,7 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
     if (title != undefined) {
         data.title = title as string;
     } else {
-        data.title = `${req.params.username!.length < 10 ? req.params.username : "My"} Leetcode Streak`
+        data.title = `${req.params.username!.length < 10 ? `${req.params.username}'s` : "My"} Leetcode Streak`
     }
 
     return `<!-- GitHub Streak SVG -->
@@ -193,7 +193,7 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
                 <!-- Completion Actuals -->
                 <g transform='translate(0,114)'>
                     <text x='460' y='50' stroke-width='0' text-anchor='middle' class="subText">
-                        ${data.completionActuals[0]} out of ${data.completionActuals[1]}
+                        ${data.completionActuals[0].toLocaleString()} out of ${data.completionActuals[1]!.toLocaleString()}
                     </text>
                     <text x='460' y='60' stroke-width='0' text-anchor='middle' fill='#151515' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='300' font-size='10px' font-style='normal' style='opacity: 0; animation: fadeInAnimation 0.5s linear forwards 1.4s'>
                         questions complete

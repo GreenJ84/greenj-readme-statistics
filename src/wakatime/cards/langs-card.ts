@@ -31,7 +31,7 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
     if (title !== undefined) {
         data.title = title as string
     } else {
-        data.title = `${req.params.username!.length < 10 ? req.params.username! : "My"}'s Language Stats`
+        data.title = `${req.params.username!.length < 10 ? `${req.params.username!}'s` : "My"} Language Stats`
     }
 
 
@@ -122,7 +122,7 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
         <!-- Title -->
             <g>
                 <text x="20.5" y="28" stroke-width="0" text-anchor="start" fill="${theme.textMain}" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="24px" font-style="normal" style="opacity: 0; animation: fadeInAnimation 0.5s linear forwards 0.7s; letter-spacing: 4px; text-shadow: 1px 1px 2px black;">
-                    ${data.title}dkjsafaasdkjfhdsajkf
+                    ${data.title}
                 </text>
             </g>
 

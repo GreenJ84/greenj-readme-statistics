@@ -39,7 +39,7 @@ export const statsCard = (req: Request, data: PROFILEDATA): string => {
 
     if (title != undefined) {
         data.title = title as string;
-    } else { data.title = `${req.params.username!.length < 10 ? req.params.username! : "My"} Leetcode Stats` }
+    } else { data.title = `${req.params.username!.length < 10 ? `${req.params.username!}'s` : "My"} Leetcode Stats` }
 
 
     return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr' role="img" aria-labelledby="descId">
