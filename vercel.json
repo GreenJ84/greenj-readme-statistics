@@ -1,0 +1,25 @@
+{
+    "builds": [
+        {
+            "src": "server.ts",
+            "use": "@vercel/node@1.11.0"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/github/.*",
+            "dest": "server.ts"
+        },
+        {
+            "src": "/leetcode/.*",
+            "dest": "server.ts"
+        },
+        {
+            "src": "/wakatime/.*",
+            "dest": "server.ts"
+        }
+    ],
+    "env": {
+        "NODE_ENV": "production"
+    }
+}
