@@ -1,22 +1,11 @@
 {
     "buildCommand": "npm run build",
     "installCommand" : "npm install",
-    "builds": [
-        {
-            "src": "dist/server.js",
-            "use": "@vercel/node"
-        }
-    ],
+    "outputDirectory" : "build",
     "routes": [
         {
             "src": "/(.*)",
             "dest": "/"
         }
-    ],
-    "files.exclude": [
-        "**/*.test.ts",
-        "**/node_modules",
-        "**/.gitignore",
-        "**/.git"
     ]
 }
