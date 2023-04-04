@@ -12,5 +12,15 @@
             "src": "/(.*)",
             "dest": "/"
         }
+    ],
+    "files": [
+        "dist",
+        "src"
+    ],
+    "files.exclude": [
+        "**/*.test.ts",
+        "**/node_modules",
+        "**/.gitignore",
+        "**/.git"
     ]
 }
