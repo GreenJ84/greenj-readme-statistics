@@ -4,6 +4,7 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "sourceRoot": "./src",
+        "outDir": "dist",
         "inlineSourceMap": true,
         "allowJs": true,
         "skipDefaultLibCheck": true,

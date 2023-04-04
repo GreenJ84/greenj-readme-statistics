@@ -3,7 +3,7 @@
     "installCommand" : "npm install",
     "builds": [
         {
-            "src": "index.js",
+            "src": "dist/server.js",
             "use": "@vercel/node"
         }
     ],
