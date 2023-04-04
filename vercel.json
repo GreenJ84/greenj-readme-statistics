@@ -1,23 +1,16 @@
 {
-    "version": 1,
-    "build": {
-        "functions": {
-            "./**/*.ts": {
-                "ignore": false
-            }
-        },
-        "src": "src",
-        "command": "npm run build",
-        "output": ".dist"
-    },
+    "buildCommand": "npm run build",
+    "installCommand" : "npm install",
+    "builds": [
+        {
+            "src": "index.js",
+            "use": "@vercel/node"
+        }
+    ],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": ".dist/$1"
+            "dest": "/"
         }
-    ],
-    "env": {
-        "NODE_ENV": "production"
-    },
-    "start": "node .dist/server.js"
+    ]
 }
