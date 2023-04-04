@@ -55,7 +55,7 @@ export function sanitizeBoolean(value: string): string {
 
 // Match alphanumeric characters and hyphens, with length between 1 and 39
 export function sanitizeUsername(value: string): string {
-    const match = value.match(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,39}$/i);
+    const match = value.match(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){1,39}$/i);
     if (match) {
         return match[0];
     } else {
@@ -65,7 +65,6 @@ export function sanitizeUsername(value: string): string {
 
 // Loop through all query parameters and sanitize them accordingly
 export function sanitizeQuery(req: Request): boolean {
-    req.params.username = sanitizeUsername(req.params.username!);
     const color: string[] = [
         "background", "border", "stroke", "ring", "fire", "dayAvg", "pieBG", "icons", "logo", "currStreak", "question", "score", "stats", "sideStat", "textMain", "textSub", "dates",
     ];
@@ -78,7 +77,7 @@ export function sanitizeQuery(req: Request): boolean {
     for (const param in req.query) {
         const value = req.query[param];
         if (value !== xss(value as string)) {
-            
+            req.query = {};
             return false;
         }
 
@@ -131,6 +130,7 @@ export const preFlight = (req: Request, res: Response): boolean => {
             });
         return false;
     }
+    req.params.username = sanitizeUsername(req.params.username!);
 
     let accessCheck = checkBlacklistRequest(req, req.params.username)
     if (!accessCheck[0]) {
