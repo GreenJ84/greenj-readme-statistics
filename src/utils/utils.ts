@@ -2,9 +2,10 @@ import { DateTime } from 'luxon';
 import { Request, Response } from "express";
 import { createIntl, createIntlCache } from '@formatjs/intl';
 
-import { checkBlacklistRequest } from "./blacklist";
+import { addToBlacklist, checkBlacklistRequest } from "./blacklist";
 import { THEMES, THEMETYPE } from "./themes";
 import { COLORS } from './colors';
+import xss from 'xss';
 
 export function sanitizeText(value: string): string {
     // Match letters, digits, underscores, and spaces
@@ -63,7 +64,8 @@ export function sanitizeUsername(value: string): string {
 }
 
 // Loop through all query parameters and sanitize them accordingly
-export function sanitizeQuery(req: Request): void {
+export function sanitizeQuery(req: Request): boolean {
+    req.params.username = sanitizeUsername(req.params.username!);
     const color: string[] = [
         "background", "border", "stroke", "ring", "fire", "dayAvg", "pieBG", "icons", "logo", "currStreak", "question", "score", "stats", "sideStat", "textMain", "textSub", "dates",
     ];
@@ -75,6 +77,10 @@ export function sanitizeQuery(req: Request): void {
     const sanitizedParams: Record<string, any> = {};
     for (const param in req.query) {
         const value = req.query[param];
+        if (value !== xss(value as string)) {
+            
+            return false;
+        }
 
         switch (true) {
             case color.includes(param):
@@ -111,6 +117,7 @@ export function sanitizeQuery(req: Request): void {
         }
     }
     req.query = sanitizedParams;
+    return true;
 }
 
 // API Security
@@ -124,7 +131,6 @@ export const preFlight = (req: Request, res: Response): boolean => {
             });
         return false;
     }
-    req.params.username = sanitizeUsername(req.params.username!);
 
     let accessCheck = checkBlacklistRequest(req, req.params.username)
     if (!accessCheck[0]) {
@@ -137,7 +143,15 @@ export const preFlight = (req: Request, res: Response): boolean => {
         return false;
     }
 
-
+    if (!sanitizeQuery(req)) {
+        addToBlacklist(req.params.username);
+        addToBlacklist(req.ip);
+        res.status(400).send({
+            error: "Malicious Parameter Content",
+            error_code: 400,
+            message: "Malicious xss content found within api call. Immediate API exile."
+        })
+    }
     return true;
 }
 
