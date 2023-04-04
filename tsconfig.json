@@ -5,7 +5,6 @@
         "moduleResolution": "node",
         "sourceRoot": "./src",
         "outDir": "dist",
-        "types": ["node", "react"],
         "inlineSourceMap": true,
         "allowJs": true,
         "skipDefaultLibCheck": true,
