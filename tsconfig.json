@@ -12,7 +12,6 @@
         "forceConsistentCasingInFileNames": true,
         "esModuleInterop": true,
         "noEmit": false,
-        "noImplicitAny": true,
         "noImplicitReturns": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
