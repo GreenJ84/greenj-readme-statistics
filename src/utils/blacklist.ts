@@ -27,7 +27,7 @@ export const checkBlacklistRequest = (req: Request, user: string = "DONTEVERBLOC
 }
 
 export const manageLimiter = async (req: Request): Promise<ResponseError> => {
-    let errors = [];
+    let errors: string[] = [];
 
     const ipKey = `limit_exceeded:${req.ip}`;
     const [ipSuccess, ipCache] = await getCacheData(ipKey);

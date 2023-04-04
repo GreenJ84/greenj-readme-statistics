@@ -33,7 +33,7 @@ const statsParse = (data: ProfileResponse): PROFILEDATA => {
 }
 
 const badgesParse = (data: ProfileResponse): BADGEDATA => {
-    let badges = [];
+    let badges: Object[] = [];
     for (let badge of data.matchedUser.badges) {
         let { id, ...badgeData } = badge;
         badges.push(badgeData);
@@ -41,7 +41,7 @@ const badgesParse = (data: ProfileResponse): BADGEDATA => {
 
     return {
         badges: badges,
-    };
+    } as BADGEDATA;
 }
 
 const questionsSolvedParse = (data: ProfileResponse): QUESTIONDATA => {
