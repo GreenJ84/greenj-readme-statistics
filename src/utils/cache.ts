@@ -14,7 +14,7 @@ type cacheType =
     wakaResponse |
     { times: number }
 
-const client: RedisClientType = process.env.NODE_ENV === "production" ?
+export const client: RedisClientType = process.env.NODE_ENV === "production" ?
     createClient({
             url: `redis://${process.env.REDIS_USER}:${process.env.REDIS_PASS}@${process.env.PROD_HOST}:${process.env.PROD_PORT}`
         })
@@ -23,8 +23,15 @@ const client: RedisClientType = process.env.NODE_ENV === "production" ?
 
 client.on("error", err => console.error(`Redis client error: ${err}`))
 
-client.connect()
-    .then(() => console.log("Redis connection created."))
+export const buildRedis = async () => {
+    await client.connect()
+        .then(() => console.log("Redis server connected."))
+}
+
+export const teardownRedis = async () => {
+    await client.disconnect()
+        .then(() => console.log("Redis server disconnected."));
+}
 
 export const getCacheData = async (key: string): Promise<[boolean, cacheType | null]> => {
     try {
