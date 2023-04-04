@@ -11,6 +11,7 @@ import { GithubRoutes } from "./routes/github.routes";
 import { WakaTimeRoutes } from "./routes/wakatime.routes";
 import { manageLimiter } from "./utils/blacklist";
 import { ResponseError } from "./utils/constants";
+import { buildRedis, teardownRedis } from "./utils/cache";
 
 const PORT = 8000;
 
@@ -78,4 +79,31 @@ LeetCodeRoutes(app);
 GithubRoutes(app);
 WakaTimeRoutes(app);
 
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+const server = app.listen(PORT, async () => {
+  console.log(`Server is running on port ${PORT}`);
+
+  await buildRedis();
+});
+
+// Stop the Redis server and close the Express server
+const gracefulShutdown = async () => {
+  server.close(() => {
+    // Disconnect from Redis server
+    teardownRedis().then(() => {
+      console.log('Express server closed.');
+      process.exit(0);
+    });
+  });
+};
+
+// Handle SIGINT signal for graceful shutdown
+process.on('SIGINT', gracefulShutdown);
+
+// Handle SIGTERM signal for graceful shutdown
+process.on('SIGTERM', gracefulShutdown);
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error(err);
+  gracefulShutdown();
+});
