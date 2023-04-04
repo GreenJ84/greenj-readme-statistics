@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "ts-node server.ts",
     "test": "jest",
-    "build": "tsc --production",
+    "build": "tsc",
     "start": "node dist/server.js"
   },
   "keywords": [],
