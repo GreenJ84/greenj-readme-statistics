@@ -5,7 +5,7 @@
         "inlineSourceMap": true,
         "allowJs": true,
         "skipDefaultLibCheck": true,
-        "outDir": "/dist",
+        "outDir": "./dist",
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "esModuleInterop": true,
@@ -21,7 +21,7 @@
         "compilerOptions": {
         "moduleResolution": "node",
         "skipDefaultLibCheck": true,
-        "outDir": "/dist",
+        "outDir": "./dist",
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "esModuleInterop": true,

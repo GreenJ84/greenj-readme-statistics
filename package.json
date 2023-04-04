@@ -5,7 +5,9 @@
   "main": "server.ts",
   "scripts": {
     "dev": "ts-node server.ts",
-    "test": "jest"
+    "test": "jest",
+    "build": "tsc",
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
