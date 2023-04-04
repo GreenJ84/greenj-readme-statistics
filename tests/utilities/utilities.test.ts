@@ -1,7 +1,16 @@
 import { Request, Response } from 'express';
+import { buildRedis, teardownRedis } from '../../src/utils/cache';
 import { THEMES } from '../../src/utils/themes';
 import { preFlight, normalizeLocaleCode, normalizeParam, sanitizeText, sanitizeColor, sanitizeNumber, sanitizeBoolean, sanitizeUsername, sanitizeQuery, baseCardThemeParse, parse_cookie, getFormatDate } from '../../src/utils/utils';
 
+
+beforeAll(async () => {
+    await buildRedis();
+})
+
+afterAll(async () => {
+    await teardownRedis();
+});
 
 describe('sanitizeText', () => {
     it('returns the sanitized value for valid input', () => {
@@ -92,7 +101,8 @@ describe('sanitizeUsername', () => {
 
 describe('sanitizeQuery', () => {
     const mockRequest = {
-        query: {}
+        query: {},
+        params: {}
     } as Request;
     it('returns the sanitized value for valid input', () => {
         let request = { ...mockRequest } as Request;
@@ -107,8 +117,7 @@ describe('sanitizeQuery', () => {
             "textSub": "FEFEFE",
             "dates": "9E9E9E",
         }
-        sanitizeQuery(request)
-        console.log(request.query)
+        expect(sanitizeQuery(request)).toEqual(true)
         expect(request.query).toEqual({
             "background": "#151515",
             "border": "#E4E2E2",
@@ -131,7 +140,7 @@ describe('sanitizeQuery', () => {
             "borderRadius": "14",
             "hideBorder": "true"
         }
-        sanitizeQuery(request)
+        expect(sanitizeQuery(request)).toEqual(true);
         expect(request.query).toEqual({
             "background": "#151515",
             "textMain": "#FB8C00",
@@ -146,11 +155,11 @@ describe('sanitizeQuery', () => {
     const iMock = {
         query: {}
     } as Request;
-    it('throws an error for invalid input', () => {
+    it('solves errors for invalid input', () => {
         let request = { ...iMock } as Request;
         request.query = {
-            "background": "151515",
-            "border": "E4E2E2",
+            "background": "#151515",
+            "border": "#E4E2E2",
             "stroke": "E4E2 E2",
             "fire": "FB/8C00",
             "icons": "FB8$C00",
@@ -159,11 +168,8 @@ describe('sanitizeQuery', () => {
             "textSub": "<FEFEFE>",
             "dates": "9^E9E",
         }
-        sanitizeQuery(request)
-        expect(request.query).toEqual({
-            "background": "#151515",
-            "border": "#E4E2E2",
-        });
+        expect(sanitizeQuery(request)).toEqual(false);
+        expect(request.query).toEqual({});
 
         request = { ...iMock } as Request;
         request.query = {
@@ -174,7 +180,7 @@ describe('sanitizeQuery', () => {
             "borderRadius": "fourteen",
             "hideBorder": "hidden"
         }
-        sanitizeQuery(request)
+        expect(sanitizeQuery(request)).toEqual(false);
         expect(request.query).toEqual({});
     });
 });
