@@ -6,6 +6,8 @@
         "sourceRoot": "./src",
         "outDir": "dist",
         "types": ["node", "react"],
+        "declaration": true,
+        "declarationDir": "./dist/types",
         "inlineSourceMap": true,
         "allowJs": true,
         "skipDefaultLibCheck": true,

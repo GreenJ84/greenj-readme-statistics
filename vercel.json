@@ -1,11 +1,11 @@
 {
     "buildCommand": "npm run build",
     "installCommand" : "npm install",
-    "outputDirectory" : "build",
-    "routes": [
+    "outputDirectory" : "dist",
+    "rewrites": [
         {
             "src": "/(.*)",
-            "dest": "/"
+            "destination": "./dist/src/server.js"
         }
     ]
 }
