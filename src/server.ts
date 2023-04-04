@@ -81,13 +81,13 @@ WakaTimeRoutes(app);
 
 const server = app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
-
   await buildRedis();
 });
 
 // Stop the Redis server and close the Express server
 const gracefulShutdown = async () => {
   server.close(() => {
+    console.log("\n");
     // Disconnect from Redis server
     teardownRedis().then(() => {
       console.log('Express server closed.');
