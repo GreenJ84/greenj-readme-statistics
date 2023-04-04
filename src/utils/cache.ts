@@ -1,14 +1,16 @@
 import { RedisClientType, createClient } from 'redis';
 import dotenv from 'dotenv';
-import { LeetCodeGraphQLResponse } from '../leetcode/leetcodeTypes';
-import { GraphQLResponse } from '../github/githubTypes';
+import { LeetCodeGraphQLResponse, STREAKDATA } from '../leetcode/leetcodeTypes';
+import { GraphQLResponse, STREAKTYPE } from '../github/githubTypes';
 import { wakaResponse } from '../wakatime/wakatimeTypes';
 
 dotenv.config();
 
 type cacheType = 
     LeetCodeGraphQLResponse |
+    STREAKDATA |
     GraphQLResponse |
+    STREAKTYPE |
     wakaResponse |
     { times: number }
 
