@@ -146,7 +146,7 @@ export const LANGUAGES: Record<string, LANGUAGE_TYPE> = {
         present: "Presente",
     },
     "ja": {
-        "date_format" => "[Y.]n.j",
+        date_format:"[Y.]n.j",
         totalContributions: "総ｺﾝﾄﾘﾋﾞｭｰｼｮﾝ数",
         currentStreak: "現在のストリーク",
         longestStreak: "最長のストリーク",
