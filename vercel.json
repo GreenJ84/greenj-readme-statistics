@@ -4,7 +4,7 @@
     "outputDirectory" : "dist",
     "rewrites": [
         {
-            "src": "/(.*)",
+            "source": "/(.*)",
             "destination": "./dist/src/server.js"
         }
     ]
