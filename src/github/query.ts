@@ -1,6 +1,6 @@
 import fs from 'fs';
 import dotenv from 'dotenv';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { gql } from "graphql-tag";
 import { match } from 'ts-pattern';
