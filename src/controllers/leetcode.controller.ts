@@ -45,9 +45,6 @@ export const leetcodeStats = async (req: Request, res: Response): Promise<void> 
             .catch(err => {
                 throw err
             })
-            .catch(err => {
-                console.error('Unhandled promise rejection:', err);
-            });
         if (!queryResponse) { return; }
         setCacheData(key, queryResponse);
         data = queryResponse;

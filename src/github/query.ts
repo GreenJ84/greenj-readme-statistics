@@ -72,7 +72,7 @@ export const preQery = async (variables: {}, type: string): Promise<GraphQLRespo
                 "Error building GraphQL query for the GitHub API",
                 err, 500
             );
-        })
+        });
 
     // Data to be returned will be of a valid response type
     return data as GraphQLResponse;

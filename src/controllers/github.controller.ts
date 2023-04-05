@@ -11,7 +11,6 @@ import { getResponseParse } from "../github/apiParser";
 import { cardDirect } from "../github/githubUtils";
 import { streakCardSetup } from "../github/cards/streak-card";
 import { getCacheData, setCacheData } from "../utils/cache";
-import { ResponseError } from "../utils/constants";
 
 let sleepMod = -2;
 
@@ -33,10 +32,7 @@ export const getProfileStats = async (req: Request, res: Response) => {
         const queryResponse = await preQery( variables, type)
             .then((data) => { return data })
             .catch (err => {
-                throw new ResponseError(
-                    "Error building GraphQL query for the GitHub API",
-                    err, 500
-                )
+                throw err;
             });;
 
         data = queryResponse;
@@ -72,10 +68,7 @@ export const getCommitStreak = async (req: Request, res: Response) => {
         // Query user data for Creation Date and Years of membership
         const [created, years] = await streakProbe(req)
             .catch(err => {
-                throw new ResponseError(
-                    "Error probing GitHub for membership years",
-                    err, 502
-                );
+                throw err;
             });
 
 
@@ -121,10 +114,7 @@ export const getCommitStreak = async (req: Request, res: Response) => {
             const data = await preQery(variables, "streak")
                 .then((data) => { return data })
                 .catch (err => {
-                    throw new ResponseError(
-                        "Error building GraphQL query for the GitHub API",
-                        err, 500
-                    )
+                    throw err;
                 });
             
             // Get Function to parse data
