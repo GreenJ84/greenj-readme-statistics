@@ -13,7 +13,7 @@ import * as leetcode from '../leetcode/query';
 
 // Universal query for GitHub
 export async function leetcodeGraphQL(query: GraphQLQuery, url: string, csrf: string):
-    Promise<LeetCodeGraphQLResponse | ResponseError> {
+    Promise<LeetCodeGraphQLResponse> {
     const client = new ApolloClient({
         uri: url,
         cache: new InMemoryCache(),
@@ -40,11 +40,9 @@ export async function leetcodeGraphQL(query: GraphQLQuery, url: string, csrf: st
             return result.data as LeetCodeGraphQLResponse
         })
         .catch(err => {
-            return {
-                    message: "An error occurred while retrieving data from the external API",
-                    error_code: 500,
-                    error: err
-                } as ResponseError
+            throw new ResponseError("An error occurred while retrieving data from the external LeetCode API",
+                err, 502,
+            );
         });
     return result;
 };
@@ -52,12 +50,17 @@ export async function leetcodeGraphQL(query: GraphQLQuery, url: string, csrf: st
 
 
 // Set up up query, credential retrieval, Server level error handling
-export const preQuery = async (req: Request, res: Response, type: string):
-Promise<LeetCodeGraphQLResponse | Boolean> => {
+export const preQuery = async (req: Request, type: string):
+Promise<LeetCodeGraphQLResponse> => {
     type;
     // Retrieve Cross-site forgery credentials
-    const csrf_credential: string = await get_csrf()
-    .then((result) => result.toString());
+    const csrf_credential = await get_csrf()
+        .then((result) => result.toString())
+        .catch((err) => {
+            throw new ResponseError("Internal server error retrieving LeetCode credentials",
+                err, 500,
+            );
+        });
     
     // Get correct query based on api called
     const graphql = gql(
@@ -74,33 +77,31 @@ Promise<LeetCodeGraphQLResponse | Boolean> => {
             variables: { username: username! }
         },
         GRAPHQL_URL,
-        csrf_credential
+        csrf_credential as string
         )
         .then((res) => res)
         // Catch sever problems conducting the call
         .catch((err) => {
-            return {
-                message: "Internal server error",
-                error: err,
-                error_code: 500,
-            } as ResponseError;
+            throw new ResponseError("Internal server error building LeetCode Graph call",
+                err, 500,
+            );
         })
-        // Send API errors if they have occured
-    if ((data as ResponseError).error !== undefined) {
-            console.error(data as ResponseError)
-            res.status((data as ResponseError).error_code).send(data);
-            return false;
-        }
-        return data as LeetCodeGraphQLResponse
+
+    return data
 };
 
 
 // Set up for profile years probe query
-export const preProbe = async (req: Request, res: Response):
-Promise<[number[], string] | boolean> => {
+export const preProbe = async (req: Request):
+Promise<[number[], string]> => {
     // Cross-site forgery credentials
     const csrf_credential: string = await get_csrf()
-        .then((result) => result.toString());
+        .then((result) => result.toString())
+        .catch((err) => {
+            throw new ResponseError("Internal server error retrieving LeetCode credentials",
+                err, 500,
+            );
+        });
     const graphql = gql(
         fs.readFileSync("src/leetcode/graphql/profile-years-probe.graphql", 'utf8')
     );
@@ -116,18 +117,12 @@ Promise<[number[], string] | boolean> => {
         GRAPHQL_URL,
         csrf_credential
     )
-        .then((res) => res as unknown as ProbeResponse)
+        .then((res) => res as ProbeResponse)
         .catch((err) => {
-            return {
-                message: "Internal server error",
-                error: err,
-                error_code: 500,
-            } as ResponseError;
+            throw new ResponseError("Internal server error building LeetCode Graph call",
+                err, 500,
+            );
         })
-    // Return API errors if they have occured
-    if ((data as ResponseError).error !== undefined) {
-        res.status(400).send((data as unknown as ResponseError));
-        return false;
-    }
-    return [(data as ProbeResponse).matchedUser.userCalendar.activeYears, csrf_credential];
+
+    return [data.matchedUser.userCalendar.activeYears, csrf_credential];
 }
