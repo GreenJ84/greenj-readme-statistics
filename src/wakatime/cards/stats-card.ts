@@ -46,7 +46,7 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
     if (title !== undefined) {
         data.title = title as string
     } else {
-        data.title = `${req.params.username!.length < 10 ? `'${req.params.username!}'s` : "My"} WakaTime Stats`
+        data.title = `${req.params.username!.length < 10 ? `${req.params.username!}'s` : "My"} WakaTime Stats`
     }
 
     return `<!-- WakaTime Stats SVG -->
