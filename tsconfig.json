@@ -4,7 +4,7 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "sourceRoot": "./src",
-        "outDir": "dist",
+        "outDir": "./dist",
         "types": ["node", "react"],
         "declaration": true,
         "declarationDir": "./dist/types",
