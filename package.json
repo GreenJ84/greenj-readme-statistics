@@ -4,10 +4,10 @@
   "description": "Display your total contributions, current streak, and longest streak on your GitHub profile README",
   "main": "server.ts",
   "scripts": {
-    "dev": "ts-node server.ts",
+    "dev": "ts-node src/server.ts",
     "test": "jest",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js --trace-warnings"
   },
   "keywords": [],
   "author": "",
