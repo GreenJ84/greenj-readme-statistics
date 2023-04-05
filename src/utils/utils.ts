@@ -130,7 +130,18 @@ export const preFlight = (req: Request, res: Response): boolean => {
             });
         return false;
     }
-    req.params.username = sanitizeUsername(req.params.username!);
+
+    try {
+        req.params.username = sanitizeUsername(req.params.username!);
+    } catch (err) {
+        res.status(403).send(
+            {
+                message: "Username found on API Call did not pass sanitization. Check name or submit support issue.",
+                error: err,
+                error_code: 400
+        });
+        return false
+    }
 
     let accessCheck = checkBlacklistRequest(req, req.params.username)
     if (!accessCheck[0]) {
