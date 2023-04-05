@@ -12,6 +12,7 @@ import { WakaTimeRoutes } from "./routes/wakatime.routes";
 import { manageLimiter } from "./utils/blacklist";
 import { ResponseError } from "./utils/constants";
 import { buildRedis, teardownRedis } from "./utils/cache";
+import { displayModals } from "./routes/display";
 
 const PORT = 8000;
 
@@ -78,6 +79,7 @@ app.use(
 LeetCodeRoutes(app);
 GithubRoutes(app);
 WakaTimeRoutes(app);
+displayModals(app);
 
 const server = app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
