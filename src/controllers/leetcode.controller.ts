@@ -38,12 +38,15 @@ export const leetcodeStats = async (req: Request, res: Response): Promise<void> 
     let data: LeetCodeGraphQLResponse;
     const [success, cacheData] = await getCacheData(key);
     if (!success) {
-        const queryResponse = await preQuery(req, res, subRoute)
-        if (queryResponse == false) {
-            return;
-        }
+        const queryResponse = await preQuery(req, subRoute)
+            .catch(err => {
+                throw new ResponseError(
+                    "Error building LeetCode profile GraphQL query",
+                    err, 500
+                )
+            });
         setCacheData(key, queryResponse);
-        data = queryResponse as LeetCodeGraphQLResponse;
+        data = queryResponse;
     } else {
         data = cacheData as LeetCodeGraphQLResponse;
     }
@@ -62,13 +65,16 @@ const leetcodeStreak = async (req: Request, res: Response, subRoute: string): Pr
     let data: STREAKDATA;
     const [success, cacheData] = await getCacheData(key);
     if (!success) {
-        const parseStreak = parseDirect(subRoute);
+        const parseStreak = parseDirect(subRoute)
         const path = getGraph(subRoute);
-        const preSet = await preProbe(req, res);
-        if (preSet == false) {
-            return;
-        }
-        const [membershipYears, csrf_credential] = preSet as [number[], string];
+        const preSet = await preProbe(req)
+            .catch(err => {
+                throw new ResponseError(
+                    "Error build probe query for user membership length",
+                    err, 502
+                )
+            });
+        const [membershipYears, csrf_credential] = preSet;
 
         const streakData: STREAKDATA = {
             streak: [0, 0],
@@ -91,23 +97,15 @@ const leetcodeStreak = async (req: Request, res: Response, subRoute: string): Pr
                 csrf_credential)
                 .then((res) => res)
                 .catch((err) => {
-                    return {
-                        message: "Internal server error",
-                        error: err,
-                        error_code: 500,
-                    } as ResponseError;
+                    throw new ResponseError("Error building LeetCode streak GraphQL query",
+                        err, 500,
+                    );
                 });
-            // Send API errors if they have occured
-            if ((data as ResponseError).error !== undefined) {
-                console.error(data as ResponseError)
-                res.status((data as ResponseError).error_code).send(data);
-                return;
-            }
 
             parseStreak(streakData, data, year);
         }
         setCacheData(key, streakData);
-        data = streakData as STREAKDATA
+        data = streakData;
     } else {
         data = cacheData as STREAKDATA;
     }
@@ -125,12 +123,15 @@ export const leetcodeDaily = async (req: Request, res: Response): Promise<void> 
     let data: LeetCodeGraphQLResponse;
     const [success, cacheData] = await getCacheData(key)
     if (!success) {
-        const queryResponse = await preQuery(req, res, 'daily')
-        if (queryResponse == false) {
-            return;
-        }
+        const queryResponse = await preQuery(req, 'daily')
+            .catch(err => {
+                throw new ResponseError(
+                    "Error building LeetCode daily question GraphQL query",
+                    err, 500
+                )
+            });
         setCacheData(key, queryResponse);
-        data = queryResponse as LeetCodeGraphQLResponse;
+        data = queryResponse;
     } else {
         data = cacheData as LeetCodeGraphQLResponse;
     }
