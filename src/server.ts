@@ -5,7 +5,6 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import cacheControl from "express-cache-controller";
-import fetch from "fetch";
 
 import { LeetCodeRoutes } from "./routes/leetcode.routes";
 import { GithubRoutes } from "./routes/github.routes";
@@ -16,7 +15,6 @@ import { buildRedis, teardownRedis } from "./utils/cache";
 import { displayModals } from "./routes/display";
 
 const PORT = 8000;
-global.fetch = fetch;
 
 const app = express();
 app.use(express.json(), express.urlencoded({ extended: true }));
