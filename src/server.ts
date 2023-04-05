@@ -30,9 +30,24 @@ app.use(
 // Set svg content headers for all routes
 app.use((req: Request, res: Response, next: NextFunction) => {
   req;
-  // Set response headers
+  // Set svg response headers as default
   res.setHeader("Content-Type", "image/svg+xml");
   next();
+});
+
+// error handling middleware
+app.use((err: Error, _: Request, res: Response) => {
+  if (err instanceof ResponseError) {
+    res.status(err.error_code).json({
+      message: err.message,
+      error: err.error
+    });
+  } else {
+    res.status(500).json({
+      message: 'Internal server error',
+      error: err
+    });
+  }
 });
 
 // Rate limiting the api
