@@ -26,15 +26,12 @@ export const leetcodeStats = async (req: Request, res: Response): Promise<void> 
 
     if (subRoute === "streak") {
         leetcodeStreak(req, res, subRoute);
-        return
+        return;
     }
-
-    const parse = parseDirect(subRoute);
-    const createCard = cardDirect(subRoute);
-
+    
     sleepMod = (sleepMod + 2) % 10
     await sleep(sleepMod);
-
+    
     let data: LeetCodeGraphQLResponse;
     const [success, cacheData] = await getCacheData(key);
     if (!success) {
@@ -43,16 +40,20 @@ export const leetcodeStats = async (req: Request, res: Response): Promise<void> 
                 throw new ResponseError(
                     "Error building LeetCode profile GraphQL query",
                     err, 500
-                )
+                );
             });
         setCacheData(key, queryResponse);
         data = queryResponse;
     } else {
         data = cacheData as LeetCodeGraphQLResponse;
     }
-    
+        
+    const parse = parseDirect(subRoute);
     const parsedData = parse(data as ProfileResponse);
+
+    const createCard = cardDirect(subRoute);
     const card = createCard(req, parsedData);
+
     res.status(200).send(card);
     return;
 }
@@ -60,66 +61,64 @@ export const leetcodeStats = async (req: Request, res: Response): Promise<void> 
 // User Streak specific controller
 const leetcodeStreak = async (req: Request, res: Response, subRoute: string): Promise<void> => {
     const key = `leetcode:${req.params.username!}:streak`;
-    const streakCard = cardDirect(subRoute);
-
+    
     let data: STREAKDATA;
     const [success, cacheData] = await getCacheData(key);
     if (!success) {
         const parseStreak = parseDirect(subRoute)
         const path = getGraph(subRoute);
         const preSet = await preProbe(req)
-            .catch(err => {
-                throw new ResponseError(
-                    "Error build probe query for user membership length",
-                    err, 502
+        .catch(err => {
+            throw new ResponseError(
+                "Error build probe query for user membership length",
+                err, 502
                 )
             });
-        const [membershipYears, csrf_credential] = preSet;
-
-        const streakData: STREAKDATA = {
-            streak: [0, 0],
-            totalActive: 0,
-            mostActiveYear: 0,
-            completion: "0.00",
-            completionActuals: [0, 0],
-            theme: THEMES["black-ice"]!
-        }
-        const graphql = gql(
-            fs.readFileSync(path, 'utf8')
-        );
-        // Call the universal leetCode querier for each year
-        for (let year of membershipYears) {
-            const data = await leetcodeGraphQL({
-                query: graphql,
-                variables: { username: req.params.username!, year: year }
-            },
-                GRAPHQL_URL,
-                csrf_credential)
-                .then((res) => res)
-                .catch((err) => {
-                    throw new ResponseError("Error building LeetCode streak GraphQL query",
+            const [membershipYears, csrf_credential] = preSet;
+            
+            const streakData: STREAKDATA = {
+                streak: [0, 0],
+                totalActive: 0,
+                mostActiveYear: 0,
+                completion: "0.00",
+                completionActuals: [0, 0],
+                theme: THEMES["black-ice"]!
+            }
+            const graphql = gql(
+                fs.readFileSync(path, 'utf8')
+                );
+                // Call the universal leetCode querier for each year
+                for (let year of membershipYears) {
+                    const data = await leetcodeGraphQL({
+                        query: graphql,
+                        variables: { username: req.params.username!, year: year }
+                    },
+                    GRAPHQL_URL,
+                    csrf_credential)
+                    .catch((err) => {
+                        throw new ResponseError("Error building LeetCode streak GraphQL query",
                         err, 500,
-                    );
-                });
+                        );
+                    });
+                    
+                    parseStreak(streakData, data, year);
+                }
+                setCacheData(key, streakData);
+                data = streakData;
+            } else {
+                data = cacheData as STREAKDATA;
+            }
+            
+            const streakCard = cardDirect(subRoute);
+            const card = streakCard(req, data);
 
-            parseStreak(streakData, data, year);
-        }
-        setCacheData(key, streakData);
-        data = streakData;
-    } else {
-        data = cacheData as STREAKDATA;
-    }
-
-    const card = streakCard(req, data);
-    res.status(200).send(card);
-    return;
+            res.status(200).send(card);
+            return;
 }
 
 export const leetcodeDaily = async (req: Request, res: Response): Promise<void> => {
     const key = `leetcode:daily`;
-    const parse = parseDirect('daily');
-    const createCard = cardDirect('daily');
-
+    
     let data: LeetCodeGraphQLResponse;
     const [success, cacheData] = await getCacheData(key)
     if (!success) {
@@ -135,9 +134,13 @@ export const leetcodeDaily = async (req: Request, res: Response): Promise<void> 
     } else {
         data = cacheData as LeetCodeGraphQLResponse;
     }
-    
+        
+    const parse = parseDirect('daily');
     const parsedData = parse(data);
+
+    const createCard = cardDirect('daily');
     const card = createCard(req, parsedData);
+
     res.status(200).send(card);
     return;
 }

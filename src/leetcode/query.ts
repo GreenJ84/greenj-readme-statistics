@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { gql } from "graphql-tag";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
