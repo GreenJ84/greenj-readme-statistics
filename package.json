@@ -7,7 +7,7 @@
     "dev": "ts-node src/server.ts",
     "test": "jest",
     "build": "tsc",
-    "start": "node dist/server.js --trace-warnings"
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
