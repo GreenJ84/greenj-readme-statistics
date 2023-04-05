@@ -20,13 +20,10 @@ export const getProfileStats = async (req: Request, res: Response): Promise<void
     const subRoute = req.path.split("/")[2]!;
     const cacheKey = `wakatime:${req.params.username!}`
 
-    // Get data processing functionality for subRoute
-    const dataParse = parseDirect(subRoute);
-    const cardCreate = cardDirect(subRoute);
-
+    
     sleepMod = (sleepMod + 2) % 10
     await sleep(sleepMod);
-
+    
     // Try for cached data, Query API if not present
     let data: wakaResponse;
     const [success, cacheData] = await getCacheData(cacheKey);
@@ -39,18 +36,22 @@ export const getProfileStats = async (req: Request, res: Response): Promise<void
                     err, 502
                 );
             });
-        // Add new query data to cache
-        setCacheData(cacheKey, queryRepsonse)
-
-        data = queryRepsonse;
+            // Add new query data to cache
+            setCacheData(cacheKey, queryRepsonse)
+            
+            data = queryRepsonse;
+        }
+        else {
+            data = cacheData as wakaResponse;
+        }
+        
+        // Parse Data, Build Card, and Send
+        const dataParse = parseDirect(subRoute);
+        const parsedData = dataParse(data);
+        
+        const cardCreate = cardDirect(subRoute);
+        const card: string = cardCreate(req, parsedData);
+        
+        res.status(200).send(card);
+        return;
     }
-    else {
-        data = cacheData as wakaResponse;
-    }
-
-    // Parse Data, Build Card, and Send
-    const parsedData = dataParse(data);
-    const card: string = cardCreate(req, parsedData);
-    res.status(200).send(card);
-    return;
-}
