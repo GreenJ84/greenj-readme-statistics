@@ -32,15 +32,17 @@ export const getProfileStats = async (req: Request, res: Response): Promise<void
     const [success, cacheData] = await getCacheData(cacheKey);
     if (!success) {
         // Query WakaTime api
-        const queryRepsonse: wakaResponse | ResponseError = await getUserStats(req);
-        if ((queryRepsonse as ResponseError).error !== undefined) {
-            res.status((queryRepsonse as ResponseError).error_code).send(queryRepsonse);
-            return;
-        } 
+        const queryRepsonse: wakaResponse = await getUserStats(req)
+            .catch(err => {
+                throw new ResponseError(
+                    "Server error building Wakatime API call",
+                    err, 502
+                );
+            });
         // Add new query data to cache
-        setCacheData(cacheKey, queryRepsonse as wakaResponse)
+        setCacheData(cacheKey, queryRepsonse)
 
-        data = queryRepsonse as wakaResponse;
+        data = queryRepsonse;
     }
     else {
         data = cacheData as wakaResponse;
