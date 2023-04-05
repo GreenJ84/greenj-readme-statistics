@@ -14,6 +14,8 @@ import * as leetcode from '../leetcode/query';
 // Universal query for GitHub
 export async function leetcodeGraphQL(query: GraphQLQuery, url: string, csrf: string):
     Promise<LeetCodeGraphQLResponse> {
+    const fetch = require('fetch');
+    fetch;
     const client = new ApolloClient({
         uri: url,
         cache: new InMemoryCache(),
@@ -40,8 +42,9 @@ export async function leetcodeGraphQL(query: GraphQLQuery, url: string, csrf: st
             return result.data as LeetCodeGraphQLResponse
         })
         .catch(err => {
-            throw new ResponseError("An error occurred while retrieving data from the external LeetCode API",
-                err, 502,
+            throw new ResponseError(
+                "An error occurred while retrieving data from the external LeetCode API",
+                err, 502
             );
         });
     return result;
@@ -57,9 +60,7 @@ Promise<LeetCodeGraphQLResponse> => {
     const csrf_credential = await get_csrf()
         .then((result) => result.toString())
         .catch((err) => {
-            throw new ResponseError("Internal server error retrieving LeetCode credentials",
-                err, 500,
-            );
+            throw err
         });
     
     // Get correct query based on api called
@@ -82,9 +83,7 @@ Promise<LeetCodeGraphQLResponse> => {
         .then((res) => res)
         // Catch sever problems conducting the call
         .catch((err) => {
-            throw new ResponseError("Internal server error building LeetCode Graph call",
-                err, 500,
-            );
+            throw err
         })
 
     return data
@@ -98,9 +97,7 @@ Promise<[number[], string]> => {
     const csrf_credential: string = await get_csrf()
         .then((result) => result.toString())
         .catch((err) => {
-            throw new ResponseError("Internal server error retrieving LeetCode credentials",
-                err, 500,
-            );
+            throw err;
         });
     const graphql = gql(
         fs.readFileSync("src/leetcode/graphql/profile-years-probe.graphql", 'utf8')
@@ -119,9 +116,7 @@ Promise<[number[], string]> => {
     )
         .then((res) => res as ProbeResponse)
         .catch((err) => {
-            throw new ResponseError("Internal server error building LeetCode Graph call",
-                err, 500,
-            );
+            throw err;
         })
 
     return [data.matchedUser.userCalendar.activeYears, csrf_credential];

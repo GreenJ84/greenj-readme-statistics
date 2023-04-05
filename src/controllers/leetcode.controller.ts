@@ -25,23 +25,30 @@ export const leetcodeStats = async (req: Request, res: Response): Promise<void> 
     }
 
     if (subRoute === "streak") {
-        leetcodeStreak(req, res, subRoute);
+        await leetcodeStreak(req, res, subRoute)
+            .catch(err => {
+                throw err
+            });
         return;
     }
     
     sleepMod = (sleepMod + 2) % 10
-    await sleep(sleepMod);
+    await sleep(sleepMod)
+        .catch(_ => {
+            console.error("Snored to hard")
+        });
     
     let data: LeetCodeGraphQLResponse;
     const [success, cacheData] = await getCacheData(key);
     if (!success) {
         const queryResponse = await preQuery(req, subRoute)
             .catch(err => {
-                throw new ResponseError(
-                    "Error building LeetCode profile GraphQL query",
-                    err, 500
-                );
+                throw err
+            })
+            .catch(err => {
+                console.error('Unhandled promise rejection:', err);
             });
+        if (!queryResponse) { return; }
         setCacheData(key, queryResponse);
         data = queryResponse;
     } else {
