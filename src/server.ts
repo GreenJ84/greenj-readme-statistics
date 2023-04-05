@@ -5,6 +5,7 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import cacheControl from "express-cache-controller";
+import fetch from "fetch";
 
 import { LeetCodeRoutes } from "./routes/leetcode.routes";
 import { GithubRoutes } from "./routes/github.routes";
@@ -15,6 +16,7 @@ import { buildRedis, teardownRedis } from "./utils/cache";
 import { displayModals } from "./routes/display";
 
 const PORT = 8000;
+global.fetch = fetch;
 
 const app = express();
 app.use(express.json(), express.urlencoded({ extended: true }));
@@ -36,18 +38,19 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // error handling middleware
-app.use((err: Error, _: Request, res: Response) => {
-  if (err instanceof ResponseError) {
+app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
+  if (err && err instanceof ResponseError) {
     res.status(err.error_code).json({
       message: err.message,
       error: err.error
     });
-  } else {
+  } else if (err) {
     res.status(500).json({
       message: 'Internal server error',
       error: err
     });
   }
+  next();
 });
 
 // Rate limiting the api
