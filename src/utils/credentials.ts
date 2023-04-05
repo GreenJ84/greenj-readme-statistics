@@ -11,7 +11,7 @@ export interface ICredential {
     csrf?: string;
 }
 
-export async function get_csrf(): Promise<string | ResponseError> {
+export async function get_csrf(): Promise<string> {
     const cookies_raw = await axios.get(CRED_URL, {
         headers: {
             "user-agent": USER_AGENT,
@@ -20,15 +20,11 @@ export async function get_csrf(): Promise<string | ResponseError> {
         return res.headers['set-cookie']![0] as string;
     })
     .catch((err) => {
-        return {
-            message: "LeetCode credentials API response error",
-            error: err,
-            error_code: 502,
-        } as ResponseError;
+        throw new ResponseError(
+            "LeetCode credentials API response error", err, 502
+        );
     });
-    if ((cookies_raw as ResponseError).error !== undefined) {
-        return cookies_raw;
-    }
+
     const csrf_token = parse_cookie(cookies_raw as string).csrftoken!;
 
     return csrf_token;
