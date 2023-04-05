@@ -11,6 +11,7 @@ import { getResponseParse } from "../github/apiParser";
 import { cardDirect } from "../github/githubUtils";
 import { streakCardSetup } from "../github/cards/streak-card";
 import { getCacheData, setCacheData } from "../utils/cache";
+import { ResponseError } from "../utils/constants";
 
 let sleepMod = -2;
 
@@ -29,17 +30,20 @@ export const getProfileStats = async (req: Request, res: Response) => {
     const [success, cacheData] = await getCacheData(key);
     if (!success) {
         let variables = { login: req.params.username! }
-        const queryResponse = await preQery(res, variables, type)
-            .then((data) => { return data });
-        if (queryResponse == false) {
-            return;
-        }
-        data = queryResponse as GraphQLResponse;
+        const queryResponse = await preQery( variables, type)
+            .then((data) => { return data })
+            .catch (err => {
+                throw new ResponseError(
+                    "Error building GraphQL query for the GitHub API",
+                    err, 500
+                )
+            });;
+
+        data = queryResponse;
         setCacheData(key, queryResponse)
     } else {
         data = cacheData as GraphQLResponse;
     }
-
 
     // Get Function to parse data type
     const parse = getResponseParse(req);
@@ -57,7 +61,7 @@ export const getProfileStats = async (req: Request, res: Response) => {
 
 // GitHub Streak Controller
 export const getCommitStreak = async (req: Request, res: Response) => {
-    if (!preFlight(req, res)) { // Username requirement, Blacklist checking
+    if (!preFlight(req, res)) {
         return;
     }
     const key = `github:${req.params.username!}:streak`;
@@ -66,10 +70,14 @@ export const getCommitStreak = async (req: Request, res: Response) => {
     const [success, cacheData] = await getCacheData(key);
     if (!success) {
         // Query user data for Creation Date and Years of membership
-        const [created, years] = await streakProbe(req, res);
-        if (created == false) {
-            return;
-        }
+        const [created, years] = await streakProbe(req)
+            .catch(err => {
+                throw new ResponseError(
+                    "Error probing GitHub for membership years",
+                    err, 502
+                );
+            });
+
 
         // Start data with defaults sets
         let streak: STREAKTYPE = {
@@ -110,11 +118,14 @@ export const getCommitStreak = async (req: Request, res: Response) => {
                 variables.end = `${year}-12-31T00:00:00Z`;
             }
             // Query data for the specific yar
-            const data = await preQery(res, variables, "streak")
-                .then((data) => { return data });
-            if (data == false) {
-                return;
-            }
+            const data = await preQery(variables, "streak")
+                .then((data) => { return data })
+                .catch (err => {
+                    throw new ResponseError(
+                        "Error building GraphQL query for the GitHub API",
+                        err, 500
+                    )
+                });
             
             // Get Function to parse data
             const parse = getResponseParse(req);

@@ -5,7 +5,7 @@ import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { gql } from "graphql-tag";
 import { match } from 'ts-pattern';
 
-import { GraphQLQuery, GraphQLError, GIT_URL } from '../utils/constants';
+import { GraphQLQuery, ResponseError, GIT_URL } from '../utils/constants';
 import { GraphQLResponse, StreakProbe } from './githubTypes';
 
 dotenv.config()
@@ -25,7 +25,7 @@ const getGraph = (type: string): string => {
 }
 
 // Provides all basic GitHub details for GraphQL query
-export async function githubGraphQL(query: GraphQLQuery): Promise<GraphQLError | GraphQLResponse> {
+export async function githubGraphQL(query: GraphQLQuery): Promise<ResponseError | GraphQLResponse> {
     const client = new ApolloClient({
         uri: GIT_URL,
         cache: new InMemoryCache(),
@@ -48,17 +48,15 @@ export async function githubGraphQL(query: GraphQLQuery): Promise<GraphQLError |
             return result.data as GraphQLResponse
         })
         .catch(err => {
-            return {
-                    message: "An error occurred while retrieving data from the external API",
-                    error_code: 500,
-                    error: err
-                } as GraphQLError
+            throw new ResponseError("Error retrieving data from the external GitHub API",
+                err, 502
+            );
         });
     return result;
 };
 
 // Decide GraphQL query before execution
-export const preQery = async (res: Response, variables: {}, type: string): Promise<GraphQLResponse | Boolean> => {
+export const preQery = async (variables: {}, type: string): Promise<GraphQLResponse> => {
     const path = getGraph(type === "streak" ? type : "all");
     const graphql = gql(
         fs.readFileSync(path, 'utf8')
@@ -70,24 +68,18 @@ export const preQery = async (res: Response, variables: {}, type: string): Promi
         })
         .then((res) => res as GraphQLResponse)
         .catch((err) => {
-            return {
-                message: "Internal server error",
-                error: err,
-                error_code: 500,
-            } as GraphQLError;
+            throw new ResponseError(
+                "Error building GraphQL query for the GitHub API",
+                err, 500
+            );
         })
-    // Return API errors if they have occured
-    if ((data as GraphQLError).error !== undefined) {
-        console.error((data as GraphQLError));
-        res.status((data as GraphQLError).error_code).send(data);
-        return false;
-    }
+
     // Data to be returned will be of a valid response type
     return data as GraphQLResponse;
 }
 
 // Probes user creation date and years a member for streak query
-export const streakProbe = async (req: Request, res: Response): Promise<[string | boolean, number[]]> => {
+export const streakProbe = async (req: Request): Promise<[string , number[]]> => {
     const now = new Date().toISOString()
     const today = now.slice(0, 19);
     const year = now.slice(0,4)
@@ -106,21 +98,14 @@ export const streakProbe = async (req: Request, res: Response): Promise<[string 
         })
         .then((res) => res as GraphQLResponse)
         .catch((err) => {
-            return {
-                message: "Internal server error",
-                error: err,
-                error_code: 500,
-            } as GraphQLError;
+            throw new ResponseError(
+                "Error building GraphQL query for the GitHub API",
+                err, 500
+            );
         })
 
-    // Return API errors if they have occured and flag call termination
-    if ((data as GraphQLError).error !== undefined) {
-        res.status((data as GraphQLError).error_code).send(data);
-        return [false, [0]];
-    } else {
-        return [
-            (data as GraphQLResponse as StreakProbe).user.createdAt,
-            [...(data as GraphQLResponse as StreakProbe).user.contributionsCollection.contributionYears].sort()];
-    }
-    
+    return [
+        (data as GraphQLResponse as StreakProbe).user.createdAt,
+        [...(data as GraphQLResponse as StreakProbe).user.contributionsCollection.contributionYears].sort()
+    ];
 }
