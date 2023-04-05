@@ -7,14 +7,14 @@ import { ResponseError, WAKA_TIME_URL } from '../utils/constants';
 
 dotenv.config()
 
-export const getUserStats = async (req: Request): Promise<wakaResponse | ResponseError> => {
+export const getUserStats = async (req: Request): Promise<wakaResponse > => {
     const { username } = req.params;
-    if (process.env.WAKATIME_TOKEN == undefined) {
-        return {
-            message: "Error accessing WakaTime API Token",
-            error: "WakaTime Token ENV variable missing",
-            error_code: 500
-        } as ResponseError
+    if (process.env.WAKATIME_TOKEN === undefined) {
+        throw new ResponseError(
+            "Error accessing WakaTime API Token",
+            "WakaTime Token ENV variable missing",
+            500
+        );
     }
 
     const config = axios.create({
@@ -29,10 +29,12 @@ export const getUserStats = async (req: Request): Promise<wakaResponse | Respons
         .then(res => {
             return res.data.data as wakaResponse
         })
-        .catch(err => { return {
-            message: "Error accessing WakaTime API",
-            error: err,
-            error_code: 500
-        } as ResponseError })
+        .catch(err => {
+            throw new ResponseError(
+                "Error accessing WakaTime API",
+                err, 502
+            );
+        });
+
     return data;
 }
