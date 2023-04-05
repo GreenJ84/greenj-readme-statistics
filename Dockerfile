@@ -18,7 +18,7 @@ RUN npm install
 COPY . .
 
 # Build the TypeScript code to JavaScript
-# RUN npm run build
+RUN npm run build
 
 # Expose port 3000
 EXPOSE 8000
