@@ -14,19 +14,22 @@ export const WAKA_TIME_URL = "https://wakatime.com/api/v1";
 export const WAKA_TIME_AUTH_URL = "https://wakatime.com/oauth/token";
 
 
+export class ResponseError extends Error {
+    error: any;
+    error_code: number;
 
-// Extras
-export interface GraphQLError {
-    message: string,
-    error: any,
-    error_code: number
+    constructor(message: string, error: any, error_code: number) {
+        super(message);
+        this.error = error;
+        this.error_code = error_code;
+    }
 }
 
-export interface ResponseError {
-    message: string,
-    error: any,
-    error_code: number
-}
+// export interface ResponseError {
+//     message: string,
+//     error: any,
+//     error_code: number
+// }
 
 export interface GraphQLQuery {
     variables?: { [key: string]: unknown };
