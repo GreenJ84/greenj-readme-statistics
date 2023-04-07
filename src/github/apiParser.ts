@@ -71,8 +71,8 @@ const streakParse = (streak: STREAKTYPE, data: StreakResponse) => {
     streak.total = total;
     streak.curr = curr;
     streak.currDate = [cS!, cE!];
-    streak.longest = longest;
-    streak.longestDate = [lS!, lE!];
+    streak.longest = Math.max(longest, curr);
+    streak.longestDate = longest > curr ?[lS!, lE!] : streak.currDate;
 }
 
 
