@@ -79,7 +79,7 @@ app.use(
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'"],
-        styleSrc: ["'self'"],
+        styleSrc: ["'self'", 'unsafe-inline'],
         "img-src": ["'self'", "data:"]
       },
     },
