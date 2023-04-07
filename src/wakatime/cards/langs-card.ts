@@ -7,6 +7,7 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
     const theme: THEMETYPE = baseCardThemeParse(req);
     
     const {
+        topStat,
         stats,
         pieBG,
         textMain,
@@ -15,8 +16,11 @@ export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
         title
     } = req.query;
 
+    if (topStat !== undefined) {
+        theme.statsMain = topStat as string;
+    }
     if (stats !== undefined) {
-        theme.statsMain = stats as string;
+        theme.statsSub = stats as string;
     }
     if (textMain !== undefined) {
         theme.textMain = textMain as string;

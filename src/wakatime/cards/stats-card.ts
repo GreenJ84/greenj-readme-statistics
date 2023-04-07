@@ -19,10 +19,10 @@ export const statsCardSetup = (req: Request, data: STATTYPE): string => {
         title
     } = req.query;
     if (ring !== undefined) {
-        theme.detailMain = ring as string;
+        theme.detailSub = ring as string;
     }
     if (fire !== undefined) {
-        theme.detailSub = fire as string;
+        theme.detailMain= fire as string;
     }
     if (stroke !== undefined) {
         theme.stroke = stroke as string;

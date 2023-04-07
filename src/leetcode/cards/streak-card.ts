@@ -18,10 +18,10 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
     } = req.query;
 
     if (ring !== undefined) {
-        theme.detailMain = ring as string;
+        theme.detailSub = ring as string;
     }
     if (fire !== undefined) {
-        theme.detailSub = fire as string;
+        theme.detailMain = fire as string;
     }
     if (currStreak !== undefined) {
         theme.statsMain = currStreak as string;
@@ -49,34 +49,40 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
     <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr'>
         <title>${data.title}</title>
         <style>
-            .stats{
-                fill: ${theme.statsMain};
+            .mainStat, .stats, .mainLabel, .labels, .date{
                 stroke: none;
-                font-family: "Segoe UI", Ubuntu, sans-serif; 
+                font-family:"Segoe UI", Ubuntu, sans-serif;
+                font-style: normal;
+                opacity: 0;
+            }
+            .mainStat{
+                fill: ${theme.statsMain};
                 font-weight: 700;
                 font-size: 32px;
-                font-style:normal;
-                opacity: 0; 
                 animation: fadeInAnimation 0.5s linear forwards 1.2s;
             }
-            .labels{
+            .stats{
+                fill: ${theme.statsSub};
+                font-weight: 700;
+                font-size: 32px;
+                animation: fadeInAnimation 0.5s linear forwards 1.2s;
+            }
+            .mainLabel{
                 fill: ${theme.textMain};
-                stroke: none;
-                font-family: "Segoe UI", Ubuntu, sans-serif;
                 font-weight: 400;
                 font-size: 14px;
-                font-style: normal;
-                opacity: 0;
                 animation: fadeInAnimation 0.5s linear forwards 0.7s;
             }
-            .subText{
+            .labels{
                 fill: ${theme.textSub};
-                stroke: none;
-                font-family: "Segoe UI", Ubuntu, sans-serif;
+                font-weight: 400;
+                font-size: 14px;
+                animation: fadeInAnimation 0.5s linear forwards 0.7s;
+            }
+            .dates{
+                fill: ${theme.dates};
                 font-weight: 400;
                 font-size: 12px;
-                font-style: normal;
-                opacity: 0;
                 animation: fadeInAnimation 0.5s linear forwards 0.8s;
             }
             @keyframes currstreak {
@@ -91,7 +97,7 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
         </style>
         <defs>
             <clipPath id='outer_rectangle'>
-                <rect width='552' height='215' rx='10'/>
+                <rect width='552' height='215' rx='${theme.borderRadius}'/>
             </clipPath>
         </defs>
         <g clip-path='url(#outer_rectangle)'>
@@ -131,7 +137,7 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
                 </g>
                 <!-- Most Active year -->
                 <g transform='translate(1,114)'>
-                    <text x='92' y='50' stroke-width='0' text-anchor='middle' class="subText">
+                    <text x='92' y='50' stroke-width='0' text-anchor='middle' class="dates">
                         Most Active Year: ${data.mostActiveYear} days
                     </text>
                 </g>
@@ -141,19 +147,19 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
             <g style='isolation: isolate'>
                 <!-- Max Streak Number -->
                 <g transform='translate(0,48)'>
-                    <text x='276' y='66' stroke-width='0' text-anchor='middle' class="stats">
+                    <text x='276' y='66' stroke-width='0' text-anchor='middle' class="mainStat">
                         ${data.streak[0]}
                     </text>
                 </g>
                 <!-- Max Streak Label -->
                 <g transform='translate(0,108)'>
-                    <text x='276' y='60' stroke-width='0' text-anchor='middle' class="labels">
+                    <text x='276' y='60' stroke-width='0' text-anchor='middle' class="mainLabel">
                         Longest Streak
                     </text>
                 </g>
                 <!-- Max Streak Year -->
                 <g transform='translate(0,145)'>
-                    <text x='276' y='46' stroke-width='0' text-anchor='middle' class="subText">
+                    <text x='276' y='46' stroke-width='0' text-anchor='middle' class="dates">
                         in ${data.streak[1]}
                     </text>
                 </g>
@@ -161,7 +167,7 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
             <!-- Main Stats Detail -->
                 <!-- Ring around number -->
                 <g mask='url(#mask_out_ring_behind_fire)'>
-                    <circle cx='276' cy='102' r='38' fill='none' stroke='${theme.detailMain}' stroke-width='5' style='opacity: 0; animation: fadeInAnimation 0.5s linear forwards 0.4s'>
+                    <circle cx='276' cy='102' r='38' fill='none' stroke='${theme.detailSub}' stroke-width='5' style='opacity: 0; animation: fadeInAnimation 0.5s linear forwards 0.4s'>
                     </circle>
                 </g>
                 <!-- Fire background cutout -->
@@ -192,10 +198,10 @@ export const streakCard = (req: Request, data: STREAKDATA): string => {
                 </g>
                 <!-- Completion Actuals -->
                 <g transform='translate(0,114)'>
-                    <text x='460' y='50' stroke-width='0' text-anchor='middle' class="subText">
+                    <text x='460' y='50' stroke-width='0' text-anchor='middle' class="dates">
                         ${data.completionActuals[0].toLocaleString()} out of ${data.completionActuals[1]!.toLocaleString()}
                     </text>
-                    <text x='460' y='60' stroke-width='0' text-anchor='middle' fill='#151515' stroke='none' font-family='\"Segoe UI\", Ubuntu, sans-serif' font-weight='300' font-size='10px' font-style='normal' style='opacity: 0; animation: fadeInAnimation 0.5s linear forwards 1.4s'>
+                    <text x='460' y='60' stroke-width='0' text-anchor='middle' class="dates">
                         questions complete
                     </text>
                 </g>
