@@ -28,6 +28,30 @@ export const THEMES: Record<string, THEMETYPE> = {
             textSub: "#151515",
             dates: "#464646",
         },
+        "greenj-dark": {
+            background: "#172F45",
+            border: "#BCE3FB",
+            stroke: "#BCE3FB",
+            detailMain: "#32FF05",
+            detailSub: "#81FFA2",
+            statsMain: "#54ADFF",
+            statsSub: "#5957FF",
+            textMain: "#2EFFFF",
+            textSub: "#91FEDD",
+            dates: "#7CA7EA",
+        },
+        "greenj-light": {
+            background: "#BCE3FB", //
+            border: "#172F45", //
+            stroke: "#172F45", //
+            detailMain: "#50E42F", //
+            detailSub: "#1A4C34", //
+            statsMain: "#38A0FF", //
+            statsSub: "#0D9246", //
+            textMain: "#5957FF", //
+            textSub: "#1466B2",
+            dates: "#56738E", //
+        },
         "dark": {
             background: "#151515",
             border: "#E4E2E2",
