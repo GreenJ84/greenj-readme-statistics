@@ -80,7 +80,7 @@ app.use(
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
-        "img-src": ["'self'", "data:", "https://greenj-readme-stats.onrender.com", "http://localhost:8000"]
+        imgSrc: ["'self'", "data:", "https://greenj-readme-stats.onrender.com"]
       },
     },
     xssFilter: true,
