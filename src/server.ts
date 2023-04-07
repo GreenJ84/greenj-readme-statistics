@@ -79,8 +79,8 @@ app.use(
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'"],
-        styleSrc: ["'self'", "unsafe-inline"],
-        "img-src": ["'self'", "data:", "https://greenj-readme-stats.onrender.com"]
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        "img-src": ["'self'", "data:", "https://greenj-readme-stats.onrender.com", "http://localhost:8000"]
       },
     },
     xssFilter: true,
