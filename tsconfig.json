@@ -6,6 +6,7 @@
         "sourceRoot": "./src",
         "outDir": "./dist",
         "types": ["node", "react"],
+        "typeRoots": ["node_modules/@types"],
         "declaration": true,
         "declarationDir": "./dist/types",
         "inlineSourceMap": true,
