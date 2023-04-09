@@ -12,7 +12,7 @@ export const getUserStats = async (req: Request): Promise<wakaResponse > => {
     if (process.env.WAKATIME_TOKEN === undefined) {
         throw new ResponseError(
             "Error accessing WakaTime API Token",
-            "WakaTime Token ENV variable missing",
+            "WakaTime Token environmental variable is missing",
             500
         );
     }
@@ -31,10 +31,9 @@ export const getUserStats = async (req: Request): Promise<wakaResponse > => {
         })
         .catch(err => {
             throw new ResponseError(
-                "Error accessing WakaTime API",
-                err, 502
+                `Error accessing WakaTime API: ${err.response.statusText}`,
+                err, err.response.status
             );
         });
-
     return data;
 }
