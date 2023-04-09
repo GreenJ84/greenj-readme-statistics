@@ -14,6 +14,10 @@ import { ResponseError } from "./utils/constants";
 import { buildRedis, teardownRedis } from "./utils/cache";
 import { displayModals } from "./routes/display";
 
+import { spawn } from 'child_process';
+
+const npmProcess = spawn('npm', ['start']);
+
 const PORT = 8000;
 
 const app = express();
@@ -102,6 +106,19 @@ displayModals(app);
 const server = app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
   await buildRedis();
+});
+
+npmProcess.stderr.on('data', (data) => {
+  const errorMessage = data.toString();
+  if (errorMessage.includes('npm ERR!')) {
+    console.error(errorMessage);
+  } else {
+    console.log(`npm stderr: ${data}`);
+  }
+});
+
+npmProcess.on('close', (code) => {
+  console.log(`npm exited with code ${code}`);
 });
 
 // Stop the Redis server and close the Express server
