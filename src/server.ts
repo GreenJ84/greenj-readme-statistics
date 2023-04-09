@@ -27,29 +27,6 @@ app.use(
   })
 );
 
-// Set svg content headers for all routes
-app.use((req: Request, res: Response, next: NextFunction) => {
-  req;
-  // Set svg response headers as default
-  res.setHeader("Content-Type", "image/svg+xml");
-  next();
-});
-
-// error handling middleware
-app.use((err: Error, _: Request, res: Response, next: NextFunction) => {
-  if (err && err instanceof ResponseError) {
-    res.status(err.error_code).json({
-      message: err.message,
-      error: err.error
-    });
-  } else if (err) {
-    res.status(500).json({
-      message: 'Internal server error',
-      error: err
-    });
-  }
-  next();
-});
 
 // Rate limiting the api
 const limiter = rateLimit({
@@ -60,7 +37,7 @@ const limiter = rateLimit({
     res.status(err.error_code).send(err);
   },
 });
-app.use("/", limiter);
+app.use(limiter);
 
 // Cache api calls
 app.use(
@@ -91,11 +68,35 @@ app.use(
       preload: true,
     },
   })
-);
+  );
+
+// Set svg content headers for all routes
+app.use((_: Request, res: Response, next: NextFunction) => {
+  // Set svg response headers as default
+  res.setHeader("Content-Type", "image/svg+xml");
+  next();
+});
 
 LeetCodeRoutes(app);
 GithubRoutes(app);
 WakaTimeRoutes(app);
+
+// error handling middleware
+app.use((err: Error, _: Request, res: Response, __: NextFunction) => {
+  res.setHeader("Content-Type", "text/json");
+  if (err && err instanceof ResponseError) {
+    res.status(err.error_code).json({
+      message: err.message,
+      error: err.error
+    });
+  } else if (err) {
+    res.status(500).json({
+      message: 'Internal server error',
+      error: err
+    });
+  }
+});
+
 displayModals(app);
 
 const server = app.listen(PORT, async () => {
