@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import { preFlight, sleep } from '../utils/utils';
-import { ResponseError } from '../utils/constants';
+// import { ResponseError } from '../utils/constants';
 
 import { getUserStats } from '../wakatime/query';
 import { parseDirect } from '../wakatime/apiParse';
@@ -31,27 +31,24 @@ export const getProfileStats = async (req: Request, res: Response): Promise<void
         // Query WakaTime api
         const queryRepsonse: wakaResponse = await getUserStats(req)
             .catch(err => {
-                throw new ResponseError(
-                    "Server error building Wakatime API call",
-                    err, 502
-                );
+                throw err;
             });
             // Add new query data to cache
             setCacheData(cacheKey, queryRepsonse)
             
             data = queryRepsonse;
-        }
-        else {
-            data = cacheData as wakaResponse;
-        }
-        
-        // Parse Data, Build Card, and Send
-        const dataParse = parseDirect(subRoute);
-        const parsedData = dataParse(data);
-        
-        const cardCreate = cardDirect(subRoute);
-        const card: string = cardCreate(req, parsedData);
-        
-        res.status(200).send(card);
-        return;
     }
+    else {
+        data = cacheData as wakaResponse;
+    }
+    
+    // Parse Data, Build Card, and Send
+    const dataParse = parseDirect(subRoute);
+    const parsedData = dataParse(data);
+    
+    const cardCreate = cardDirect(subRoute);
+    const card: string = cardCreate(req, parsedData);
+    
+    res.status(200).send(card);
+    return;
+}
