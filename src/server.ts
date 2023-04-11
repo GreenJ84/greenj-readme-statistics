@@ -5,6 +5,7 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import cacheControl from "express-cache-controller";
+import { spawn } from 'child_process';
 
 import { LeetCodeRoutes } from "./routes/leetcode.routes";
 import { GithubRoutes } from "./routes/github.routes";
@@ -14,13 +15,11 @@ import { ResponseError } from "./utils/constants";
 import { buildRedis, teardownRedis } from "./utils/cache";
 import { displayModals } from "./routes/display";
 
-import { spawn } from 'child_process';
 
 const npmProcess = spawn('npm', ['start']);
-
 const PORT = 8000;
-
 const app = express();
+
 app.use(express.json(), express.urlencoded({ extended: true }));
 
 // Open cross origin access
@@ -84,6 +83,7 @@ app.use((_: Request, res: Response, next: NextFunction) => {
 LeetCodeRoutes(app);
 GithubRoutes(app);
 WakaTimeRoutes(app);
+displayModals(app);
 
 // error handling middleware
 app.use((err: Error, _: Request, res: Response, __: NextFunction) => {
@@ -101,46 +101,54 @@ app.use((err: Error, _: Request, res: Response, __: NextFunction) => {
   }
 });
 
-displayModals(app);
-
 const server = app.listen(PORT, async () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Express server running on port ${PORT}`);
   await buildRedis();
 });
+server.timeout = 30000;
 
+
+// NPM error handling
 npmProcess.stderr.on('data', (data) => {
   const errorMessage = data.toString();
   if (errorMessage.includes('npm ERR!')) {
     console.error(errorMessage);
   } else {
-    console.log(`npm stderr: ${data}`);
+    console.error(`npm stderr: ${data}`);
   }
 });
 
 npmProcess.on('close', (code) => {
-  console.log(`npm exited with code ${code}`);
+  if (code != 0) {
+    console.log(`npm exited with code ${code}`);
+  } else {
+    console.log("npm successful closure")
+  }
 });
 
+
+let shuttingDown = false;
 // Stop the Redis server and close the Express server
 const gracefulShutdown = async () => {
-  server.close(() => {
+  if (!shuttingDown) {
+    shuttingDown = true;
     console.log("\n");
-    // Disconnect from Redis server
-    teardownRedis().then(() => {
-      console.log('Express server closed.');
-      process.exit(0);
+    console.log("Shutting Down");
+    server.close(() => {
+      // Disconnect from Redis server
+      teardownRedis().then(() => {
+        console.log('Express server closed.');
+        process.exit(0);
+      });
     });
-  });
+  }
 };
-
 // Handle SIGINT signal for graceful shutdown
 process.on('SIGINT', gracefulShutdown);
-
 // Handle SIGTERM signal for graceful shutdown
 process.on('SIGTERM', gracefulShutdown);
-
 // Handle uncaught exceptions
 process.on('uncaughtException', (err) => {
-  console.error(err);
+  console.error(`Uncaught: ${err}`);
   gracefulShutdown();
 });
