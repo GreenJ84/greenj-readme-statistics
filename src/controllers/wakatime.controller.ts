@@ -7,7 +7,7 @@ import { getUserStats, updateUser } from '../wakatime/query';
 import { parseDirect } from '../wakatime/apiParse';
 import { cardDirect } from '../wakatime/wakatimeUtils';
 import { wakaResponse } from '../wakatime/wakatimeTypes';
-import { getCacheData, getCacheKey, setCacheData } from '../utils/cache';
+import { deleteCacheData, getCacheData, getCacheKey, setCacheData } from '../utils/cache';
 import { PRODUCTION } from '../utils/constants';
 
 let sleepMod = -2;
@@ -30,7 +30,8 @@ export const wakaStatsRegister = async (req: Request, res: Response): Promise<vo
         res.status(208).json({
             message: "User already registered",
             code: "208"
-        })
+        });
+        return;
     }
     // Query WakaTime api
     const queryRepsonse: wakaResponse = await getUserStats(req.params.username!)
@@ -38,18 +39,23 @@ export const wakaStatsRegister = async (req: Request, res: Response): Promise<vo
             throw err;
         });
     // Add new query data to cache
-    await setCacheData(cacheKey, queryRepsonse);
-
-    setInterval(() => {
+    const intervalID = setInterval(() => {
         // console.log("Updating");
-        updateUser(cacheKey, req.params.username!);
+        updateUser(cacheKey, intervalID, req.params.username!);
     }, DATA_UDPDATE_INTERVAL);
-    
+    await setCacheData( cacheKey, {
+            interval: intervalID ,
+            data: queryRepsonse
+        }
+    );
+
     res.status(201).json({
         message: "User Registered",
         code: "201"
     });
+    return;
 }
+
 
 
 export const getProfileStats = async (req: Request, res: Response): Promise<void> => {
@@ -76,7 +82,7 @@ export const getProfileStats = async (req: Request, res: Response): Promise<void
         return;
     }
     else {
-        data = cacheData as wakaResponse;
+        data = cacheData!.data as wakaResponse;
     }
     
     // Parse Data, Build Card, and Send
