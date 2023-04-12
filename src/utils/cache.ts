@@ -1,10 +1,9 @@
 import { RedisClientType, createClient } from 'redis';
-import dotenv from 'dotenv';
 import { LeetCodeGraphQLResponse, STREAKDATA } from '../leetcode/leetcodeTypes';
 import { GraphQLResponse, STREAKTYPE } from '../github/githubTypes';
 import { wakaResponse } from '../wakatime/wakatimeTypes';
+import { PRODUCTION, PROD_HOST, PROD_PORT, REDIS_PASS, REDIS_USER } from './constants';
 
-dotenv.config();
 
 type cacheType = 
     LeetCodeGraphQLResponse |
@@ -14,9 +13,9 @@ type cacheType =
     wakaResponse |
     { times: number }
 
-export const client: RedisClientType = process.env.NODE_ENV === "production" ?
+export const client: RedisClientType = PRODUCTION ?
     createClient({
-            url: `redis://${process.env.REDIS_USER}:${process.env.REDIS_PASS}@${process.env.PROD_HOST}:${process.env.PROD_PORT}`
+            url: `redis://${REDIS_USER}:${REDIS_PASS}@${PROD_HOST}:${PROD_PORT}`
         })
     :
     createClient();
@@ -54,7 +53,9 @@ export const setCacheData = async (key: string, data: any): Promise<void> => {
     await client.set(
         key,
         JSON.stringify(data), {
-            "EX": (60 * 60 * 6)
+            // 30 sec development cache lifetime
+            // 8hr and 6min production cache lifetime
+            "EX": PRODUCTION ? (60 * 61 * 8) : 30
         }
     )
     return;
