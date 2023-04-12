@@ -56,6 +56,38 @@ export const wakaStatsRegister = async (req: Request, res: Response): Promise<vo
     return;
 }
 
+export const wakaStatsUnregister = async (req: Request, res: Response): Promise<void> => {
+    // Ensure caller is viable
+    if (!preFlight(req, res)) {
+        return;
+    }
+    const cacheKey = getCacheKey(req);
+    res.set('Content-Type', 'application/json');
+
+    // Try for cached data, Query API if not present
+    const [success, cache] = await getCacheData(cacheKey);
+    if (!success) { 
+        res.status(400).json({
+            message: "User not found.",
+            code: "404"
+        });
+        return;
+    }
+
+    const intervalID = cache?.interval;
+    clearInterval(intervalID);
+    const deleted = await deleteCacheData(cacheKey);
+
+    if (!deleted) {
+        console.error("Cache data didn't get deleted.");
+    }
+
+    res.status(200).json({
+        message: "User unregistered",
+        code: "200"
+    });
+    return;
+}
 
 
 export const getProfileStats = async (req: Request, res: Response): Promise<void> => {
