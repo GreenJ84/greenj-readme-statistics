@@ -14,6 +14,11 @@ type cacheType =
     wakaResponse |
     { times: number }
 
+export interface USER_CACHE {
+    interval: NodeJS.Timer
+    data: cacheType
+}
+
 export const client: RedisClientType = PRODUCTION ?
     createClient({
             url: `redis://${REDIS_USER}:${REDIS_PASS}@${PROD_HOST}:${PROD_PORT}`
@@ -45,7 +50,7 @@ export const teardownRedis = async () => {
         .then(() => console.log("Redis server disconnected."));
 }
 
-export const getCacheData = async (key: string): Promise<[boolean, cacheType | null]> => {
+export const getCacheData = async (key: string): Promise<[boolean, USER_CACHE | null]> => {
     try {
         const data = await client.get(
             key
@@ -62,12 +67,12 @@ export const getCacheData = async (key: string): Promise<[boolean, cacheType | n
     }
 }
 
-export const setCacheData = async (key: string, data: any): Promise<void> => {
+export const setCacheData = async (key: string, data: USER_CACHE): Promise<void> => {
     await client.set(
         key,
         JSON.stringify(data), {
             // 30 sec development cache lifetime
-            // 8hr and 6min production cache lifetime
+            // 8hr and 8min production cache lifetime
             "EX": PRODUCTION ? (60 * 61 * 8) : 30
         }
     )
