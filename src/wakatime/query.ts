@@ -1,9 +1,10 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
 
-import { wakaResponse } from './wakatimeTypes';
+import { wakaRaw, wakaResponse } from './wakatimeTypes';
 import { ResponseError, WAKA_TIME_URL } from '../utils/constants';
 import { setCacheData } from '../utils/cache';
+import { shaveData } from './apiParse';
 
 dotenv.config()
 
@@ -22,11 +23,11 @@ export const getUserStats = async (username: string): Promise<wakaResponse > => 
             Authorization: `Basic ${Buffer.from(process.env.WAKATIME_TOKEN!).toString('base64')}`
         }
     });
-    const data = await config.get(`users/${username}/stats/all_time`, {
+    const response = await config.get(`users/${username}/stats/all_time`, {
         params: {}
     })
         .then(res => {
-            return res.data.data as wakaResponse
+            return res.data.data as wakaRaw
         })
         .catch(err => {
             throw new ResponseError(
@@ -34,6 +35,8 @@ export const getUserStats = async (username: string): Promise<wakaResponse > => 
                 err, err.response.status
             );
         });
+    // Shave unnecessary data to spare cache
+    const data = shaveData(response);
     return data;
 }
 
