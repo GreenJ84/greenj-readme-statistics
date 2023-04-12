@@ -79,3 +79,12 @@ export const setCacheData = async (key: string, data: USER_CACHE): Promise<void>
     return;
 }
 
+export const deleteCacheData = async (key: string): Promise<boolean> => {
+    const repsonse = await client.del(key);
+
+    if (repsonse > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
