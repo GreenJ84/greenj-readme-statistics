@@ -1,14 +1,13 @@
-import { Request } from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
 
 import { wakaResponse } from './wakatimeTypes';
 import { ResponseError, WAKA_TIME_URL } from '../utils/constants';
+import { setCacheData } from '../utils/cache';
 
 dotenv.config()
 
-export const getUserStats = async (req: Request): Promise<wakaResponse > => {
-    const { username } = req.params;
+export const getUserStats = async (username: string): Promise<wakaResponse > => {
     if (process.env.WAKATIME_TOKEN === undefined) {
         throw new ResponseError(
             "Error accessing WakaTime API Token",
@@ -36,4 +35,23 @@ export const getUserStats = async (req: Request): Promise<wakaResponse > => {
             );
         });
     return data;
+}
+
+export const updateUser = async (cacheKey: string, username: string) => {
+    try {
+        // Query WakaTime api
+        const queryRepsonse: wakaResponse = await getUserStats(username)
+            .catch(err => {
+                throw err;
+            });
+        
+        await setCacheData(cacheKey, queryRepsonse);
+        
+    } catch (err) {
+        if (err instanceof ResponseError) {
+            console.error(`Error (${err.error}) updating user data for ${username}: ${err.message}`);
+        } else {
+            console.error(`Error updating user data for ${username}: ${err}`);
+        }
+    }
 }
