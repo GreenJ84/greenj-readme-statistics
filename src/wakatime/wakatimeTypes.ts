@@ -1,6 +1,6 @@
 import { THEMETYPE } from "../utils/themes"
 
-interface sectionObject {
+export interface sectionObject {
     name: string
     total_seconds: number
     percent: number
@@ -62,7 +62,7 @@ export interface wakaRaw {
     }
 }
 
-interface wakaSection {
+export interface wakaSection {
     name: string
     total_seconds: number
     percent: number
