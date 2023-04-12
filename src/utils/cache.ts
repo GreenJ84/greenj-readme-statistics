@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { RedisClientType, createClient } from 'redis';
 import { LeetCodeGraphQLResponse, STREAKDATA } from '../leetcode/leetcodeTypes';
 import { GraphQLResponse, STREAKTYPE } from '../github/githubTypes';
@@ -21,6 +22,18 @@ export const client: RedisClientType = PRODUCTION ?
     createClient();
 
 client.on("error", err => console.error(`Redis client error: ${err}`))
+
+export const getCacheKey = (req: Request) => {
+    const path = req.path.split("/");
+
+    // Get platform route
+    const route = path[1];
+    // Get subroute if not wakatime else set profile
+    const subroute = route !== "wakatime" ? path[2] : "profile";
+    // User terirnary for not user routes
+    const user = req.params.username !== undefined ? `:${req.params.username!}` : "";
+    return `${route}:${subroute}${user}`;
+}
 
 export const buildRedis = async () => {
     await client.connect()
