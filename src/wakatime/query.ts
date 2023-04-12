@@ -40,7 +40,7 @@ export const getUserStats = async (username: string): Promise<wakaResponse > => 
     return data;
 }
 
-export const updateUser = async (cacheKey: string, username: string) => {
+export const updateUser = async (cacheKey: string, intervalID: NodeJS.Timer, username: string) => {
     try {
         // Query WakaTime api
         const queryRepsonse: wakaResponse = await getUserStats(username)
@@ -48,7 +48,11 @@ export const updateUser = async (cacheKey: string, username: string) => {
                 throw err;
             });
         
-        await setCacheData(cacheKey, queryRepsonse);
+        await setCacheData(cacheKey, {
+            interval: intervalID,
+            data: queryRepsonse
+            }
+        );
         
     } catch (err) {
         if (err instanceof ResponseError) {
