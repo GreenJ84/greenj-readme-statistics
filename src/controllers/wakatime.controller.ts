@@ -7,7 +7,7 @@ import { getUserStats, updateUser } from '../wakatime/query';
 import { parseDirect } from '../wakatime/apiParse';
 import { cardDirect } from '../wakatime/wakatimeUtils';
 import { wakaResponse } from '../wakatime/wakatimeTypes';
-import { getCacheData, setCacheData } from '../utils/cache';
+import { getCacheData, getCacheKey, setCacheData } from '../utils/cache';
 import { PRODUCTION } from '../utils/constants';
 
 let sleepMod = -2;
@@ -21,7 +21,7 @@ export const wakaStatsRegister = async (req: Request, res: Response): Promise<vo
     if (!preFlight(req, res)) {
         return;
     }
-    const cacheKey = `wakatime:${req.params.username!}`;
+    const cacheKey = getCacheKey(req);
     res.set('Content-Type', 'application/json');
     
     // Try for cached data, Query API if not present
@@ -41,7 +41,7 @@ export const wakaStatsRegister = async (req: Request, res: Response): Promise<vo
     await setCacheData(cacheKey, queryRepsonse);
 
     setInterval(() => {
-        console.log("Updating");
+        // console.log("Updating");
         updateUser(cacheKey, req.params.username!);
     }, DATA_UDPDATE_INTERVAL);
     
@@ -59,8 +59,7 @@ export const getProfileStats = async (req: Request, res: Response): Promise<void
     }
 
     const subRoute = req.path.split("/")[2]!;
-    const cacheKey = `wakatime:${req.params.username!}`
-
+    const cacheKey = getCacheKey(req);
     
     sleepMod = (sleepMod + 2) % 10
     await sleep(sleepMod);
