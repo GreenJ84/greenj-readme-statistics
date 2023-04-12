@@ -1,8 +1,17 @@
 import express, {Request, Response, NextFunction} from "express";
 
-import {getProfileStats} from '../controllers/wakatime.controller';
+import {getProfileStats, wakaStatsRegister} from '../controllers/wakatime.controller';
 
 export const WakaTimeRoutes = (app: express.Application) => {
+    // Register wakatime user in server
+    app.get('/wakatime/register/:username',
+    (req: Request, res: Response, next: NextFunction) => {
+        wakaStatsRegister(req, res)
+            .catch(err => {
+                next(err)
+            })
+        });
+
     // coding/debugging, top project, top lang, top os, top editor, top machine
     app.get('/wakatime/insights/:username',
         (req: Request, res: Response, next: NextFunction) => {
