@@ -12,7 +12,7 @@ interface sectionObject {
 }
 
 
-export interface wakaResponse {
+export interface wakaRaw {
     created_at: string // '2023-03-27T05:41:28Z',
     daily_average: number // 18882,
     daily_average_including_other_language: number // 18891,
@@ -58,6 +58,32 @@ export interface wakaResponse {
         id: string // '40a810d6-9811-4f8e-9427-216c1bfa4464',
         modified_at: string // '2023-03-27T18:34:37Z',
         text: string // '8 hrs 9 mins',
+        total_seconds: number // 29398.761891
+    }
+}
+
+interface wakaSection {
+    name: string
+    total_seconds: number
+    percent: number
+}
+
+export interface wakaResponse {
+    start: string // '2023-03-16T07:00:00Z',
+    daily_average: number // 18882,
+    daily_average_including_other_language: number // 18891,
+    days_minus_holidays: number // 11,
+    total_seconds: number // 207703.81587,
+    total_seconds_including_other_language: number // 207804.709525,
+    categories: wakaSection[]
+    projects: wakaSection[],
+    languages: wakaSection[]
+    editors: wakaSection[]
+    operating_systems: wakaSection[],
+    dependencies: wakaSection[]
+    machines: wakaSection[],
+    best_day: {
+        date: string // '2023-03-19',
         total_seconds: number // 29398.761891
     }
 }
