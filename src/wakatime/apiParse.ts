@@ -1,7 +1,7 @@
 import { match } from "ts-pattern";
 
 import { langColor } from "./wakatimeUtils";
-import { INSIGHTTYPE, LANGTYPE, STATTYPE, wakaResponse } from "./wakatimeTypes";
+import { INSIGHTTYPE, LANGTYPE, STATTYPE, sectionObject, wakaRaw, wakaResponse, wakaSection } from "./wakatimeTypes";
 
 export const parseDirect = (type: string): Function => {
     const parseFunc: Function = match(type)
@@ -17,6 +17,40 @@ export const parseDirect = (type: string): Function => {
         .run()
 
     return parseFunc;
+}
+
+const secParse = (section: sectionObject[]): wakaSection[] => {
+    let shavedSection: wakaSection[] = [];
+    for (let top of section) {
+        const { name, percent, total_seconds } = top;
+        shavedSection.push({ name, percent, total_seconds})
+    }
+    return shavedSection;
+}
+
+export const shaveData = (data: wakaRaw): wakaResponse => {
+
+    let shavedData = {
+        start: data.start,
+        daily_average: data.daily_average,
+        daily_average_including_other_language: data.daily_average_including_other_language,
+        days_minus_holidays: data.days_minus_holidays,
+        total_seconds: data.total_seconds, 
+        total_seconds_including_other_language: data.total_seconds_including_other_language,
+        categories: secParse(data.categories.slice(0, 3)),
+        projects: secParse(data.projects.slice(0, 3)),
+        languages: secParse(data.languages.slice(0, 3)),
+        editors: secParse(data.editors.slice(0, 3)),
+        operating_systems: secParse(data.operating_systems.slice(0, 3)),
+        dependencies: secParse(data.dependencies.slice(0, 3)),
+        machines: secParse(data.machines.slice(0, 3)),
+        best_day: {
+            date: data.best_day.date,
+            total_seconds: data.best_day.total_seconds
+        }
+    }
+
+    return shavedData;
 }
 
 
