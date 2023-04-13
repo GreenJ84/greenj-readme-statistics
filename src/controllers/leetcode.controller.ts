@@ -11,7 +11,7 @@ import { preFlight, sleep } from "../utils/utils";
 import { parseDirect } from "../leetcode/apiParser";
 import {cardDirect, getGraph } from "../leetcode/leetcodeUtils";
 import { leetcodeGraphQL, preProbe, preQuery, streakQuery, updateStreak, updateUser } from '../leetcode/query';
-import { getCacheData, getCacheKey, setCacheData } from '../utils/cache';
+import { deleteCacheData, getCacheData, getCacheKey, setCacheData } from '../utils/cache';
 
 let sleepMod = -2;
 
@@ -150,7 +150,75 @@ export const leetcodeStreak = async (req: Request, res: Response): Promise<void>
 }
 
 export const leetcodeUnregister = async (req: Request, res: Response) => {
+// Ensure caller is viable
+    if (!preFlight(req, res)) {
+        return;
+    }
+
+    let cacheKey = getCacheKey(req);
+    res.set('Content-Type', 'application/json');
+
+    // Try for cached data, Query API if not present
+    const [profSuccess, profCache] = await getCacheData(cacheKey);
+    if (!profSuccess) {
+        console.error("User's profile data not found.");
+    } else {
+        const intervalID = profCache?.interval;
+        if (intervalID) {
+            clearInterval(intervalID);
+        }
+        const deleted = await deleteCacheData(cacheKey);
+        if (!deleted) {
+            console.error("Cached profile data didn't get deleted.");
+        }
+    }
     
+    req.path = req.path.split('/').map((sec, idx) => {
+        if (idx == 2) {
+            return 'streak'
+        } else {
+            return sec;
+        }
+    }).join('/');
+    cacheKey = getCacheKey(req);
+    // Try for cached data, Query API if not present
+    const [streakSuccess, streakCache] = await getCacheData(cacheKey);
+    if (!streakSuccess) {
+        console.error("User's streak data not found.");
+    } else {
+        
+        const intervalID = streakCache?.interval;
+        if (intervalID) {
+            clearInterval(intervalID);
+        }
+        const deleted = await deleteCacheData(cacheKey);
+        if (!deleted) {
+            console.error("Cached Streak data didn't get deleted.");
+        }
+    }
+
+
+    if (!profSuccess && !streakSuccess) {
+        res.status(400).json({
+            message: "Unregistration process failed.",
+            code: "400"
+        });
+        return;
+    }
+    else if (!profSuccess || !streakSuccess){
+        res.status(400).json({
+            message: "Unregistration partial success. May be partially registered still.",
+            code: "400"
+        });
+        return;
+    }
+    else {
+        res.status(200).json({
+            message: "User unregistered",
+            code: "200"
+        });
+        return;
+    }
 }
 
 export const leetcodeDaily = async (req: Request, res: Response): Promise<void> => {
