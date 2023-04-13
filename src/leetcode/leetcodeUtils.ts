@@ -1,3 +1,4 @@
+import { Request } from "express";
 import { match } from "ts-pattern";
 import { questionsCard } from "./cards/questions-card";
 import { recentCard } from "./cards/recent-card";
@@ -19,8 +20,8 @@ export const getGraph = (type: string): string => {
 }
 
 // Returns the card creation function depending on path
-export const cardDirect = (type: string): Function => {
-    const parseFunc = match(type)
+export const cardDirect = (req: Request): Function => {
+    const parseFunc = match(req.path.split('/')[2]!)
         .with("stats", () => {return statsCard})
         // .with("badges", () => {return })
         .with("questions_solved", () => {return questionsCard})

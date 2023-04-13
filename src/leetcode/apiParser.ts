@@ -1,11 +1,12 @@
+import { Request } from "express";
 import { match } from "ts-pattern";
 
 import { ProfileResponse, BADGEDATA, PROFILEDATA, QUESTIONDATA, STREAKDATA, StreakResponse, SUBMISSIONDATA } from "./leetcodeTypes"
 import { calculateRank } from "./leetcodeUtils";
 
 // Returns the parse creation function depending on path
-export const parseDirect = (type: string): Function => {
-    const parseFunc = match(type)
+export const parseDirect = (req: Request): Function => {
+    const parseFunc = match(req.path.split('/')[2]!)
         .with("stats", () => {return statsParse})
         .with("badges", () => {return badgesParse})
         .with("questions_solved", () => {return questionsSolvedParse})
