@@ -10,36 +10,79 @@ import { preQery, streakProbe } from "../github/query";
 import { getResponseParse } from "../github/apiParser";
 import { cardDirect } from "../github/githubUtils";
 import { streakCardSetup } from "../github/cards/streak-card";
-import { getCacheData, setCacheData } from "../utils/cache";
+import { getCacheData, getCacheKey, setCacheData } from "../utils/cache";
+import { DATA_UDPDATE_INTERVAL } from "../utils/constants";
 
 let sleepMod = -2;
+
+export const githubRegister = async (req: Request, res: Response) => {
+    // Ensure Caller is viable
+    if (!preFlight(req, res)) {
+        return;
+    }
+    const cacheKey = getCacheKey(req);
+    res.set('Content-Type', 'application/json');
+
+    // Try for cached data, Query API if not present
+    const [success, _] = await getCacheData(cacheKey);
+    if (success) {
+        res.status(208).json({
+            message: "User already registered",
+            code: "208"
+        });
+        return;
+    }
+
+    let variables = { login: req.params.username! }
+    const queryResponse = await preQery(variables)
+        .then((data) => { return data })
+        .catch (err => {
+            throw err;
+        });
+    
+    const intervalId = setInterval(() => {
+        // console.log(intervalId);
+        updateUser(cacheKey, intervalId, req.params.username!);
+    }, DATA_UDPDATE_INTERVAL)
+
+    await setCacheData(cacheKey, {
+        interval: intervalId,
+        data: queryResponse
+    })
+
+    res.status(201).json({
+        message: "User Registered",
+        code: "201"
+    });
+    return;
+}
+
+export const githubUnregister = async (req: Request, res: Response) => {
+
+}
 
 // GitHub controller for all GitHub routes except - Commit Streak Data
 export const getProfileStats = async (req: Request, res: Response) => {
     if (!preFlight(req, res)) {
         return;
     }
-    const type = req.path.split("/")[2]!;
-    const key = `github:${req.params.username!}:profile`;
+
+    const cacheKey = getCacheKey(req);
 
     sleepMod = (sleepMod + 2) % 10
     await sleep(sleepMod);
 
-    let data: GraphQLResponse;
-    const [success, cacheData] = await getCacheData(key);
+    const [success, cacheData] = await getCacheData(cacheKey);
     if (!success) {
-        let variables = { login: req.params.username! }
-        const queryResponse = await preQery( variables, type)
-            .then((data) => { return data })
-            .catch (err => {
-                throw err;
-            });;
-
-        data = queryResponse;
-        setCacheData(key, queryResponse)
-    } else {
-        data = cacheData as GraphQLResponse;
+        res.set('Content-Type', 'application/json');
+        res.status(400).json({
+            message: "User not found.",
+            code: "404"
+        });
+        return;
     }
+        
+    const data = cacheData?.data as GraphQLResponse;
 
     // Get Function to parse data type
     const parse = getResponseParse(req);
@@ -51,6 +94,7 @@ export const getProfileStats = async (req: Request, res: Response) => {
 
     // Send created card as svg string
     res.status(200).send(card);
+    return;
 };
 
 
@@ -60,10 +104,10 @@ export const getCommitStreak = async (req: Request, res: Response) => {
     if (!preFlight(req, res)) {
         return;
     }
-    const key = `github:${req.params.username!}:streak`;
+    const cacheKey = `github:${req.params.username!}:streak`;
 
     let data: STREAKTYPE;
-    const [success, cacheData] = await getCacheData(key);
+    const [success, cacheData] = await getCacheData(cacheKey);
     if (!success) {
         // Query user data for Creation Date and Years of membership
         const [created, years] = await streakProbe(req)
@@ -123,7 +167,7 @@ export const getCommitStreak = async (req: Request, res: Response) => {
             parse(streak, data)
         }
         data = streak;
-        setCacheData(key, streak);
+        setCacheData(cacheKey, streak);
     } else {
         data = cacheData as STREAKTYPE;
     }
