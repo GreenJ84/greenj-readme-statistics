@@ -2,11 +2,10 @@ import { Request, Response } from "express";
 
 // API Global imports
 import { preFlight, sleep } from "../utils/utils";
-import { THEMES, THEMETYPE } from "../utils/themes";
 
 // GitHub specific imports
 import { GraphQLResponse, ReadMeData, STREAKTYPE } from "../github/githubTypes";
-import { preQery, streakProbe, streakQuery, updateUser } from "../github/query";
+import { preQery, updateStreak, streakQuery, updateUser } from "../github/query";
 import { getResponseParse } from "../github/apiParser";
 import { cardDirect } from "../github/githubUtils";
 import { streakCardSetup } from "../github/cards/streak-card";
@@ -75,9 +74,9 @@ export const getProfileStats = async (req: Request, res: Response) => {
     const [success, cacheData] = await getCacheData(cacheKey);
     if (!success) {
         res.set('Content-Type', 'application/json');
-        res.status(400).json({
-            message: "User not found.",
-            code: "404"
+        res.status(401).json({
+            message: "User unauthorized. Registration required for API data.",
+            code: "401"
         });
         return;
     }
@@ -98,6 +97,46 @@ export const getProfileStats = async (req: Request, res: Response) => {
 };
 
 
+export const githubStreakRegister = async (req: Request, res: Response) => {
+    // Ensure Caller is viable
+    if (!preFlight(req, res)) {
+        return;
+    }
+    const cacheKey = getCacheKey(req);
+    res.set('Content-Type', 'application/json');
+
+    // Try for cached data, Query API if not present
+    const [success, _] = await getCacheData(cacheKey);
+    if (success) {
+        res.status(208).json({
+            message: "User already registered",
+            code: "208"
+        });
+        return;
+    }
+        
+    const queryResponse = await streakQuery(req)
+        .catch(err => {
+            throw err;
+    });
+    
+    const intervalId = setInterval(() => {
+        // console.log(intervalId);
+        updateStreak(cacheKey, intervalId, {...req} as Request);
+    }, DATA_UDPDATE_INTERVAL)
+
+    await setCacheData(cacheKey, {
+        interval: intervalId,
+        data: queryResponse
+    })
+
+    res.status(201).json({
+        message: "User Registered",
+        code: "201"
+    });
+    return;
+}
+
 
 // GitHub Streak Controller
 export const getCommitStreak = async (req: Request, res: Response) => {
@@ -106,22 +145,17 @@ export const getCommitStreak = async (req: Request, res: Response) => {
     }
     const cacheKey = getCacheKey(req);
 
-    let data: STREAKTYPE;
     const [success, cacheData] = await getCacheData(cacheKey);
     if (!success) {
-        // Query user data for Creation Date and Years of membership
-        const [created, years] = await streakProbe(req)
-            .catch(err => {
-                throw err;
-            });
-        
-        const queryRespnose = await streakQuery(req, created, years);
-        data = queryRespnose;
-        setCacheData(cacheKey, queryRespnose);
-    } else {
-        data = cacheData as STREAKTYPE;
+        res.set('Content-Type', 'application/json');
+        res.status(401).json({
+            message: "User unauthorized. Registration required for API data.",
+            code: "401"
+        });
+        return;
     }
-    
+    const data = cacheData?.data as STREAKTYPE;
+
     const card: string = streakCardSetup(req, data);
     res.status(200).send(card);
     return;
