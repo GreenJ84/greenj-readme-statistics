@@ -65,7 +65,12 @@ export const leetcodeStats = async (req: Request, res: Response): Promise<void> 
     
     const [success, cacheData] = await getCacheData(cacheKey);
     if (!success) {
-
+        res.set('Content-Type', 'application/json');
+        res.status(401).json({
+            message: "User unauthorized. Registration required for API data.",
+            code: "401"
+        });
+        return;
     }
     const data = cacheData?.data as ProfileResponse;
         
