@@ -4,10 +4,11 @@ import { gql } from "graphql-tag";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 import { USER_AGENT, GraphQLQuery, GRAPHQL_URL, ResponseError } from "../utils/constants";
-import { LeetCodeGraphQLResponse, ProbeResponse } from "./leetcodeTypes";
+import { LeetCodeGraphQLResponse, ProbeResponse, ProfileResponse } from "./leetcodeTypes";
 
 import { get_csrf } from '../utils/credentials';
 import * as leetcode from '../leetcode/query';
+import { setCacheData } from '../utils/cache';
 
 
 
@@ -53,9 +54,8 @@ export async function leetcodeGraphQL(query: GraphQLQuery, url: string, csrf: st
 
 
 // Set up up query, credential retrieval, Server level error handling
-export const preQuery = async (req: Request, type: string):
-Promise<LeetCodeGraphQLResponse> => {
-    type;
+export const preQuery = async (username: string):
+Promise<ProfileResponse> => {
     // Retrieve Cross-site forgery credentials
     const csrf_credential = await get_csrf()
         .then((result) => result.toString())
@@ -68,26 +68,42 @@ Promise<LeetCodeGraphQLResponse> => {
         fs.readFileSync('src/leetcode/graphql/leetcode-all-profile.graphql', 'utf8')
     );
     
-    // Username which has to be there if preflight passed
-    const { username } = req.params;
-    
     // Call the universal leetCode querier
     const data = await leetcode.leetcodeGraphQL(
         {
             query: graphql,
-            variables: { username: username! }
+            variables: { username: username }
         },
         GRAPHQL_URL,
         csrf_credential as string
         )
-        .then((res) => res)
+        .then((res) => res as ProfileResponse)
         // Catch sever problems conducting the call
         .catch((err) => {
             throw err
         })
-
-    return data
+    return data;
 };
+
+export const updateUser = async (key: string, intervalId: NodeJS.Timer, username: string) => {
+    try {
+        const queryResponse = await preQuery(username)
+        .catch(err => {
+            throw err
+        });
+
+        await setCacheData(key, {
+            interval: intervalId,
+            data: queryResponse
+        });
+    } catch (err) {
+        if (err instanceof ResponseError) {
+            console.error(`Error (${err.error}) updating user data for ${username}: ${err.message}`);
+        } else {
+            console.error(`Error updating user data for ${username}: ${err}`);
+        }
+    }
+}
 
 
 // Set up for profile years probe query
