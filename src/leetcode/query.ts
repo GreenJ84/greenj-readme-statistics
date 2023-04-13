@@ -182,3 +182,23 @@ export const streakQuery = async (req: Request): Promise<STREAKDATA> => {
     }
     return streakData;
 }
+
+export const updateStreak = async (key: string, intervalId: NodeJS.Timer, req: Request) => {
+    try {
+        const queryResponse = await streakQuery(req)
+            .catch(err => {
+                throw err
+            });
+
+        await setCacheData(key, {
+            interval: intervalId,
+            data: queryResponse
+        });
+    } catch (err) {
+        if (err instanceof ResponseError) {
+            console.error(`Error (${err.error}) updating user data for ${req.params.username}: ${err.message}`);
+        } else {
+            console.error(`Error updating user data for ${req.params.username}: ${err}`);
+        }
+    }
+}
