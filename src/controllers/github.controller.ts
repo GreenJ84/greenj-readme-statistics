@@ -9,10 +9,11 @@ import { preQery, updateStreak, streakQuery, updateUser } from "../github/query"
 import { getResponseParse } from "../github/apiParser";
 import { cardDirect } from "../github/githubUtils";
 import { streakCardSetup } from "../github/cards/streak-card";
-import { getCacheData, getCacheKey, setCacheData } from "../utils/cache";
+import { deleteCacheData, getCacheData, getCacheKey, setCacheData } from "../utils/cache";
 import { DATA_UDPDATE_INTERVAL } from "../utils/constants";
 
 let sleepMod = -2;
+
 
 export const githubRegister = async (req: Request, res: Response) => {
     // Ensure Caller is viable
@@ -56,10 +57,6 @@ export const githubRegister = async (req: Request, res: Response) => {
     return;
 }
 
-export const githubUnregister = async (req: Request, res: Response) => {
-
-}
-
 // GitHub controller for all GitHub routes except - Commit Streak Data
 export const getProfileStats = async (req: Request, res: Response) => {
     if (!preFlight(req, res)) {
@@ -95,6 +92,8 @@ export const getProfileStats = async (req: Request, res: Response) => {
     res.status(200).send(card);
     return;
 };
+
+
 
 
 export const githubStreakRegister = async (req: Request, res: Response) => {
@@ -160,3 +159,80 @@ export const getCommitStreak = async (req: Request, res: Response) => {
     res.status(200).send(card);
     return;
 };
+
+
+
+
+export const githubUnregister = async (req: Request, res: Response) => {
+    let error = [false, ""];
+    // Ensure caller is viable
+    if (!preFlight(req, res)) {
+        return;
+    }
+
+    let cacheKey = getCacheKey(req);
+    res.set('Content-Type', 'application/json');
+
+    // Try for cached data, Query API if not present
+    const [profSuccess, profCache] = await getCacheData(cacheKey);
+    if (!profSuccess) {
+        console.error("User's profile data not found.");
+    } else {
+
+        const intervalID = profCache?.interval;
+        if (intervalID) {
+            clearInterval(intervalID);
+        }
+        const deleted = await deleteCacheData(cacheKey);
+        if (!deleted) {
+            console.error("Cached profile data didn't get deleted.");
+        }
+    }
+    
+    req.path = req.path.split('/').map((sec, idx) => {
+        if (idx == 2) {
+            return 'streak'
+        } else {
+            return sec;
+        }
+    }).join('/');
+    cacheKey = getCacheKey(req);
+    // Try for cached data, Query API if not present
+    const [streakSuccess, streakCache] = await getCacheData(cacheKey);
+    if (!streakSuccess) {
+        console.error("User's streak data not found.");
+    } else {
+        
+        const intervalID = streakCache?.interval;
+        if (intervalID) {
+            clearInterval(intervalID);
+        }
+        const deleted = await deleteCacheData(cacheKey);
+        if (!deleted) {
+            console.error("Cached Streak data didn't get deleted.");
+        }
+    }
+
+
+    if (!profSuccess && !streakSuccess) {
+        res.status(400).json({
+            message: "Unregistration process failed.",
+            code: "400"
+        });
+        return;
+    }
+    else if (!profSuccess || !streakSuccess){
+        res.status(400).json({
+            message: "Unregistration partial success. May be partially registered still.",
+            code: "400"
+        });
+        return;
+    }
+    else {
+        res.status(200).json({
+            message: "User unregistered",
+            code: "200"
+        });
+        return;
+    }
+}
