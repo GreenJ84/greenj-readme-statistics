@@ -11,7 +11,7 @@ export function sanitizeText(value: string): string {
     // Match letters, digits, underscores, and spaces
     const match = value.match(/^[a-zA-Z_]+$/);
     if (match) {
-        return match[0];
+        return match[0].replace('_', " ");
     } else {
         throw new Error(`Invalid text value: ${value}`);
     }
@@ -55,7 +55,7 @@ export function sanitizeBoolean(value: string): string {
 
 // Match alphanumeric characters and hyphens, with length between 1 and 39
 export function sanitizeUsername(value: string): string {
-    const match = value.match(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){1,39}$/i);
+    const match = value.match(/^[a-z_\d](?:[a-z_\d]|-(?=[a-z\d])){1,39}$/i);
     if (match) {
         return match[0];
     } else {
