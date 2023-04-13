@@ -9,7 +9,7 @@ import { preQery, updateStreak, streakQuery, updateUser } from "../github/query"
 import { getResponseParse } from "../github/apiParser";
 import { cardDirect } from "../github/githubUtils";
 import { streakCardSetup } from "../github/cards/streak-card";
-import { deleteCacheData, getCacheData, getCacheKey, setCacheData } from "../utils/cache";
+import { USER_CACHE, deleteCacheData, getCacheData, getCacheKey, setCacheData } from "../utils/cache";
 import { DATA_UDPDATE_INTERVAL } from "../utils/constants";
 
 let sleepMod = -2;
@@ -78,7 +78,7 @@ export const getProfileStats = async (req: Request, res: Response) => {
         return;
     }
         
-    const data = cacheData?.data as GraphQLResponse;
+    const data = (cacheData as USER_CACHE)?.data as GraphQLResponse;
 
     // Get Function to parse data type
     const parse = getResponseParse(req);
@@ -153,7 +153,7 @@ export const getCommitStreak = async (req: Request, res: Response) => {
         });
         return;
     }
-    const data = cacheData?.data as STREAKTYPE;
+    const data = (cacheData as USER_CACHE)?.data as STREAKTYPE;
 
     const card: string = streakCardSetup(req, data);
     res.status(200).send(card);
@@ -164,7 +164,6 @@ export const getCommitStreak = async (req: Request, res: Response) => {
 
 
 export const githubUnregister = async (req: Request, res: Response) => {
-    let error = [false, ""];
     // Ensure caller is viable
     if (!preFlight(req, res)) {
         return;
@@ -179,7 +178,7 @@ export const githubUnregister = async (req: Request, res: Response) => {
         console.error("User's profile data not found.");
     } else {
 
-        const intervalID = profCache?.interval;
+        const intervalID = (profCache as USER_CACHE)?.interval;
         if (intervalID) {
             clearInterval(intervalID);
         }
@@ -203,7 +202,7 @@ export const githubUnregister = async (req: Request, res: Response) => {
         console.error("User's streak data not found.");
     } else {
         
-        const intervalID = streakCache?.interval;
+        const intervalID = (streakCache as USER_CACHE)?.interval;
         if (intervalID) {
             clearInterval(intervalID);
         }
