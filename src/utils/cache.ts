@@ -33,12 +33,12 @@ export const getCacheKey = (req: Request) => {
 
     // Get platform route
     const route = path[1];
+    const user = req.params.username !== undefined ? `:${req.params.username!}` : "";
     // Get subroute if not wakatime else set profile
     const subroute = path[2] == "streak" || path[2] == "daily" ?
         path[2] : "profile";
     // User terirnary for not user routes
-    const user = req.params.username !== undefined ? `:${req.params.username!}` : "";
-    return `${route}:${subroute}${user}`;
+    return `${route}${user}:${subroute}`;
 }
 
 export const buildRedis = async () => {
