@@ -1,14 +1,13 @@
 import { Request, Response } from 'express';
 
 import { preFlight, sleep } from '../utils/utils';
-// import { ResponseError } from '../utils/constants';
+import { deleteCacheData, getCacheData, getCacheKey, setCacheData } from '../utils/cache';
+import { PRODUCTION } from '../utils/constants';
 
 import { getUserStats, updateUser } from '../wakatime/query';
 import { parseDirect } from '../wakatime/apiParse';
 import { cardDirect } from '../wakatime/wakatimeUtils';
 import { wakaResponse } from '../wakatime/wakatimeTypes';
-import { deleteCacheData, getCacheData, getCacheKey, setCacheData } from '../utils/cache';
-import { PRODUCTION } from '../utils/constants';
 
 let sleepMod = -2;
 
@@ -40,7 +39,7 @@ export const wakaStatsRegister = async (req: Request, res: Response): Promise<vo
         });
     // Add new query data to cache
     const intervalID = setInterval(() => {
-        // console.log("Updating");
+        // console.log(intervalID);
         updateUser(cacheKey, intervalID, req.params.username!);
     }, DATA_UDPDATE_INTERVAL);
     await setCacheData( cacheKey, {
@@ -75,11 +74,18 @@ export const wakaStatsUnregister = async (req: Request, res: Response): Promise<
     }
 
     const intervalID = cache?.interval;
-    clearInterval(intervalID);
+    if (intervalID) {
+        clearInterval(intervalID);
+    }
     const deleted = await deleteCacheData(cacheKey);
 
     if (!deleted) {
         console.error("Cache data didn't get deleted.");
+        res.status(200).json({
+            message: "Unregistration process failed.",
+            code: "400"
+        });
+        return;
     }
 
     res.status(200).json({
@@ -103,7 +109,6 @@ export const getProfileStats = async (req: Request, res: Response): Promise<void
     await sleep(sleepMod);
     
     // Try for cached data, Query API if not present
-    let data: wakaResponse;
     const [success, cacheData] = await getCacheData(cacheKey);
     if (!success) {
         res.set('Content-Type', 'application/json');
@@ -113,9 +118,7 @@ export const getProfileStats = async (req: Request, res: Response): Promise<void
         });
         return;
     }
-    else {
-        data = cacheData!.data as wakaResponse;
-    }
+    const data = cacheData!.data as wakaResponse;
     
     // Parse Data, Build Card, and Send
     const dataParse = parseDirect(subRoute);
