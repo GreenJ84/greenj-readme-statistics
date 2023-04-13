@@ -4,11 +4,11 @@ import { gql } from "graphql-tag";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 import { USER_AGENT, GraphQLQuery, GRAPHQL_URL, ResponseError } from "../utils/constants";
-import { LeetCodeGraphQLResponse, ProbeResponse, ProfileResponse, STREAKDATA, StreakResponse } from "./leetcodeTypes";
+import { DAILY_QUESTION, LeetCodeGraphQLResponse, ProbeResponse, ProfileResponse, STREAKDATA, StreakResponse } from "./leetcodeTypes";
 
 import { get_csrf } from '../utils/credentials';
 import * as leetcode from '../leetcode/query';
-import { getCacheKey, setCacheData } from '../utils/cache';
+import { getCacheData, getCacheKey, setCacheData } from '../utils/cache';
 import { parseDirect } from './apiParser';
 import { THEMES } from '../utils/themes';
 
@@ -201,4 +201,78 @@ export const updateStreak = async (key: string, intervalId: NodeJS.Timer, req: R
             console.error(`Error updating user data for ${req.params.username}: ${err}`);
         }
     }
+}
+
+export const startLeetcodeDaily = async () => {
+    const cacheKey = `leetcode:daily`;
+    // Retrieve Cross-site forgery credentials
+    const csrf_credential = await get_csrf()
+        .then((result) => result.toString())
+        .catch((err) => {
+            throw err
+        });
+    
+    // Get correct query based on api called
+    const graphql = gql(
+        fs.readFileSync('src/leetcode/graphql/leetcode-daily-question.graphql', 'utf8')
+    );
+    
+    // Call the universal leetCode querier
+    const data = await leetcodeGraphQL({
+            query: graphql,
+        },
+        GRAPHQL_URL,
+        csrf_credential as string)
+            .then((res) => res as DAILY_QUESTION)
+            // Catch sever problems conducting the call
+            .catch((err) => {
+                throw new ResponseError(
+                    "Error building LeetCode daily question GraphQL query",
+                    err, 500
+                )
+            });
+
+    setCacheData(cacheKey, data);
+
+    const localNow = new Date(new Date().toLocaleString());
+    const utcMidnight = new Date(Date.UTC(
+        localNow.getUTCFullYear(),
+        localNow.getUTCMonth(),
+        localNow.getUTCDate() + 1,
+        0,
+        0,
+        0,
+        0
+    ));
+    const millisecUntilMidnightUTC = utcMidnight.getTime() - localNow.getTime();
+
+    // Wait until 10 min after UTC Midnight for new question
+    setTimeout(() => {
+        // Set interval to retrieve every 24 hrs
+        setInterval(async () => {
+            const csrf_credential = await get_csrf()
+                .then((result) => result.toString())
+                .catch((err) => {
+                    console.error(err)
+                });
+    
+            // Call the universal leetCode querier
+            const data = await leetcodeGraphQL({
+                    query: graphql,
+                },
+                GRAPHQL_URL,
+                csrf_credential as string)
+                    .then((res) => res as DAILY_QUESTION)
+                    // Catch sever problems conducting the call
+                    .catch((err) => {
+                        throw new ResponseError(
+                            "Error building LeetCode daily question GraphQL query",
+                            err, 500
+                        )
+                    });
+            
+            setCacheData(cacheKey, data);
+        }, 24 * 60 * 60 * 1000)
+
+    }, 1000 * 60 * 10 + millisecUntilMidnightUTC)
 }
