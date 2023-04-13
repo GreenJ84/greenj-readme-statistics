@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 import { preFlight, sleep } from '../utils/utils';
 import { deleteCacheData, getCacheData, getCacheKey, setCacheData } from '../utils/cache';
-import { PRODUCTION } from '../utils/constants';
+import { DATA_UDPDATE_INTERVAL } from '../utils/constants';
 
 import { getUserStats, updateUser } from '../wakatime/query';
 import { parseDirect } from '../wakatime/apiParse';
@@ -13,7 +13,6 @@ let sleepMod = -2;
 
 // 30 sec interval for development
 // 8hr interval for production
-const DATA_UDPDATE_INTERVAL = PRODUCTION ? 1000 * 60 * 60 * 8 : 1000 * 30;
 
 export const wakaStatsRegister = async (req: Request, res: Response): Promise<void> => {
     // Ensure caller is viable
@@ -37,11 +36,12 @@ export const wakaStatsRegister = async (req: Request, res: Response): Promise<vo
         .catch(err => {
             throw err;
         });
-    // Add new query data to cache
+
     const intervalID = setInterval(() => {
         // console.log(intervalID);
         updateUser(cacheKey, intervalID, req.params.username!);
     }, DATA_UDPDATE_INTERVAL);
+
     await setCacheData( cacheKey, {
             interval: intervalID ,
             data: queryRepsonse

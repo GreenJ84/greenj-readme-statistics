@@ -23,6 +23,8 @@ export const GIT_URL = "https://api.github.com/graphql";
 export const WAKA_TIME_URL = "https://wakatime.com/api/v1";
 export const WAKA_TIME_AUTH_URL = "https://wakatime.com/oauth/token";
 
+export const DATA_UDPDATE_INTERVAL = PRODUCTION ? 1000 * 60 * 60 * 8 : 1000 * 30;
+
 
 export class ResponseError extends Error {
     error: any;
