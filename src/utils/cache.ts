@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { RedisClientType, createClient } from 'redis';
-import { LeetCodeGraphQLResponse, STREAKDATA } from '../leetcode/leetcodeTypes';
+import { DAILY_QUESTION, LeetCodeGraphQLResponse, STREAKDATA } from '../leetcode/leetcodeTypes';
 import { GraphQLResponse, STREAKTYPE } from '../github/githubTypes';
 import { wakaResponse } from '../wakatime/wakatimeTypes';
 import { PRODUCTION, PROD_HOST, PROD_PORT, REDIS_PASS, REDIS_USER } from './constants';
@@ -9,10 +9,13 @@ import { PRODUCTION, PROD_HOST, PROD_PORT, REDIS_PASS, REDIS_USER } from './cons
 type cacheType = 
     LeetCodeGraphQLResponse |
     STREAKDATA |
+    DAILY_QUESTION |
     GraphQLResponse |
     STREAKTYPE |
     wakaResponse |
     { times: number }
+
+export type CACHE = USER_CACHE | DAILY_QUESTION
 
 export interface USER_CACHE {
     interval: NodeJS.Timer
@@ -51,7 +54,7 @@ export const teardownRedis = async () => {
         .then(() => console.log("Redis server disconnected."));
 }
 
-export const getCacheData = async (key: string): Promise<[boolean, USER_CACHE | null]> => {
+export const getCacheData = async (key: string): Promise<[boolean, CACHE | null]> => {
     try {
         const data = await client.get(
             key
@@ -68,7 +71,7 @@ export const getCacheData = async (key: string): Promise<[boolean, USER_CACHE | 
     }
 }
 
-export const setCacheData = async (key: string, data: USER_CACHE): Promise<void> => {
+export const setCacheData = async (key: string, data: CACHE): Promise<void> => {
     await client.set(
         key,
         JSON.stringify(data), {
