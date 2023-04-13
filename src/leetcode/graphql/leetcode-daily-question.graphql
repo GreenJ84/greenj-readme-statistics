@@ -4,13 +4,10 @@ query {
         link
         question {
             questionId
-            questionFrontendId
             boundTopicId
             title
             titleSlug
             content
-            translatedTitle
-            translatedContent
             isPaidOnly
             difficulty
             likes
@@ -18,9 +15,7 @@ query {
             topicTags {
                 name
                 slug
-                translatedName
             }
-            companyTagStats
             codeSnippets {
                 lang
                 langSlug
