@@ -104,7 +104,7 @@ export const updateUser = async (key: string, intervalId: NodeJS.Timer, username
 
 
 // Probes user creation date and years a member for streak query
-export const streakProbe = async (req: Request): Promise<[string , number[]]> => {
+export const streakProbe = async (username: string): Promise<[string , number[]]> => {
     const now = new Date().toISOString()
     const today = now.slice(0, 19);
     const year = now.slice(0,4)
@@ -112,7 +112,7 @@ export const streakProbe = async (req: Request): Promise<[string , number[]]> =>
         fs.readFileSync("src/github/graphql/streak-probe.graphql", 'utf8')
     );
     const variables = {
-        login: req.params.username!,
+        login: username,
         start: `${year}-01-01T00:00:00Z`,
         end: today
     }
@@ -135,7 +135,12 @@ export const streakProbe = async (req: Request): Promise<[string , number[]]> =>
     ];
 }
 
-export const streakQuery = async (req: Request,created: string, years: number[]): Promise<STREAKTYPE> => {
+export const streakQuery = async (req: Request): Promise<STREAKTYPE> => {
+    // Query user data for Creation Date and Years of membership
+    const [created, years] = await streakProbe(req.params.username!)
+    .catch(err => {
+        throw err;
+    });
     // Start data with defaults sets
     let streak: STREAKTYPE = {
         total: 0,
@@ -187,4 +192,25 @@ export const streakQuery = async (req: Request,created: string, years: number[])
         parse(streak, data);
     }
     return streak;
+}
+
+export const updateStreak = async (key: string, intervalId: NodeJS.Timer, req: Request) => {
+    try {
+        const queryResponse = await streakQuery(req)
+            .catch(err => {
+                throw err;
+        });
+        
+        await setCacheData(key, {
+            interval: intervalId,
+            data: queryResponse
+        });
+
+    } catch (err) {
+        if (err instanceof ResponseError) {
+            console.error(`Error (${err.error}) updating user data for ${req.params.username}: ${err.message}`);
+        } else {
+            console.error(`Error updating user data for ${req.params.username}: ${err}`);
+        }
+    }
 }
