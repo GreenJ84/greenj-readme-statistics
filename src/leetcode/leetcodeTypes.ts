@@ -3,7 +3,8 @@ import { THEMETYPE } from "../utils/themes";
 export type LeetCodeGraphQLResponse =
     ProbeResponse |
     StreakResponse |
-    ProfileResponse
+    ProfileResponse |
+    DAILY_QUESTION
 
 export interface ProbeResponse{
     matchedUser: {
@@ -123,4 +124,42 @@ export interface SUBMISSIONDATA {
         lang: string;
     }[]
     theme?: THEMETYPE
+}
+
+export interface DAILY_QUESTION {
+    activeDailyCodingChallengeQuestion: {
+        date: string
+        link: string
+        question: {
+            questionId: number
+            boundTopicId: string
+            title: string
+            titleSlug: string
+            content: string
+            isPaidOnly: boolean
+            difficulty: "Easy" | "Medium" | "Hard"
+            likes: number
+            dislikes: number
+            topicTags: {
+                name: string
+                slug: string
+            }
+            codeSnippets: {
+                lang: string
+                langSlug: string
+                code: string
+            }[]
+            stats: any
+            hints: any
+            status: "Accept" | "Not Accept" | "Not Start"
+            challengeQuestion: {
+                id: number
+                date: string
+                incompleteChallengeCount: number
+                streakCount: number
+                type: string
+            }
+            note: string
+        }
+    }
 }
