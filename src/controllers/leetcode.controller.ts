@@ -4,14 +4,14 @@ import { Request, Response } from "express";
 import gql from "graphql-tag";
 
 import { ResponseError, GRAPHQL_URL, DATA_UDPDATE_INTERVAL } from "../utils/constants";
-import { LeetCodeGraphQLResponse, ProfileResponse, STREAKDATA } from "../leetcode/leetcodeTypes";
+import { DAILY_QUESTION, LeetCodeGraphQLResponse, ProfileResponse, STREAKDATA } from "../leetcode/leetcodeTypes";
 
 import { THEMES } from '../utils/themes';
 import { preFlight, sleep } from "../utils/utils";
 import { parseDirect } from "../leetcode/apiParser";
 import {cardDirect, getGraph } from "../leetcode/leetcodeUtils";
-import { leetcodeGraphQL, preProbe, preQuery, streakQuery, updateStreak, updateUser } from '../leetcode/query';
-import { deleteCacheData, getCacheData, getCacheKey, setCacheData } from '../utils/cache';
+import { leetcodeGraphQL, preProbe, preQuery, startLeetcodeDaily, streakQuery, updateStreak, updateUser } from '../leetcode/query';
+import { USER_CACHE, deleteCacheData, getCacheData, getCacheKey, setCacheData } from '../utils/cache';
 
 let sleepMod = -2;
 
@@ -72,7 +72,7 @@ export const leetcodeStats = async (req: Request, res: Response): Promise<void> 
         });
         return;
     }
-    const data = cacheData?.data as ProfileResponse;
+    const data = (cacheData as USER_CACHE)?.data as ProfileResponse;
         
     const parse = parseDirect(req);
     const parsedData = parse(data);
@@ -140,7 +140,7 @@ export const leetcodeStreak = async (req: Request, res: Response): Promise<void>
         });
         return;
     }
-    const data = cacheData?.data as STREAKDATA;
+    const data = (cacheData as USER_CACHE)?.data as STREAKDATA;
             
     const streakCard = cardDirect(req);
     const card = streakCard(req, data);
@@ -163,7 +163,7 @@ export const leetcodeUnregister = async (req: Request, res: Response) => {
     if (!profSuccess) {
         console.error("User's profile data not found.");
     } else {
-        const intervalID = profCache?.interval;
+        const intervalID = (profCache as USER_CACHE)?.interval;
         if (intervalID) {
             clearInterval(intervalID);
         }
@@ -187,7 +187,7 @@ export const leetcodeUnregister = async (req: Request, res: Response) => {
         console.error("User's streak data not found.");
     } else {
         
-        const intervalID = streakCache?.interval;
+        const intervalID = (streakCache as USER_CACHE)?.interval;
         if (intervalID) {
             clearInterval(intervalID);
         }
@@ -222,30 +222,23 @@ export const leetcodeUnregister = async (req: Request, res: Response) => {
 }
 
 export const leetcodeDaily = async (req: Request, res: Response): Promise<void> => {
-    const key = `leetcode:daily`;
+    req;
+    const cacheKey = `leetcode:daily`;
     
-    let data: LeetCodeGraphQLResponse;
-    const [success, cacheData] = await getCacheData(key)
+    const [success, cacheData] = await getCacheData(cacheKey)
     if (!success) {
-        const queryResponse = await preQuery(req, 'daily')
-            .catch(err => {
-                throw new ResponseError(
-                    "Error building LeetCode daily question GraphQL query",
-                    err, 500
-                )
-            });
-        setCacheData(key, queryResponse);
-        data = queryResponse;
-    } else {
-        data = cacheData as LeetCodeGraphQLResponse;
+        startLeetcodeDaily();
+        res.status(500).json({
+            message: "Updating Daily Question. Try again in a minute.",
+            code: "500"
+        });
+        return;
     }
-        
-    const parse = parseDirect('daily');
-    const parsedData = parse(data);
+    const data = cacheData! as DAILY_QUESTION;
 
-    const createCard = cardDirect('daily');
-    const card = createCard(req, parsedData);
+    console.log(data)
+    // const card = createCard(req, parsedData);
 
-    res.status(200).send(card);
+    res.status(200).send(data);
     return;
 }
