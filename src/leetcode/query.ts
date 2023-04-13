@@ -4,11 +4,13 @@ import { gql } from "graphql-tag";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 import { USER_AGENT, GraphQLQuery, GRAPHQL_URL, ResponseError } from "../utils/constants";
-import { LeetCodeGraphQLResponse, ProbeResponse, ProfileResponse } from "./leetcodeTypes";
+import { LeetCodeGraphQLResponse, ProbeResponse, ProfileResponse, STREAKDATA, StreakResponse } from "./leetcodeTypes";
 
 import { get_csrf } from '../utils/credentials';
 import * as leetcode from '../leetcode/query';
-import { setCacheData } from '../utils/cache';
+import { getCacheKey, setCacheData } from '../utils/cache';
+import { parseDirect } from './apiParser';
+import { THEMES } from '../utils/themes';
 
 
 
@@ -136,4 +138,47 @@ Promise<[number[], string]> => {
         })
 
     return [data.matchedUser.userCalendar.activeYears, csrf_credential];
+}
+
+export const streakQuery = async (req: Request): Promise<STREAKDATA> => {
+    const parseStreak = parseDirect(req);
+
+    const preSet = await preProbe(req)
+        .catch(err => {
+            throw new ResponseError(
+                "Error build probe query for user membership length",
+                err, 502
+            )
+        });
+    const [membershipYears, csrf_credential] = preSet;
+    const graphql = gql(
+        fs.readFileSync("src/leetcode/graphql/leetcode-streak.graphql", 'utf8')
+    );
+        
+    const streakData: STREAKDATA = {
+        streak: [0, 0],
+        totalActive: 0,
+        mostActiveYear: 0,
+        completion: "0.00",
+        completionActuals: [0, 0],
+        theme: THEMES["black-ice"]!
+    }
+    // Call the universal leetCode querier for each year
+    for (let year of membershipYears) {
+        const data = await leetcodeGraphQL({
+            query: graphql,
+            variables: { username: req.params.username!, year: year }
+        },
+        GRAPHQL_URL,
+        csrf_credential)
+        .then(res => {return res as StreakResponse})
+        .catch((err) => {
+            throw new ResponseError("Error building LeetCode streak GraphQL query",
+            err, 500,
+            );
+        });
+        
+        parseStreak(streakData, data, year);
+    }
+    return streakData;
 }
