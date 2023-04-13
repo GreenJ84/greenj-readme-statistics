@@ -3,68 +3,94 @@ import fs from 'fs';
 import { Request, Response } from "express";
 import gql from "graphql-tag";
 
-import { ResponseError, GRAPHQL_URL } from "../utils/constants";
+import { ResponseError, GRAPHQL_URL, DATA_UDPDATE_INTERVAL } from "../utils/constants";
 import { LeetCodeGraphQLResponse, ProfileResponse, STREAKDATA } from "../leetcode/leetcodeTypes";
 
 import { THEMES } from '../utils/themes';
 import { preFlight, sleep } from "../utils/utils";
 import { parseDirect } from "../leetcode/apiParser";
 import {cardDirect, getGraph } from "../leetcode/leetcodeUtils";
-import { leetcodeGraphQL, preProbe, preQuery } from '../leetcode/query';
-import { getCacheData, setCacheData } from '../utils/cache';
+import { leetcodeGraphQL, preProbe, preQuery, updateUser } from '../leetcode/query';
+import { getCacheData, getCacheKey, setCacheData } from '../utils/cache';
 
 let sleepMod = -2;
 
-// Main Controller for GitHub
-export const leetcodeStats = async (req: Request, res: Response): Promise<void> => {
-    const subRoute = req.path.split("/")[2]!;
-    const key = `leetcode:${req.params.username!}:profile`;
+export const leetcodeRegister = async (req: Request, res: Response) => {
     // PreFlight checks for user based routes
     if (!preFlight(req, res)) {
         return;
     }
-
-    if (subRoute === "streak") {
-        await leetcodeStreak(req, res, subRoute)
-            .catch(err => {
-                throw err
-            });
+    const cacheKey = getCacheKey(req);
+    // Try for cached data, Query API if not present
+    const [success, _] = await getCacheData(cacheKey);
+    if (success) {
+        res.status(208).json({
+            message: "User already registered",
+            code: "208"
+        });
         return;
     }
+
+    const queryResponse = await preQuery(req.params.username!)
+        .catch(err => {
+            throw err
+        });
+
+    const intervalId = setInterval(() => {
+        // console.log(intervalId);
+        updateUser(cacheKey, intervalId, req.params.username!)
+    }, DATA_UDPDATE_INTERVAL);
+
+    await setCacheData(cacheKey, {
+        interval: intervalId,
+        data: queryResponse
+    });
+
+    res.status(201).json({
+        message: "User Registered",
+        code: "201"
+    });
+    return;
+}
+// Main Controller for GitHub
+export const leetcodeStats = async (req: Request, res: Response): Promise<void> => {
+    // PreFlight checks for user based routes
+    if (!preFlight(req, res)) {
+        return;
+    }
+    const cacheKey = getCacheKey(req);
     
     sleepMod = (sleepMod + 2) % 10
-    await sleep(sleepMod)
-        .catch(_ => {
-            console.error("Snored to hard")
-        });
+    await sleep(sleepMod);
     
-    let data: LeetCodeGraphQLResponse;
-    const [success, cacheData] = await getCacheData(key);
+    const [success, cacheData] = await getCacheData(cacheKey);
     if (!success) {
-        const queryResponse = await preQuery(req, subRoute)
-            .catch(err => {
-                throw err
-            })
-        if (!queryResponse) { return; }
-        setCacheData(key, queryResponse);
-        data = queryResponse;
-    } else {
-        data = cacheData as LeetCodeGraphQLResponse;
-    }
-        
-    const parse = parseDirect(subRoute);
-    const parsedData = parse(data as ProfileResponse);
 
-    const createCard = cardDirect(subRoute);
+    }
+    const data = cacheData?.data as ProfileResponse;
+        
+    const parse = parseDirect(req);
+    const parsedData = parse(data);
+
+    const createCard = cardDirect(req);
     const card = createCard(req, parsedData);
 
     res.status(200).send(card);
     return;
 }
 
+
+export const leetcodeStreakRegister = async (req: Request, res: Response) => {
+    
+}
+
 // User Streak specific controller
-const leetcodeStreak = async (req: Request, res: Response, subRoute: string): Promise<void> => {
-    const key = `leetcode:${req.params.username!}:streak`;
+export const leetcodeStreak = async (req: Request, res: Response): Promise<void> => {
+    // PreFlight checks for user based routes
+    if (!preFlight(req, res)) {
+        return;
+    }
+    const key = getCacheKey(req);
     
     let data: STREAKDATA;
     const [success, cacheData] = await getCacheData(key);
@@ -118,6 +144,10 @@ const leetcodeStreak = async (req: Request, res: Response, subRoute: string): Pr
 
             res.status(200).send(card);
             return;
+}
+
+export const leetcodeUnregister = async (req: Request, res: Response) => {
+
 }
 
 export const leetcodeDaily = async (req: Request, res: Response): Promise<void> => {
