@@ -7,6 +7,7 @@ import { match } from 'ts-pattern';
 
 import { GraphQLQuery, ResponseError, GIT_URL } from '../utils/constants';
 import { GraphQLResponse, StreakProbe } from './githubTypes';
+import { setCacheData } from '../utils/cache';
 
 dotenv.config()
 
@@ -56,8 +57,8 @@ export async function githubGraphQL(query: GraphQLQuery): Promise<ResponseError 
 };
 
 // Decide GraphQL query before execution
-export const preQery = async (variables: {}, type: string): Promise<GraphQLResponse> => {
-    const path = getGraph(type === "streak" ? type : "all");
+export const preQery = async (variables: {}, type: string = "all"): Promise<GraphQLResponse> => {
+    const path = getGraph(type);
     const graphql = gql(
         fs.readFileSync(path, 'utf8')
     );
@@ -77,6 +78,28 @@ export const preQery = async (variables: {}, type: string): Promise<GraphQLRespo
     // Data to be returned will be of a valid response type
     return data as GraphQLResponse;
 }
+
+export const updateUser = async (key: string, intervalId: NodeJS.Timer, username: string) => {
+    try {
+        const queryRepsonse = await preQery({ login: username })
+            .then((data) => { return data })
+            .catch (err => {
+                throw err;
+            });
+        
+        await setCacheData(key, {
+            interval: intervalId,
+            data: queryRepsonse
+        })
+    } catch (err) {
+        if (err instanceof ResponseError) {
+            console.error(`Error (${err.error}) updating user data for ${username}: ${err.message}`);
+        } else {
+            console.error(`Error updating user data for ${username}: ${err}`);
+        }
+    }
+}
+
 
 // Probes user creation date and years a member for streak query
 export const streakProbe = async (req: Request): Promise<[string , number[]]> => {
