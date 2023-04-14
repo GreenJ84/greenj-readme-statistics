@@ -11,10 +11,10 @@ export const PROD_HOST = process.env.PROD_HOST;
 export const PROD_PORT = process.env.PROD_PORT;
 
 // LeetCode
-export const CRED_URL = "https://leetcode.com";
-export const GRAPHQL_URL = "https://leetcode.com/graphql";
-export const GRAPHQL_URL_CN = "https://leetcode.cn/graphql";
-export const USER_AGENT = "Mozilla/5.0 LeetCode API";
+export const LEET_CRED_URL = "https://leetcode.com";
+export const LEET_GRAPHQL_URL = "https://leetcode.com/graphql";
+export const LEET_GRAPHQL_URL_CN = "https://leetcode.cn/graphql";
+export const LEET_USER_AGENT = "Mozilla/5.0 LeetCode API";
 
 //GitHub
 export const GIT_URL = "https://api.github.com/graphql";
@@ -37,13 +37,8 @@ export class ResponseError extends Error {
     }
 }
 
-// export interface ResponseError {
-//     message: string,
-//     error: any,
-//     error_code: number
-// }
 
-export interface GraphQLQuery {
+export interface GraphQuery {
     variables?: { [key: string]: unknown };
     query: DocumentNode;
 }
