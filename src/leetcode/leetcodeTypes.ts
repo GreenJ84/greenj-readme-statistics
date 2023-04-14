@@ -1,12 +1,12 @@
-import { THEMETYPE } from "../utils/themes";
+import { ThemeType } from "../utils/themes";
 
-export type LeetCodeGraphQLResponse =
-    ProbeResponse |
-    StreakResponse |
-    ProfileResponse |
-    DAILY_QUESTION
+export type LeetGraphResponse =
+    LeetUserProbe |
+    LeetStreakData |
+    LeetProfileData |
+    LeetDaily
 
-export interface ProbeResponse{
+export interface LeetUserProbe{
     matchedUser: {
         userCalendar: {
             activeYears: number[]
@@ -14,7 +14,7 @@ export interface ProbeResponse{
     }
 }
 
-export interface StreakResponse {
+export interface LeetStreakData {
     allQuestionsCount: {
         difficulty: string;
         count: number;
@@ -33,20 +33,19 @@ export interface StreakResponse {
         }
     }
 }
-export interface STREAKDATA{
+export interface LeetStreak{
     title?: string
     streak: [number, number]
     totalActive: number
     mostActiveYear: number
     completion: string
     completionActuals: [number, number]
-    theme?: THEMETYPE
+    theme?: ThemeType
 }
 
 
 
-
-export interface ProfileResponse {
+export interface LeetProfileData {
     allQuestionsCount: {
         difficulty: string;
         count: number;
@@ -84,7 +83,7 @@ export interface ProfileResponse {
 }
 
 
-export interface PROFILEDATA {
+export interface LeetStats {
     title?: string
     completion: string
     reputation: number
@@ -92,18 +91,18 @@ export interface PROFILEDATA {
     badges: number
     contributions: number
     grade: [string, number]
-    theme?: THEMETYPE
+    theme?: ThemeType
 }
-export interface BADGEDATA {
+export interface LeetBadges {
     badges: {
         displayName: string;
         icon: string;
         creationDate: string;
     }[]
-    theme?: THEMETYPE
+    theme?: ThemeType
 }
 
-export interface QUESTIONDATA {
+export interface LeetCompletion {
     title?:string
     ranking: number
     all: [number, number]
@@ -111,10 +110,10 @@ export interface QUESTIONDATA {
     medium: [number, number]
     easy: [number, number]
     acceptance: string
-    theme?: THEMETYPE
+    theme?: ThemeType
 }
 
-export interface SUBMISSIONDATA {
+export interface LeetSubmissions {
     title?: string
     recentSubmissionList: {
         title: string;
@@ -123,10 +122,10 @@ export interface SUBMISSIONDATA {
         statusDisplay: string;
         lang: string;
     }[]
-    theme?: THEMETYPE
+    theme?: ThemeType
 }
 
-export interface DAILY_QUESTION {
+export interface LeetDaily {
     activeDailyCodingChallengeQuestion: {
         date: string
         link: string
