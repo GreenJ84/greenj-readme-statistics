@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 
 import { preFlight, sleep } from "../utils/utils";
 import {
-  USER_CACHE,
+  UserCache,
   getCacheKey,
   getCacheData,
   setCacheData,
@@ -12,10 +12,10 @@ import {
 } from "../utils/cache";
 import { DATA_UDPDATE_INTERVAL } from "../utils/constants";
 
-import { wakaResponse } from "../wakatime/wakatimeTypes";
+import { WakaProfileData } from "../wakatime/wakatimeTypes";
 import { getWakaStats, updateWakaProfile } from "../wakatime/query";
-import { parseDirect } from "../wakatime/apiParse";
-import { cardDirect } from "../wakatime/wakatimeUtils";
+import { wakaParseDirect } from "../wakatime/apiParse";
+import { wakaCardDirect } from "../wakatime/wakatimeUtils";
 
 let sleepMod = -2;
 
@@ -40,7 +40,7 @@ export const wakatimeRegister = async (
     return;
   }
   // Query WakaTime api
-  const queryRepsonse: wakaResponse = await getWakaStats(
+  const queryRepsonse: WakaProfileData = await getWakaStats(
     req.params.username!
   ).catch((err) => {
     throw err;
@@ -84,7 +84,7 @@ export const wakatimeUnregister = async (
     return;
   }
 
-  const intervalID = (cacheData as USER_CACHE)?.interval;
+  const intervalID = (cacheData as UserCache)?.interval;
   if (intervalID) {
     clearInterval(intervalID);
   }
@@ -131,13 +131,13 @@ export const wakatimeProfile = async (
     });
     return;
   }
-  const data = (cacheData as USER_CACHE)!.data as wakaResponse;
+  const data = (cacheData as UserCache)!.data as WakaProfileData;
 
   // Parse Data, Build Card, and Send
-  const dataParse = parseDirect(subRoute);
+  const dataParse = wakaParseDirect(subRoute);
   const parsedData = dataParse(data);
 
-  const cardCreate = cardDirect(subRoute);
+  const cardCreate = wakaCardDirect(subRoute);
   const card: string = cardCreate(req, parsedData);
 
   res.status(200).send(card);
