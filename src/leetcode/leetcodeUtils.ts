@@ -1,13 +1,16 @@
 import { Request } from "express";
 import { match } from "ts-pattern";
-import { questionsCard } from "./cards/questions-card";
-import { recentCard } from "./cards/recent-card";
-import { statsCard } from "./cards/stats-card";
-import { streakCard } from "./cards/streak-card";
-import { PROFILEDATA } from "./leetcodeTypes";
+
+import { LeetStats } from "./leetcodeTypes";
+
+import { leetCompletionCard } from "./cards/questions-card";
+import { leetSubmissionsCard } from "./cards/recent-card";
+import { leetStatsCard } from "./cards/stats-card";
+import { leetStreakCard } from "./cards/streak-card";
+
 
 // Returns the parse graph query file depending on path
-export const getGraph = (type: string): string => {
+export const getLeetGraph = (type: string): string => {
     const graph = match(type)
         .with("stats", () => {return "src/leetcode/graphql/leetcode-profile.graphql"})
         .with("badges", () => {return "src/leetcode/graphql/leetcode-badges.graphql"})
@@ -20,13 +23,13 @@ export const getGraph = (type: string): string => {
 }
 
 // Returns the card creation function depending on path
-export const cardDirect = (req: Request): Function => {
+export const leetCardDirect = (req: Request): Function => {
     const parseFunc = match(req.path.split('/')[2]!)
-        .with("stats", () => {return statsCard})
+        .with("stats", () => {return leetStatsCard})
         // .with("badges", () => {return })
-        .with("questions_solved", () => {return questionsCard})
-        .with("recent-questions", () => {return recentCard})
-        .with("streak", () => {return streakCard})
+        .with("questions_solved", () => {return leetCompletionCard})
+        .with("recent-questions", () => {return leetSubmissionsCard})
+        .with("streak", () => {return leetStreakCard})
         // .with("daily-question", () => {return })
         .run()
     return parseFunc
@@ -51,7 +54,7 @@ const normalcdf = (mean: number, sigma: number, to: number): number => {
 };
 
 // also Maths.... but that leads to words <Will cite creator's reference as I did not build this stat gerating function myself>
-export const calculateRank = (stats: PROFILEDATA): [string, number] => {
+export const calculateRank = (stats: LeetStats): [string, number] => {
     const COMPLETION_OFFSET = 1.85;
     const REP_OFFSET = 1;
     const STARS_OFFSET = 1.25;
