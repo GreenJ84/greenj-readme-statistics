@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { WakaRawData, WakaProfileData } from './wakatimeTypes';
 import { ResponseError, WAKA_TIME_URL } from '../utils/constants';
 import { setCacheData } from '../utils/cache';
-import { shaveData } from './apiParse';
+import { wakaRawShave } from './apiParse';
 
 dotenv.config()
 
@@ -36,7 +36,7 @@ export const getWakaStats = async (username: string): Promise<WakaProfileData > 
             );
         });
     // Shave unnecessary data to spare cache
-    const data = shaveData(response);
+    const data = wakaRawShave(response);
     return data;
 }
 

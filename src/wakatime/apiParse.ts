@@ -1,26 +1,26 @@
 import { match } from "ts-pattern";
 
-import { langColor } from "./wakatimeUtils";
-import { INSIGHTTYPE, LANGTYPE, STATTYPE, sectionObject, wakaRaw, wakaResponse, wakaSection } from "./wakatimeTypes";
+import { WakaInsight, WakaLang, WakaStat, WakaRawSection, WakaRawData, WakaProfileData, WakaTopic } from "./wakatimeTypes";
+import { getLangColor } from "../utils/colors";
 
-export const parseDirect = (type: string): Function => {
+export const wakaParseDirect = (type: string): Function => {
     const parseFunc: Function = match(type)
         .with ("insights", () => {
-            return insightParse
+            return wakaInsightParse
         })
         .with("languages", () => {
-            return languagesParse
+            return wakaLanguagesParse
         })
         .with("stats", () => {
-            return statParse
+            return wakaStatParse
         })
         .run()
 
     return parseFunc;
 }
 
-const secParse = (section: sectionObject[]): wakaSection[] => {
-    let shavedSection: wakaSection[] = [];
+const wakaTopicShave = (section: WakaRawSection[]): WakaTopic[] => {
+    let shavedSection: WakaTopic[] = [];
     for (let top of section) {
         const { name, percent, total_seconds } = top;
         shavedSection.push({ name, percent, total_seconds})
@@ -28,7 +28,7 @@ const secParse = (section: sectionObject[]): wakaSection[] => {
     return shavedSection;
 }
 
-export const shaveData = (data: wakaRaw): wakaResponse => {
+export const wakaRawShave = (data: WakaRawData): WakaProfileData => {
 
     let shavedData = {
         start: data.start,
@@ -37,13 +37,13 @@ export const shaveData = (data: wakaRaw): wakaResponse => {
         days_minus_holidays: data.days_minus_holidays,
         total_seconds: data.total_seconds, 
         total_seconds_including_other_language: data.total_seconds_including_other_language,
-        categories: secParse(data.categories.slice(0, 3)),
-        projects: secParse(data.projects.slice(0, 3)),
-        languages: secParse(data.languages.slice(0, 3)),
-        editors: secParse(data.editors.slice(0, 3)),
-        operating_systems: secParse(data.operating_systems.slice(0, 3)),
-        dependencies: secParse(data.dependencies.slice(0, 3)),
-        machines: secParse(data.machines.slice(0, 3)),
+        categories: wakaTopicShave(data.categories.slice(0, 3)),
+        projects: wakaTopicShave(data.projects.slice(0, 3)),
+        languages: wakaTopicShave(data.languages.slice(0, 3)),
+        editors: wakaTopicShave(data.editors.slice(0, 3)),
+        operating_systems: wakaTopicShave(data.operating_systems.slice(0, 3)),
+        dependencies: wakaTopicShave(data.dependencies.slice(0, 3)),
+        machines: wakaTopicShave(data.machines.slice(0, 3)),
         best_day: {
             date: data.best_day.date,
             total_seconds: data.best_day.total_seconds
@@ -54,7 +54,7 @@ export const shaveData = (data: wakaRaw): wakaResponse => {
 }
 
 
-const insightParse = (data: wakaResponse): INSIGHTTYPE => {
+const wakaInsightParse = (data: WakaProfileData): WakaInsight => {
     const topLanguage = data.languages[0];
     const topProject = data.projects[0];
     const topCategory = data.categories[0];
@@ -69,10 +69,10 @@ const insightParse = (data: wakaResponse): INSIGHTTYPE => {
         topEditor: topEditor,
         topOS: topOS,
         dailyAverage: dailyAverage,
-    } as INSIGHTTYPE;
+    } as WakaInsight;
 }
 
-const languagesParse = (data: wakaResponse): LANGTYPE => {
+const wakaLanguagesParse = (data: WakaProfileData): WakaLang => {
     let topTotal = 0;
     data.languages.slice(0,6).map(lang => {
         topTotal += lang.total_seconds
@@ -83,16 +83,16 @@ const languagesParse = (data: wakaResponse): LANGTYPE => {
             name: lang.name,
             total_seconds: lang.total_seconds,
             percent: parseFloat((lang.total_seconds / topTotal * 100).toFixed(2)),
-            color: langColor(lang.name)
+            color: getLangColor(lang.name)
         }
     });
 
     return {
         languages: languages,
-    } as LANGTYPE
+    } as WakaLang
 }
 
-const statParse = (data: wakaResponse): STATTYPE => {
+const wakaStatParse = (data: WakaProfileData): WakaStat => {
     const totalBest = (data.best_day.total_seconds / 60 / 60).toFixed(1);
     const bestDate = data.best_day.date;
     const totalDevSec = (data.total_seconds_including_other_language / 60 / 60).toFixed(1);
@@ -107,5 +107,5 @@ const statParse = (data: wakaResponse): STATTYPE => {
         accountStart: accountStart,
         dailyAvg: dailyAvg,
         totalDevDays: totalDevDays,
-    } as STATTYPE
+    } as WakaStat
 }
