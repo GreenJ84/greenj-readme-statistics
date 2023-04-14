@@ -150,6 +150,17 @@ export const Colors: string[] = [
     "yellowgreen",
 ];
 
+export const getLangColor = (lang: string): string => {
+    let colorCode = "";
+    if (githubColorMapping[lang] !== undefined) {
+        colorCode = githubColorMapping[lang]!;
+    } else {
+        const random = Math.floor(Math.random()*Colors.length-1);
+        colorCode = Colors[random]!
+    }
+    return colorCode;
+}
+
 export const githubColorMapping: Record<string, string> = {
     "Mercury": "#ff2b2b", 
     "TypeScript": "#2b7489", 
