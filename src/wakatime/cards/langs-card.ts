@@ -1,10 +1,10 @@
 import { Request } from "express";
-import { THEMETYPE } from "../../utils/themes";
+import { ThemeType } from "../../utils/themes";
 import { baseCardThemeParse } from "../../utils/utils";
-import { LANGTYPE } from "../wakatimeTypes";
+import { WakaLang } from "../wakatimeTypes";
 
-export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
-    const theme: THEMETYPE = baseCardThemeParse(req);
+export const wakaLanguagesCard = (req: Request, data: WakaLang): string => {
+    const theme: ThemeType = baseCardThemeParse(req);
     
     const {
         topStat,

@@ -1,11 +1,11 @@
 import { Request } from "express";
-import { THEMETYPE } from "../../utils/themes";
+import { ThemeType } from "../../utils/themes";
 import { baseCardThemeParse } from "../../utils/utils";
-import { INSIGHTTYPE } from "../wakatimeTypes";
+import { WakaInsight } from "../wakatimeTypes";
 
 
-export const insightsCardSetup = (req: Request, data: INSIGHTTYPE): string => {
-    const theme: THEMETYPE = baseCardThemeParse(req);
+export const wakaInsightCard = (req: Request, data: WakaInsight): string => {
+    const theme: ThemeType = baseCardThemeParse(req);
     
     const {
         icons,

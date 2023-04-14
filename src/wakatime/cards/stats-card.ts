@@ -1,10 +1,10 @@
 import { Request } from "express";
-import { THEMETYPE } from "../../utils/themes";
+import { ThemeType } from "../../utils/themes";
 import { baseCardThemeParse, getFormatDate } from "../../utils/utils";
-import { STATTYPE } from "../wakatimeTypes";
+import { WakaStat } from "../wakatimeTypes";
 
-export const statsCardSetup = (req: Request, data: STATTYPE): string => {
-    const theme: THEMETYPE = baseCardThemeParse(req);
+export const wakaStatsCard = (req: Request, data: WakaStat): string => {
+    const theme: ThemeType = baseCardThemeParse(req);
 
     const {
         ring,
