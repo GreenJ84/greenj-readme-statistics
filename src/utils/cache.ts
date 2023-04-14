@@ -1,35 +1,35 @@
 import { Request } from 'express';
 import { RedisClientType, createClient } from 'redis';
-import { DAILY_QUESTION, LeetCodeGraphQLResponse, STREAKDATA } from '../leetcode/leetcodeTypes';
-import { GraphQLResponse, STREAKTYPE } from '../github/githubTypes';
-import { wakaResponse } from '../wakatime/wakatimeTypes';
+import { LeetDailyQuestion, LeetProfileData, LeetStreakData } from '../leetcode/leetcodeTypes';
+import { GithProfileData, GithProfileStreak } from '../github/githubTypes';
+import { WakaProfileData } from '../wakatime/wakatimeTypes';
 import { PRODUCTION, PROD_HOST, PROD_PORT, REDIS_PASS, REDIS_USER } from './constants';
 
 
-type cacheType = 
-    LeetCodeGraphQLResponse |
-    STREAKDATA |
-    DAILY_QUESTION |
-    GraphQLResponse |
-    STREAKTYPE |
-    wakaResponse |
+type UserData = 
+    LeetProfileData |
+    LeetStreakData |
+    LeetDailyQuestion |
+    GithProfileData |
+    GithProfileStreak |
+    WakaProfileData |
     { times: number }
 
-export type CACHE = USER_CACHE | DAILY_QUESTION
+export type RedisCache = UserCache | LeetDailyQuestion | { times: number }
 
-export interface USER_CACHE {
+export interface UserCache {
     interval: NodeJS.Timer
-    data: cacheType
+    data: UserData
 }
 
-export const client: RedisClientType = PRODUCTION ?
+export const redisClient: RedisClientType = PRODUCTION ?
     createClient({
             url: `redis://${REDIS_USER}:${REDIS_PASS}@${PROD_HOST}:${PROD_PORT}`
         })
     :
     createClient();
 
-client.on("error", err => console.error(`Redis client error: ${err}`))
+redisClient.on("error", err => console.error(`Redis Client error: ${err}`))
 
 export const getCacheKey = (req: Request) => {
     const path = req.path.split("/");
@@ -45,18 +45,18 @@ export const getCacheKey = (req: Request) => {
 }
 
 export const buildRedis = async () => {
-    await client.connect()
+    await redisClient.connect()
         .then(() => console.log("Redis server connected."))
 }
 
 export const teardownRedis = async () => {
-    await client.disconnect()
+    await redisClient.disconnect()
         .then(() => console.log("Redis server disconnected."));
 }
 
-export const getCacheData = async (key: string): Promise<[boolean, CACHE | null]> => {
+export const getCacheData = async (key: string): Promise<[boolean, UserCache | null]> => {
     try {
-        const data = await client.get(
+        const data = await redisClient.get(
             key
         );
         if (data == undefined) {
@@ -71,8 +71,8 @@ export const getCacheData = async (key: string): Promise<[boolean, CACHE | null]
     }
 }
 
-export const setCacheData = async (key: string, data: CACHE): Promise<void> => {
-    await client.set(
+export const setCacheData = async (key: string, data: UserCache): Promise<void> => {
+    await redisClient.set(
         key,
         JSON.stringify(data), {
             // 30 sec development cache lifetime
@@ -84,7 +84,7 @@ export const setCacheData = async (key: string, data: CACHE): Promise<void> => {
 }
 
 export const deleteCacheData = async (key: string): Promise<boolean> => {
-    const repsonse = await client.del(key);
+    const repsonse = await redisClient.del(key);
 
     if (repsonse > 0) {
         return true;
