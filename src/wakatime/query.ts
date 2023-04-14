@@ -8,7 +8,7 @@ import { shaveData } from './apiParse';
 
 dotenv.config()
 
-export const getUserStats = async (username: string): Promise<wakaResponse > => {
+export const getWakaStats = async (username: string): Promise<wakaResponse > => {
     if (process.env.WAKATIME_TOKEN === undefined) {
         throw new ResponseError(
             "Error accessing WakaTime API Token",
@@ -40,10 +40,10 @@ export const getUserStats = async (username: string): Promise<wakaResponse > => 
     return data;
 }
 
-export const updateUser = async (cacheKey: string, intervalID: NodeJS.Timer, username: string) => {
+export const updateWakaProfile = async (cacheKey: string, intervalID: NodeJS.Timer, username: string) => {
     try {
         // Query WakaTime api
-        const queryRepsonse: wakaResponse = await getUserStats(username)
+        const queryRepsonse: wakaResponse = await getWakaStats(username)
             .catch(err => {
                 throw err;
             });

@@ -1,132 +1,145 @@
-import { Request, Response } from 'express';
+/** @format */
 
-import { preFlight, sleep } from '../utils/utils';
-import { deleteCacheData, getCacheData, getCacheKey, setCacheData } from '../utils/cache';
-import { DATA_UDPDATE_INTERVAL } from '../utils/constants';
+import { Request, Response } from "express";
 
-import { getUserStats, updateUser } from '../wakatime/query';
-import { parseDirect } from '../wakatime/apiParse';
-import { cardDirect } from '../wakatime/wakatimeUtils';
-import { wakaResponse } from '../wakatime/wakatimeTypes';
+import { preFlight, sleep } from "../utils/utils";
+import {
+  USER_CACHE,
+  getCacheKey,
+  getCacheData,
+  setCacheData,
+  deleteCacheData,
+} from "../utils/cache";
+import { DATA_UDPDATE_INTERVAL } from "../utils/constants";
+
+import { wakaResponse } from "../wakatime/wakatimeTypes";
+import { getWakaStats, updateWakaProfile } from "../wakatime/query";
+import { parseDirect } from "../wakatime/apiParse";
+import { cardDirect } from "../wakatime/wakatimeUtils";
 
 let sleepMod = -2;
 
-// 30 sec interval for development
-// 8hr interval for production
+export const wakatimeRegister = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  // Ensure caller is viable
+  if (!preFlight(req, res)) {
+    return;
+  }
+  const cacheKey = getCacheKey(req);
+  res.set("Content-Type", "application/json");
 
-export const wakaStatsRegister = async (req: Request, res: Response): Promise<void> => {
-    // Ensure caller is viable
-    if (!preFlight(req, res)) {
-        return;
-    }
-    const cacheKey = getCacheKey(req);
-    res.set('Content-Type', 'application/json');
-    
-    // Try for cached data, Query API if not present
-    const [success, _] = await getCacheData(cacheKey);
-    if (success) { 
-        res.status(208).json({
-            message: "User already registered",
-            code: "208"
-        });
-        return;
-    }
-    // Query WakaTime api
-    const queryRepsonse: wakaResponse = await getUserStats(req.params.username!)
-        .catch(err => {
-            throw err;
-        });
-
-    const intervalID = setInterval(() => {
-        // console.log(intervalID);
-        updateUser(cacheKey, intervalID, req.params.username!);
-    }, DATA_UDPDATE_INTERVAL);
-
-    await setCacheData( cacheKey, {
-            interval: intervalID ,
-            data: queryRepsonse
-        }
-    );
-
-    res.status(201).json({
-        message: "User Registered",
-        code: "201"
+  // Try for cached data, Query API if not present
+  const [success, _] = await getCacheData(cacheKey);
+  if (success) {
+    res.status(208).json({
+      message: "User already registered",
+      code: "208",
     });
     return;
-}
+  }
+  // Query WakaTime api
+  const queryRepsonse: wakaResponse = await getWakaStats(
+    req.params.username!
+  ).catch((err) => {
+    throw err;
+  });
 
-export const wakaStatsUnregister = async (req: Request, res: Response): Promise<void> => {
-    // Ensure caller is viable
-    if (!preFlight(req, res)) {
-        return;
-    }
-    const cacheKey = getCacheKey(req);
-    res.set('Content-Type', 'application/json');
+  const intervalID = setInterval(() => {
+    // console.log(intervalID);
+    updateWakaProfile(cacheKey, intervalID, req.params.username!);
+  }, DATA_UDPDATE_INTERVAL);
 
-    // Try for cached data, Query API if not present
-    const [success, cache] = await getCacheData(cacheKey);
-    if (!success) { 
-        res.status(400).json({
-            message: "User not found.",
-            code: "404"
-        });
-        return;
-    }
+  await setCacheData(cacheKey, {
+    interval: intervalID,
+    data: queryRepsonse,
+  });
 
-    const intervalID = cache?.interval;
-    if (intervalID) {
-        clearInterval(intervalID);
-    }
-    const deleted = await deleteCacheData(cacheKey);
+  res.status(201).json({
+    message: "User Registered",
+    code: "201",
+  });
+  return;
+};
 
-    if (!deleted) {
-        console.error("Cache data didn't get deleted.");
-        res.status(200).json({
-            message: "Unregistration process failed.",
-            code: "400"
-        });
-        return;
-    }
+export const wakatimeUnregister = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  // Ensure caller is viable
+  if (!preFlight(req, res)) {
+    return;
+  }
+  const cacheKey = getCacheKey(req);
+  res.set("Content-Type", "application/json");
 
+  // Try for cached data, Query API if not present
+  const [success, cacheData] = await getCacheData(cacheKey);
+  if (!success) {
+    res.status(400).json({
+      message: "User not found.",
+      code: "404",
+    });
+    return;
+  }
+
+  const intervalID = (cacheData as USER_CACHE)?.interval;
+  if (intervalID) {
+    clearInterval(intervalID);
+  }
+  const deleted = await deleteCacheData(cacheKey);
+
+  if (!deleted) {
+    console.error("Cache data didn't get deleted.");
     res.status(200).json({
-        message: "User unregistered",
-        code: "200"
+      message: "Unregistration process failed.",
+      code: "400",
     });
     return;
-}
+  }
 
+  res.status(200).json({
+    message: "User unregistered",
+    code: "200",
+  });
+  return;
+};
 
-export const getProfileStats = async (req: Request, res: Response): Promise<void> => {
-    // Ensure caller is viable
-    if (!preFlight(req, res)) {
-        return;
-    }
-
-    const subRoute = req.path.split("/")[2]!;
-    const cacheKey = getCacheKey(req);
-    
-    sleepMod = (sleepMod + 2) % 10
-    await sleep(sleepMod);
-    
-    // Try for cached data, Query API if not present
-    const [success, cacheData] = await getCacheData(cacheKey);
-    if (!success) {
-        res.set('Content-Type', 'application/json');
-        res.status(401).json({
-            message: "User unauthorized. Registration required for API data.",
-            code: "401"
-        });
-        return;
-    }
-    const data = cacheData!.data as wakaResponse;
-    
-    // Parse Data, Build Card, and Send
-    const dataParse = parseDirect(subRoute);
-    const parsedData = dataParse(data);
-    
-    const cardCreate = cardDirect(subRoute);
-    const card: string = cardCreate(req, parsedData);
-    
-    res.status(200).send(card);
+export const wakatimeProfile = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  // Ensure caller is viable
+  if (!preFlight(req, res)) {
     return;
-}
+  }
+
+  const subRoute = req.path.split("/")[2]!;
+  const cacheKey = getCacheKey(req);
+
+  sleepMod = (sleepMod + 2) % 10;
+  await sleep(sleepMod);
+
+  // Try for cached data, Query API if not present
+  const [success, cacheData] = await getCacheData(cacheKey);
+  if (!success) {
+    res.set("Content-Type", "application/json");
+    res.status(401).json({
+      message: "User unauthorized. Registration required for API data.",
+      code: "401",
+    });
+    return;
+  }
+  const data = (cacheData as USER_CACHE)!.data as wakaResponse;
+
+  // Parse Data, Build Card, and Send
+  const dataParse = parseDirect(subRoute);
+  const parsedData = dataParse(data);
+
+  const cardCreate = cardDirect(subRoute);
+  const card: string = cardCreate(req, parsedData);
+
+  res.status(200).send(card);
+  return;
+};
