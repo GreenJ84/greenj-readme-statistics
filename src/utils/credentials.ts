@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-import { CRED_URL, ResponseError, USER_AGENT } from "../utils/constants";
-import { parse_cookie } from "./utils";
+import { LEET_CRED_URL, LEET_GRAPHQL_URL_CN, ResponseError, LEET_USER_AGENT } from "../utils/constants";
+import { parseCookie } from "./utils";
 
 // Credential
 export interface ICredential {
@@ -12,9 +12,9 @@ export interface ICredential {
 }
 
 export async function get_csrf(): Promise<string> {
-    const cookies_raw = await axios.get(CRED_URL, {
+    const cookies_raw = await axios.get(LEET_CRED_URL, {
         headers: {
-            "user-agent": USER_AGENT,
+            "user-agent": LEET_USER_AGENT,
         },
     }).then((res) => {
         return res.headers['set-cookie']![0] as string;
@@ -25,30 +25,30 @@ export async function get_csrf(): Promise<string> {
         );
     });
 
-    const csrf_token = parse_cookie(cookies_raw as string).csrftoken!;
+    const csrf_token = parseCookie(cookies_raw as string).csrftoken!;
 
     return csrf_token;
 };
 
-// export async function get_csrf_cn() {
-//     const cookies_raw = await fetch(GRAPHQL_URL_CN, {
-//         method: "POST",
-//         headers: {
-//             "content-type": "application/json",
-//             "user-agent": USER_AGENT,
-//         },
-//         body: JSON.stringify({
-//             operationName: "nojGlobalData",
-//             variables: {},
-//             query: "query nojGlobalData {\n  siteRegion\n  chinaHost\n  websocketUrl\n}\n",
-//         }),
-//     }).then((res) => {
-//         return res.headers['set-cookie']![0] as string;
-//     }).catch((err) => {
-//         return `error: ${err}`
-//     });
+export async function get_csrf_cn() {
+    const cookies_raw = await fetch(LEET_GRAPHQL_URL_CN, {
+        method: "POST",
+        headers: {
+            "content-type": "application/json",
+            "user-agent": LEET_USER_AGENT,
+        },
+        body: JSON.stringify({
+            operationName: "nojGlobalData",
+            variables: {},
+            query: "query nojGlobalData {\n  siteRegion\n  chinaHost\n  websocketUrl\n}\n",
+        }),
+    }).then((res) => {
+        return res.headers['set-cookie']![0] as string;
+    }).catch((err) => {
+        return `error: ${err}`
+    });
 
-//     const csrf_token = parse_cookie(cookies_raw).csrftoken;
+    const csrf_token = parseCookie(cookies_raw).csrftoken;
 
-//     return csrf_token;
-// };
+    return csrf_token;
+};
