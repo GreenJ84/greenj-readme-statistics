@@ -1,46 +1,49 @@
+/** @format */
+
 import { Request } from "express";
 import { ThemeType } from "../../utils/themes";
 import { baseCardThemeParse } from "../../utils/utils";
 import { WakaLang } from "../wakatimeTypes";
 
 export const wakaLanguagesCard = (req: Request, data: WakaLang): string => {
-    const theme: ThemeType = baseCardThemeParse(req);
-    
-    const {
-        topStat,
-        stats,
-        pieBG,
-        textMain,
-        textSub,
-        
-        title
-    } = req.query;
+  const theme: ThemeType = baseCardThemeParse(req);
 
-    if (topStat !== undefined) {
-        theme.statsMain = topStat as string;
-    }
-    if (stats !== undefined) {
-        theme.statsSub = stats as string;
-    }
-    if (textMain !== undefined) {
-        theme.textMain = textMain as string;
-    }
-    if (textSub !== undefined) {
-        theme.textSub = textSub as string;
-    }
-    if (pieBG !== undefined) {
-        theme.stroke = pieBG as string;
-    }
+  const {
+    topStat,
+    stats,
+    pieBG,
+    textMain,
+    textSub,
 
-    if (title !== undefined) {
-        data.title = title as string
-    } else {
-        data.title = `${req.params.username!.length < 10 ? `${req.params.username!}'s` : "My"} Language Stats`
-    }
+    title,
+  } = req.query;
 
+  if (topStat !== undefined) {
+    theme.statsMain = topStat as string;
+  }
+  if (stats !== undefined) {
+    theme.statsSub = stats as string;
+  }
+  if (textMain !== undefined) {
+    theme.textMain = textMain as string;
+  }
+  if (textSub !== undefined) {
+    theme.textSub = textSub as string;
+  }
+  if (pieBG !== undefined) {
+    theme.stroke = pieBG as string;
+  }
 
-    let pieOffset = 0.0;
-    return `
+  if (title !== undefined) {
+    data.title = title as string;
+  } else {
+    data.title = `${
+      req.params.username!.length < 10 ? `${req.params.username!}'s` : "My"
+    } Language Stats`;
+  }
+
+  let pieOffset = 0.0;
+  return `
     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr' role="img">
         <title id="titleId">${data.title}</title>
         <style>
@@ -120,12 +123,18 @@ export const wakaLanguagesCard = (req: Request, data: WakaLang): string => {
 
         <!-- Background -->
             <g style="isolation: isolate">
-                <rect stroke="${theme.hideBorder ? theme.background : theme.border}" fill="${theme.background}" rx="${theme.borderRadius}" x="1.5" y="1.5" width="549" height="212"  stroke-width="2"/>
+                <rect stroke="${
+                  theme.hideBorder ? theme.background : theme.border
+                }" fill="${theme.background}" rx="${
+    theme.borderRadius
+  }" x="1.5" y="1.5" width="549" height="212"  stroke-width="2"/>
             </g>
 
         <!-- Title -->
             <g>
-                <text x="20.5" y="28" stroke-width="0" text-anchor="start" fill="${theme.textMain}" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="24px" font-style="normal" style="opacity: 0; animation: fadeInAnimation 0.5s linear forwards 0.7s; letter-spacing: 4px; text-shadow: 1px 1px 2px black;">
+                <text x="20.5" y="28" stroke-width="0" text-anchor="start" fill="${
+                  theme.textMain
+                }" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="24px" font-style="normal" style="opacity: 0; animation: fadeInAnimation 0.5s linear forwards 0.7s; letter-spacing: 4px; text-shadow: 1px 1px 2px black;">
                     ${data.title}
                 </text>
             </g>
@@ -133,7 +142,9 @@ export const wakaLanguagesCard = (req: Request, data: WakaLang): string => {
         <!-- Top Language Used -->
             <g  transform="translate(40, 62)">
                 <g class="stagger" style="animation-delay: 450ms">
-                    <circle cx="0" cy="4" r="6" fill="${data.languages[0]!.color}" />
+                    <circle cx="0" cy="4" r="6" fill="${
+                      data.languages[0]!.color
+                    }" />
                     <text data-testid="lang-name" x="15" y="10" class="top-name">
                         ${data.languages[0]!.name}
                     </text>
@@ -147,9 +158,11 @@ export const wakaLanguagesCard = (req: Request, data: WakaLang): string => {
             <g transform="translate(40, 50)">
                 <g transform="translate(0, 40)">
                     ${data.languages.slice(1, 6).map((lang, idx) => {
-                        return `<g transform="translate(0, ${idx * 25})">
+                      return `<g transform="translate(0, ${idx * 25})">
                             <g class="stagger" style="animation-delay: 450ms">
-                                <circle cx="0" cy="4" r="6" fill="${lang.color}" />
+                                <circle cx="0" cy="4" r="6" fill="${
+                                  lang.color
+                                }" />
                                 <text data-testid="lang-name" x="15" y="10" class="lang-name">
                                     ${lang.name}
                                 </text>
@@ -157,7 +170,7 @@ export const wakaLanguagesCard = (req: Request, data: WakaLang): string => {
                                     ${lang.percent}%
                                 </text>
                             </g>
-                        </g>`
+                        </g>`;
                     })}
                 </g>
                 <!-- Percentage Chart -->
@@ -166,19 +179,21 @@ export const wakaLanguagesCard = (req: Request, data: WakaLang): string => {
                 >
                     <!-- Percentage Chart -->
                     <circle r="81" cx="0" cy="0" fill="${theme.stroke}"/>
-                        ${data.languages.slice(0, 6).map(lang => {
-                            let off = pieOffset;
-                            pieOffset += lang.percent;
-                            return `<circle r="40" cx="0" cy="0" 
+                        ${data.languages.slice(0, 6).map((lang) => {
+                          let off = pieOffset;
+                          pieOffset += lang.percent;
+                          return `<circle r="40" cx="0" cy="0" 
                                 fill="none"
                                 stroke="${lang.color}"
                                 stroke-width="80"
-                                stroke-dasharray="calc(${lang.percent - .1} * (251 / 100)) 502.655"
-                                transform="rotate(${off/100*360 + .5})"
-                            />`
+                                stroke-dasharray="calc(${
+                                  lang.percent - 0.1
+                                } * (251 / 100)) 502.655"
+                                transform="rotate(${(off / 100) * 360 + 0.5})"
+                            />`;
                         })}
                 </g>
             </g>
         </g>
-    </svg>`
-}
+    </svg>`;
+};

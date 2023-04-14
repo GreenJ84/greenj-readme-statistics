@@ -1,47 +1,52 @@
+/** @format */
+
 import { Request } from "express";
 import { ThemeType } from "../../utils/themes";
 import { baseCardThemeParse } from "../../utils/utils";
 import { WakaInsight } from "../wakatimeTypes";
 
-
 export const wakaInsightCard = (req: Request, data: WakaInsight): string => {
-    const theme: ThemeType = baseCardThemeParse(req);
-    
-    const {
-        icons,
-        logo,
-        stats,
-        textMain,
-        textSub,
-        stroke,
+  const theme: ThemeType = baseCardThemeParse(req);
 
-        title
-    } = req.query;
+  const {
+    icons,
+    logo,
+    stats,
+    textMain,
+    textSub,
+    stroke,
 
-    if (icons !== undefined) {
-        theme.detailSub = icons as string;
-    }
-    if (logo !== undefined) {
-        theme.detailMain = logo as string;
-    }
-    if (stats !== undefined) {
-        theme.statsMain = stats as string;
-    }
-    if (textMain !== undefined) {
-        theme.textMain = textMain as string;
-    }
-    if (textSub !== undefined) {
-        theme.textSub = textSub as string;
-    }
-    if (stroke !== undefined) {
-        theme.stroke = stroke as string;
-    }
+    title,
+  } = req.query;
 
-    if (title != undefined) {
-        data.title = title as string;
-    } else { data.title = `${req.params.username!.length < 10 ? `${req.params.username!}'s` : "My"} WakaTime Insights` }
+  if (icons !== undefined) {
+    theme.detailSub = icons as string;
+  }
+  if (logo !== undefined) {
+    theme.detailMain = logo as string;
+  }
+  if (stats !== undefined) {
+    theme.statsMain = stats as string;
+  }
+  if (textMain !== undefined) {
+    theme.textMain = textMain as string;
+  }
+  if (textSub !== undefined) {
+    theme.textSub = textSub as string;
+  }
+  if (stroke !== undefined) {
+    theme.stroke = stroke as string;
+  }
 
-    return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr' role="img">
+  if (title != undefined) {
+    data.title = title as string;
+  } else {
+    data.title = `${
+      req.params.username!.length < 10 ? `${req.params.username!}'s` : "My"
+    } WakaTime Insights`;
+  }
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation: isolate' viewBox='0 0 552 215' width='552px' height='215px' direction='ltr' role="img">
     <title id="titleId">${data.title}</title>
     <style>
         .statText {
@@ -96,12 +101,18 @@ export const wakaInsightCard = (req: Request, data: WakaInsight): string => {
 
     <!-- Background -->
         <g style="isolation: isolate">
-            <rect stroke="${theme.hideBorder ? theme.background : theme.border}" fill="${theme.background}" rx="${theme.borderRadius}" x="1.5" y="1.5" stroke-width="2" width="549" height="212"/>
+            <rect stroke="${
+              theme.hideBorder ? theme.background : theme.border
+            }" fill="${theme.background}" rx="${
+    theme.borderRadius
+  }" x="1.5" y="1.5" stroke-width="2" width="549" height="212"/>
         </g>
 
     <!-- Title -->
         <g>
-            <text x="20.5" y="28" stroke-width="0" text-anchor="start" fill="${theme.textMain}" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="24px" font-style="normal" style="opacity: 0; animation: fadeInAnimation 0.5s linear forwards 0.7s; letter-spacing: 4px; text-shadow: 1px 1px 2px black;">
+            <text x="20.5" y="28" stroke-width="0" text-anchor="start" fill="${
+              theme.textMain
+            }" stroke="none" font-family="\'Segoe UI\', Ubuntu, sans-serif" font-weight="400" font-size="24px" font-style="normal" style="opacity: 0; animation: fadeInAnimation 0.5s linear forwards 0.7s; letter-spacing: 4px; text-shadow: 1px 1px 2px black;">
                 ${data.title}
             </text>
         </g>
@@ -109,8 +120,14 @@ export const wakaInsightCard = (req: Request, data: WakaInsight): string => {
     <!-- WakaTime Logo -->
         <g transform="translate(390.5, 50)">
             <svg width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M75 8.823c-36.552 0 -66.177 29.625 -66.177 66.177s29.625 66.177 66.177 66.177 66.177 -29.625 66.177 -66.177 -29.625 -66.177 -66.177 -66.177Z" stroke="${theme.detailMain}" stroke-width="17.647058823529413"/>
-                <path d="M83.907 94.209a3.339 3.339 0 0 1 -2.661 1.377 3.639 3.639 0 0 1 -0.684 -0.075 3.573 3.573 0 0 1 -0.609 -0.207 4.518 4.518 0 0 1 -0.291 -0.15 3.459 3.459 0 0 1 -0.45 -0.309 3.882 3.882 0 0 1 -0.225 -0.198 4.152 4.152 0 0 1 -0.309 -0.336 3.975 3.975 0 0 1 -0.393 -0.6l-3.9 -6.261 -3.9 6.261a3.441 3.441 0 0 1 -2.991 1.875 3.402 3.402 0 0 1 -2.982 -1.902L47.466 68.85a3.993 3.993 0 0 1 -0.909 -2.559c0 -2.091 1.539 -3.789 3.432 -3.789 1.227 0 2.307 0.711 2.907 1.782l14.391 21.261 4.05 -6.591a3.411 3.411 0 0 1 3.018 -1.977c1.191 0 2.241 0.666 2.859 1.689l4.182 6.852 22.575 -32.316a3.348 3.348 0 0 1 2.877 -1.725c1.893 0 3.432 1.698 3.432 3.789a4.032 4.032 0 0 1 -0.777 2.409l-25.614 36.543Z" fill="${theme.detailMain}" stroke="${theme.detailMain}" stroke-width="4.411764705882353"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M75 8.823c-36.552 0 -66.177 29.625 -66.177 66.177s29.625 66.177 66.177 66.177 66.177 -29.625 66.177 -66.177 -29.625 -66.177 -66.177 -66.177Z" stroke="${
+                  theme.detailMain
+                }" stroke-width="17.647058823529413"/>
+                <path d="M83.907 94.209a3.339 3.339 0 0 1 -2.661 1.377 3.639 3.639 0 0 1 -0.684 -0.075 3.573 3.573 0 0 1 -0.609 -0.207 4.518 4.518 0 0 1 -0.291 -0.15 3.459 3.459 0 0 1 -0.45 -0.309 3.882 3.882 0 0 1 -0.225 -0.198 4.152 4.152 0 0 1 -0.309 -0.336 3.975 3.975 0 0 1 -0.393 -0.6l-3.9 -6.261 -3.9 6.261a3.441 3.441 0 0 1 -2.991 1.875 3.402 3.402 0 0 1 -2.982 -1.902L47.466 68.85a3.993 3.993 0 0 1 -0.909 -2.559c0 -2.091 1.539 -3.789 3.432 -3.789 1.227 0 2.307 0.711 2.907 1.782l14.391 21.261 4.05 -6.591a3.411 3.411 0 0 1 3.018 -1.977c1.191 0 2.241 0.666 2.859 1.689l4.182 6.852 22.575 -32.316a3.348 3.348 0 0 1 2.877 -1.725c1.893 0 3.432 1.698 3.432 3.789a4.032 4.032 0 0 1 -0.777 2.409l-25.614 36.543Z" fill="${
+                  theme.detailMain
+                }" stroke="${
+    theme.detailMain
+  }" stroke-width="4.411764705882353"/>
             </svg>
         </g>
 
@@ -132,7 +149,9 @@ export const wakaInsightCard = (req: Request, data: WakaInsight): string => {
                     y="12.5"
                     data-testid="language"
                 >
-                    ${data.topLanguage.name} (${data.topLanguage.percent.toFixed(1)}%)
+                    ${
+                      data.topLanguage.name
+                    } (${data.topLanguage.percent.toFixed(1)}%)
                 </text>
             </g>
         </g>
@@ -193,7 +212,9 @@ export const wakaInsightCard = (req: Request, data: WakaInsight): string => {
                     y="12.5"
                     data-testid="category"
                 >
-                    ${data.topCategory.name}(${data.topCategory.percent.toFixed(1)}%)
+                    ${data.topCategory.name}(${data.topCategory.percent.toFixed(
+    1
+  )}%)
                 </text>
             </g>
         </g>
@@ -201,7 +222,9 @@ export const wakaInsightCard = (req: Request, data: WakaInsight): string => {
     <!-- Top Editor -->
         <g transform="translate(0, 160)">
             <g class="stagger" style="animation-delay: 1050ms" transform="translate(15, 0)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="${theme.detailSub}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="${
+                  theme.detailSub
+                }" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path fill="none" d="M8.25 3H3a1.5 1.5 0 0 0 -1.5 1.5v10.5a1.5 1.5 0 0 0 1.5 1.5h10.5a1.5 1.5 0 0 0 1.5 -1.5v-5.25"/>
                     <path fill="none" d="M13.875 1.875a1.591 1.591 0 0 1 2.25 2.25L9 11.25l-3 0.75 0.75 -3 7.125 -7.125z"/>
                 </svg>
@@ -214,7 +237,9 @@ export const wakaInsightCard = (req: Request, data: WakaInsight): string => {
                     y="12.5"
                     data-testid="editor"
                 >
-                    ${data.topEditor.name} (${data.topEditor.percent.toFixed(1)}%)
+                    ${data.topEditor.name} (${data.topEditor.percent.toFixed(
+    1
+  )}%)
                 </text>
             </g>
         </g>
@@ -240,5 +265,5 @@ export const wakaInsightCard = (req: Request, data: WakaInsight): string => {
         </g>
     </g>
 </svg>
-`
-}
+`;
+};
