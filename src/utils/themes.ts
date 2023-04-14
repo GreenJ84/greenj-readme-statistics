@@ -1,4 +1,4 @@
-export interface THEMETYPE{
+export interface ThemeType{
     background: string
     border: string,
     hideBorder?: boolean,
@@ -15,7 +15,7 @@ export interface THEMETYPE{
     [key: string]: any;
 }
 
-export const THEMES: Record<string, THEMETYPE> = {
+export const Themes: Record<string, ThemeType> = {
         "default": {
             background: "#FFFEFE",
             border: "#E4E2E2",
