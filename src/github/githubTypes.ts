@@ -87,12 +87,9 @@ export interface GithStreak {
   theme?: ThemeType;
 }
 
-export type GithRawProfile =
-  | GithRawUserStats
-  | GithRawUserLanguages
-  | GithRawUserBadges;
+export type GithRawProfile = GithRawUserStats | GithRawUserLanguages;
 
-export type GithProfile = GithUserStats | GithUserLanguages | GithUserBadges;
+export type GithProfile = GithUserStats | GithUserLanguages;
 
 export interface GithRawUserStats {
   user: {
@@ -156,19 +153,17 @@ export interface GithRawUserLanguages {
     };
   };
 }
+
+export interface GithLanguageData {
+  name: string;
+  usage: number | string;
+  position: number;
+  width: number;
+  color: string;
+}
 export interface GithUserLanguages {
   title?: string;
   totalSize: number;
-  languages: {
-    name: string;
-    usage: number | string;
-    position: number;
-    width: number;
-    color: string;
-  }[];
+  languages: GithLanguageData[];
   theme?: ThemeType;
 }
-
-export interface GithRawUserBadges {}
-
-export interface GithUserBadges {}
