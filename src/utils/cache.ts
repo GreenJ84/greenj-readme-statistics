@@ -3,11 +3,11 @@
 import { Request } from "express";
 import { RedisClientType, createClient } from "redis";
 import {
-  LeetDailyQuestion,
-  LeetProfileData,
-  LeetStreakData,
+  LeetRawDaily,
+  LeetRawProfileData,
+  LeetUserStreak,
 } from "../leetcode/leetcodeTypes";
-import { GithProfileData, GithProfileStreak } from "../github/githubTypes";
+import { GithRawProfileData, GithUserStreak } from "../github/githubTypes";
 import { WakaProfileData } from "../wakatime/wakatimeTypes";
 import {
   PRODUCTION,
@@ -18,15 +18,15 @@ import {
 } from "./constants";
 
 type UserData =
-  | LeetProfileData
-  | LeetStreakData
-  | LeetDailyQuestion
-  | GithProfileData
-  | GithProfileStreak
+  | LeetRawProfileData
+  | LeetUserStreak
+  | LeetRawDaily
+  | GithRawProfileData
+  | GithUserStreak
   | WakaProfileData
   | { times: number };
 
-export type RedisCache = UserCache | LeetDailyQuestion | { times: number };
+export type RedisCache = UserCache | LeetRawDaily | { times: number };
 
 export interface UserCache {
   interval: NodeJS.Timer;
@@ -76,6 +76,7 @@ export const getCacheData = async (
       console.warn("Empty Cache");
       return [false, null];
     }
+    !PRODUCTION && console.log(`Getting ${key}`);
     return [true, JSON.parse(data)];
   } catch {
     console.error("Cache retrieval Error");
@@ -88,16 +89,20 @@ export const setCacheData = async (
   data: RedisCache
 ): Promise<void> => {
   await redisClient.set(key, JSON.stringify(data), {
-    // 30 sec development cache lifetime
+    // 2 min development cache lifetime
     // 8hr and 8min production cache lifetime
-    EX: PRODUCTION ? 60 * 61 * 8 : 30,
-  });
+    EX: PRODUCTION ? 60 * 61 * 8 : 60 * 2,
+  })
+    .catch(() => {
+      console.error(`Error Setting cache`);
+    })
+  
+  PRODUCTION && console.log(`Set cahche for ${key}`);
   return;
 };
 
 export const deleteCacheData = async (key: string): Promise<boolean> => {
   const repsonse = await redisClient.del(key);
-
   if (repsonse > 0) {
     return true;
   } else {
