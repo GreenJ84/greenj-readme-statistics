@@ -161,7 +161,7 @@ export const leetPreProbe = async (req: Request): Promise<[number[], string]> =>
   return [data.matchedUser.userCalendar.activeYears, csrf_credential];
 };
 
-export const leetUserStreakPreQuery = async (req: Request): Promise<LeetUserStreak> => {
+export const leetStreakPreQuery = async (req: Request): Promise<LeetUserStreak> => {
   const parseStreak = leetParseDirect(req);
 
   const preSet = await leetPreProbe(req).catch((err) => {
@@ -216,11 +216,11 @@ export const updateStreak = async (
   req: Request
 ): Promise<void> => {
   try {
-      const queryResponse = await leetUserStreakPreQuery(req)
+      const queryResponse = await leetStreakPreQuery(req)
           .catch((err) => {
             throw err;
-        });
-
+          });
+    
     await setCacheData(key, {
       interval: intervalId,
       data: queryResponse,
