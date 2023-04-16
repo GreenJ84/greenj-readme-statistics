@@ -25,6 +25,7 @@ import {
 } from "./leetcodeTypes";
 import * as leetcode from "../leetcode/query";
 import { leetParseDirect } from "./apiParser";
+import { getLeetGraph } from "./leetcodeUtils";
 
 
 // Universal query for GitHub
@@ -77,8 +78,9 @@ export const leetProfilePreQuery = async (username: string): Promise<LeetProfile
     });
 
   // Get correct query based on api called
+  const path = getLeetGraph('all');
   const graphql = gql(
-    fs.readFileSync("src/leetcode/graphql/leetcode-all-profile.graphql", "utf8")
+    fs.readFileSync(path, "utf8")
   );
 
   // Call the universal leeetCode querier

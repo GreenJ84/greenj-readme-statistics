@@ -12,12 +12,13 @@ import { leetStreakCard } from "./cards/streak-card";
 // Returns the parse graph query file depending on path
 export const getLeetGraph = (type: string): string => {
     const graph = match(type)
-        .with("stats", () => {return "src/leetcode/graphql/leetcode-profile.graphql"})
-        .with("badges", () => {return "src/leetcode/graphql/leetcode-badges.graphql"})
-        .with("questions_solved", () => {return "src/leetcode/graphql/leetcode-questions-answered.graphql"})
-        .with("recent-questions", () => { return "src/leetcode/graphql/leetcode-recent-submissions.graphql" })
-        .with("daily-question", () => { return "src/leetcode/graphql/leetcode-daily-question.graphql" })
-        .with("streak", () => { return "src/leetcode/graphql/leetcode-streak.graphql" })
+        //! Individual route calling not yet enable
+        // .with("stats", () => {return "src/leetcode/graphql/leetcode-profile.graphql"})
+        // .with("badges", () => {return "src/leetcode/graphql/leetcode-badges.graphql"})
+        // .with("completion", () => {return "src/leetcode/graphql/leetcode-questions-answered.graphql"})
+        // .with("submission", () => { return "src/leetcode/graphql/leetcode-recent-submissions.graphql" })
+        .with("all", () => { return "src/leetcode/graphql/leetcode-all-profile.graphql" })
+
         .run()
     return graph
 }
@@ -27,10 +28,10 @@ export const leetCardDirect = (req: Request): Function => {
     const parseFunc = match(req.path.split('/')[2]!)
         .with("stats", () => {return leetStatsCard})
         // .with("badges", () => {return })
-        .with("questions_solved", () => {return leetCompletionCard})
-        .with("recent-questions", () => {return leetSubmissionsCard})
+        .with("completion", () => {return leetCompletionCard})
+        .with("submission", () => {return leetSubmissionsCard})
         .with("streak", () => {return leetStreakCard})
-        // .with("daily-question", () => {return })
+        // .with("daily", () => {return })
         .run()
     return parseFunc
 }

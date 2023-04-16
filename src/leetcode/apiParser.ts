@@ -9,9 +9,9 @@ export const leetParseDirect = (req: Request): Function => {
     const parseFunc = match(req.path.split('/')[2]!)
         .with("stats", () => {return leetStatsParse})
         .with("badges", () => {return leetBadgesParse})
-        .with("questions_solved", () => {return leetCompletionParse})
-        .with("recent-questions", () => {return leetSubmissionParse})
-        // .with("daily-question", () => {return })
+        .with("completion", () => {return leetCompletionParse})
+        .with("submission", () => {return leetSubmissionParse})
+        // .with("daily", () => {return })
         .with("streak", () => {return streakParse})
         .run()
     return parseFunc
