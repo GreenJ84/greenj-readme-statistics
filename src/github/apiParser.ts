@@ -12,7 +12,7 @@ import {
   GithRawUserLanguages,
   GithLanguageData,
 } from "./githubTypes";
-import { calculateRank } from "./githubUtils";
+import { calculateGithRank } from "./githubUtils";
 
 export const getGithResponseParse = (req: Request): Function => {
   const type = req.path.split("/")[2]!;
@@ -112,7 +112,7 @@ const statsParse = (data: GithRawUserStats): GithUserStats => {
     contributedTo: data.user.repositoriesContributedTo.totalCount,
     repos: data.user.repositories.totalCount,
   };
-  return { ...stats, grade: calculateRank(stats) };
+  return { ...stats, grade: calculateGithRank(stats) };
 };
 
 const langsParse = (data: GithRawUserLanguages): GithUserLanguages => {

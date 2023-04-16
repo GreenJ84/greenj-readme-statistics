@@ -1,12 +1,14 @@
 /** @format */
 
 import { Request } from "express";
-import { THEMETYPE } from "../../utils/themes";
-import { baseCardThemeParse } from "../../utils/utils";
-import { STATTYPE } from "../githubTypes";
 
-export const statsCardSetup = (req: Request, data: STATTYPE): string => {
-    const theme: THEMETYPE = baseCardThemeParse(req);
+import { ThemeType } from "../../utils/themes";
+import { baseCardThemeParse } from "../../utils/utils";
+
+import { GithUserStats } from "../githubTypes";
+
+export const statsCardSetup = (req: Request, data: GithUserStats): string => {
+    const theme: ThemeType = baseCardThemeParse(req);
     
     const {
         ring,

@@ -2,10 +2,11 @@
 
 import { Request } from "express";
 import { baseCardThemeParse, getFormatDate } from "../../utils/utils";
-import { STREAKTYPE } from "../githubTypes";
+import { GithStreak } from "../githubTypes";
+import { ThemeType } from "../../utils/themes";
 
-export const streakCardSetup = (req: Request, data: STREAKTYPE): string => {
-  const theme = baseCardThemeParse(req);
+export const streakCardSetup = (req: Request, data: GithStreak): string => {
+  const theme: ThemeType = baseCardThemeParse(req);
 
   const {
     ring,

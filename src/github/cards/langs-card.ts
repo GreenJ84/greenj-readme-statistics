@@ -1,11 +1,14 @@
 /** @format */
 
 import { Request } from "express";
-import { baseCardThemeParse } from "../../utils/utils";
-import { LANGTYPE } from "../githubTypes";
 
-export const langsCardSetup = (req: Request, data: LANGTYPE): string => {
-    const theme = baseCardThemeParse(req);
+import { baseCardThemeParse } from "../../utils/utils";
+import { ThemeType } from "../../utils/themes";
+
+import { GithUserLanguages } from "../githubTypes";
+
+export const langsCardSetup = (req: Request, data: GithUserLanguages): string => {
+    const theme: ThemeType = baseCardThemeParse(req);
     
     const {
         stats,
