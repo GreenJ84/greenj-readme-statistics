@@ -16,9 +16,9 @@ import { preFlight, sleep } from "../utils/utils";
 
 
 import {
-  LeetDaily,
-  LeetProfileData,
-  LeetStreak,
+  LeetRawDaily,
+  LeetRawProfileData,
+  LeetUserStreak,
 } from "../leetcode/leetcodeTypes";
 import {
   leetProfilePreQuery,
@@ -37,6 +37,9 @@ export const leetcodeRegister = async (req: Request, res: Response) => {
   if (!preFlight(req, res)) {
     return;
   }
+  res.set("Content-Type", "application/json");
+  const username = req.params.username!;
+  console.log(username)
   const cacheKey = getCacheKey(req);
   // Try for cached data, Query API if not present
   const [success, _] = await getCacheData(cacheKey);
@@ -48,20 +51,21 @@ export const leetcodeRegister = async (req: Request, res: Response) => {
     return;
   }
 
-  const queryResponse = await leetProfilePreQuery(req.params.username!).catch((err) => {
+  const queryResponse = await leetProfilePreQuery(username).catch((err) => {
     throw err;
   });
 
   const intervalId = setInterval(() => {
     // console.log(intervalId);
-    updateUser(cacheKey, intervalId, req.params.username!);
+    updateUser(cacheKey, intervalId, username);
   }, DATA_UDPDATE_INTERVAL);
 
   await setCacheData(cacheKey, {
     interval: intervalId,
     data: queryResponse,
-  });
-
+  })
+    .catch(err => { throw err; })
+  
   res.status(201).json({
     message: "User Registered",
     code: "201",
@@ -91,7 +95,8 @@ export const leetcodeStats = async (
     });
     return;
   }
-  const data = (cacheData as UserCache)?.data as LeetProfileData;
+  // console.log(success, cacheData);
+  const data = (cacheData as UserCache)?.data as LeetRawProfileData;
 
   const parse = leetParseDirect(req);
   const parsedData = parse(data);
@@ -108,6 +113,7 @@ export const leetcodeStreakRegister = async (req: Request, res: Response) => {
   if (!preFlight(req, res)) {
     return;
   }
+  res.set("Content-Type", "application/json");
   const cacheKey = getCacheKey(req);
   // Try for cached data, Query API if not present
   const [success, _] = await getCacheData(cacheKey);
@@ -125,7 +131,7 @@ export const leetcodeStreakRegister = async (req: Request, res: Response) => {
 
   const intervalId = setInterval(() => {
     // console.log(intervalId);
-    updateStreak(cacheKey, intervalId, { ...req } as Request);
+    updateStreak(cacheKey, intervalId, req);
   }, DATA_UDPDATE_INTERVAL);
 
   await setCacheData(cacheKey, {
@@ -160,7 +166,7 @@ export const leetcodeStreak = async (
     });
     return;
   }
-  const data = (cacheData as UserCache)?.data as LeetStreak;
+  const data = (cacheData as UserCache)?.data as LeetUserStreak;
 
   const streakCard = leetCardDirect(req);
   const card = streakCard(req, data);
@@ -257,7 +263,7 @@ export const leetcodeDaily = async (
     });
     return;
   }
-  const data = cacheData! as LeetDaily;
+  const data = cacheData! as LeetRawDaily;
 
   console.log(data);
   // const card = createCard(req, parsedData);

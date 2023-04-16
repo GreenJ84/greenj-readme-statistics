@@ -15,9 +15,9 @@ import { DATA_UDPDATE_INTERVAL } from "../utils/constants";
 
 // GitHub specific imports
 import {
-  GithProfile,
+  GithRawProfile,
   GithRawProfileData,
-  GithStreak,
+  GithUserStreak,
 } from "../github/githubTypes";
 import {
   preQery,
@@ -100,7 +100,7 @@ export const getProfileStats = async (req: Request, res: Response) => {
 
   // Get Function to parse data type
   const parse = getGithResponseParse(req);
-  const parsedData = parse(data) as GithProfile;
+  const parsedData = parse(data) as GithRawProfile;
 
   // Get Function to create svg card for data type
   const createCard: Function = getGithCardDirect(req);
@@ -135,7 +135,7 @@ export const githubStreakRegister = async (req: Request, res: Response) => {
 
   const intervalId = setInterval(() => {
     // console.log(intervalId);
-    updateStreak(cacheKey, intervalId, { ...req } as Request);
+    updateStreak(cacheKey, intervalId, req);
   }, DATA_UDPDATE_INTERVAL);
 
   await setCacheData(cacheKey, {
@@ -166,7 +166,7 @@ export const getCommitStreak = async (req: Request, res: Response) => {
     });
     return;
   }
-  const data = (cacheData as UserCache)?.data as GithStreak;
+  const data = (cacheData as UserCache)?.data as GithUserStreak;
 
   const card: string = streakCardSetup(req, data);
   res.status(200).send(card);
