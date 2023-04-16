@@ -16,12 +16,12 @@ import { get_csrf } from "../utils/credentials";
 import { setCacheData } from "../utils/cache";
 
 import {
-  LeetDaily,
-  LeetGraphResponse,
-  LeetUserProbe,
-  LeetProfileData,
-  LeetStreak,
-  LeetStreakData,
+  LeetRawDaily,
+  LeetRawGraphResponse,
+  LeetRawUserProbe,
+  LeetRawProfileData,
+  LeetUserStreak,
+  LeetRawStreakData,
 } from "./leetcodeTypes";
 import * as leetcode from "../leetcode/query";
 import { leetParseDirect } from "./apiParser";
@@ -33,7 +33,7 @@ export async function leetcodeQuery(
   query: GraphQuery,
   url: string,
   csrf: string
-): Promise<LeetGraphResponse> {
+): Promise<LeetRawGraphResponse> {
   const client = new ApolloClient({
     uri: url,
     cache: new InMemoryCache(),
@@ -56,7 +56,7 @@ export async function leetcodeQuery(
       },
     })
     .then((result) => {
-      return result.data as LeetGraphResponse;
+      return result.data as LeetRawGraphResponse;
     })
     .catch((err) => {
       throw new ResponseError(
@@ -69,7 +69,7 @@ export async function leetcodeQuery(
 }
 
 // Set up up query, credential retrieval, Server level error handling
-export const leetProfilePreQuery = async (username: string): Promise<LeetProfileData> => {
+export const leetProfilePreQuery = async (username: string): Promise<LeetRawProfileData> => {
   // Retrieve Cross-site forgery credentials
   const csrf_credential = await get_csrf()
     .then((result) => result.toString())
@@ -93,7 +93,7 @@ export const leetProfilePreQuery = async (username: string): Promise<LeetProfile
       LEET_GRAPHQL_URL,
       csrf_credential as string
     )
-    .then((res) => res as LeetProfileData)
+    .then((res) => res as LeetRawProfileData)
     // Catch sever problems conducting the call
     .catch((err) => {
       throw err;
@@ -153,7 +153,7 @@ export const leetPreProbe = async (req: Request): Promise<[number[], string]> =>
       LEET_GRAPHQL_URL,
       csrf_credential
     )
-    .then((res) => res as LeetUserProbe)
+    .then((res) => res as LeetRawUserProbe)
     .catch((err) => {
       throw err;
     });
@@ -161,7 +161,7 @@ export const leetPreProbe = async (req: Request): Promise<[number[], string]> =>
   return [data.matchedUser.userCalendar.activeYears, csrf_credential];
 };
 
-export const leetStreakPreQuery = async (req: Request): Promise<LeetStreak> => {
+export const leetUserStreakPreQuery = async (req: Request): Promise<LeetUserStreak> => {
   const parseStreak = leetParseDirect(req);
 
   const preSet = await leetPreProbe(req).catch((err) => {
@@ -176,7 +176,7 @@ export const leetStreakPreQuery = async (req: Request): Promise<LeetStreak> => {
     fs.readFileSync("src/leetcode/graphql/leetcode-streak.graphql", "utf8")
   );
 
-  const streakData: LeetStreak = {
+  const streakData: LeetUserStreak = {
     streak: [0, 0],
     totalActive: 0,
     mostActiveYear: 0,
@@ -195,7 +195,7 @@ export const leetStreakPreQuery = async (req: Request): Promise<LeetStreak> => {
       csrf_credential
     )
       .then((res) => {
-        return res as LeetStreakData;
+        return res as LeetRawStreakData;
       })
       .catch((err) => {
         throw new ResponseError(
@@ -216,7 +216,7 @@ export const updateStreak = async (
   req: Request
 ): Promise<void> => {
   try {
-      const queryResponse = await leetStreakPreQuery(req)
+      const queryResponse = await leetUserStreakPreQuery(req)
           .catch((err) => {
             throw err;
         });
@@ -263,7 +263,7 @@ export const startLeetcodeDaily = async () => {
     LEET_GRAPHQL_URL,
     csrf_credential as string
   )
-    .then((res) => res as LeetDaily)
+    .then((res) => res as LeetRawDaily)
     // Catch sever problems conducting the call
     .catch((err) => {
       throw new ResponseError(
@@ -307,7 +307,7 @@ export const startLeetcodeDaily = async () => {
         LEET_GRAPHQL_URL,
         csrf_credential as string
       )
-        .then((res) => res as LeetDaily)
+        .then((res) => res as LeetRawDaily)
         // Catch sever problems conducting the call
         .catch((err) => {
           throw new ResponseError(

@@ -1,8 +1,8 @@
-import { LeetStreak } from "../leetcodeTypes";
+import { LeetUserStreak } from "../leetcodeTypes";
 import { Request } from "express";
 import { baseCardThemeParse } from "../../utils/utils";
 
-export const leetStreakCard = (req: Request, data: LeetStreak): string => {
+export const leetStreakCard = (req: Request, data: LeetUserStreak): string => {
     const theme = baseCardThemeParse(req);
 
     const {

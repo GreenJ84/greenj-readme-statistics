@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { match } from "ts-pattern";
 
-import { LeetStats } from "./leetcodeTypes";
+import { LeetUserStats } from "./leetcodeTypes";
 
 import { leetCompletionCard } from "./cards/questions-card";
 import { leetSubmissionsCard } from "./cards/recent-card";
@@ -55,7 +55,7 @@ const normalcdf = (mean: number, sigma: number, to: number): number => {
 };
 
 // also Maths.... but that leads to words <Will cite creator's reference as I did not build this stat gerating function myself>
-export const calculateRank = (stats: LeetStats): [string, number] => {
+export const calculateRank = (stats: LeetUserStats): [string, number] => {
     const COMPLETION_OFFSET = 1.85;
     const REP_OFFSET = 1;
     const STARS_OFFSET = 1.25;

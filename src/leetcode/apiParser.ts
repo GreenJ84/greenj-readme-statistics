@@ -1,14 +1,14 @@
 import { Request } from "express";
 import { match } from "ts-pattern";
 
-import { LeetProfileData, LeetBadges, LeetStats, LeetCompletion, LeetStreak, LeetStreakData, LeetSubmissions } from "./leetcodeTypes"
+import { LeetRawProfileData, LeetUserBadges, LeetUserStats, LeetUserCompletion, LeetUserStreak, LeetRawStreakData, LeetUserSubmissions } from "./leetcodeTypes"
 import { calculateRank } from "./leetcodeUtils";
 
 // Returns the parse creation function depending on path
 export const leetParseDirect = (req: Request): Function => {
     const parseFunc = match(req.path.split('/')[2]!)
-        .with("stats", () => {return leetStatsParse})
-        .with("badges", () => {return leetBadgesParse})
+        .with("stats", () => {return leetUserStatsParse})
+        .with("badges", () => {return leetUserBadgesParse})
         .with("completion", () => {return leetCompletionParse})
         .with("submission", () => {return leetSubmissionParse})
         // .with("daily", () => {return })
@@ -17,14 +17,14 @@ export const leetParseDirect = (req: Request): Function => {
     return parseFunc
 }
 
-const leetStatsParse = (data: LeetProfileData): LeetStats => {
+const leetUserStatsParse = (data: LeetRawProfileData): LeetUserStats => {
     const stats = {
         completion: (data.matchedUser.submitStats.acSubmissionNum[0]!.count / data.allQuestionsCount[0]!.count * 100).toFixed(2),
         reputation: data.matchedUser.profile.reputation,
         stars: data.matchedUser.profile.starRating,
         badges: data.matchedUser.badges.length,
         contributions: data.matchedUser.contributions.points
-    } as LeetStats;
+    } as LeetUserStats;
     const grade = calculateRank(stats);
 
     return {
@@ -33,19 +33,19 @@ const leetStatsParse = (data: LeetProfileData): LeetStats => {
     };
 }
 
-const leetBadgesParse = (data: LeetProfileData): LeetBadges => {
+const leetUserBadgesParse = (data: LeetRawProfileData): LeetUserBadges => {
     let badges: Object[] = [];
     for (let badge of data.matchedUser.badges) {
-        let { id, ...LeetBadges } = badge;
-        badges.push(LeetBadges);
+        let { id, ...badgeData } = badge;
+        badges.push(badgeData);
     }
 
     return {
         badges: badges,
-    } as LeetBadges;
+    } as LeetUserBadges;
 }
 
-const leetCompletionParse = (data: LeetProfileData): LeetCompletion => {
+const leetCompletionParse = (data: LeetRawProfileData): LeetUserCompletion => {
     const ranking = data.matchedUser.profile.ranking;
     const all = data.matchedUser.submitStats.acSubmissionNum[0]!.count;
     const totalAll = data.allQuestionsCount[0]!.count;
@@ -70,8 +70,8 @@ const leetCompletionParse = (data: LeetProfileData): LeetCompletion => {
 }
 
 
-const leetSubmissionParse = (data: LeetProfileData): LeetSubmissions => {
-    const recentSubmissions: LeetSubmissions = { recentSubmissionList: [] }
+const leetSubmissionParse = (data: LeetRawProfileData): LeetUserSubmissions => {
+    const recentSubmissions: LeetUserSubmissions = { recentSubmissionList: [] }
     const seen: { [key: string]: number } = {}
     
     // Throttle repeated questions from appearing excessively
@@ -89,7 +89,7 @@ const leetSubmissionParse = (data: LeetProfileData): LeetSubmissions => {
     };
 }
 
-const streakParse = (streak: LeetStreak, data: LeetStreakData, year: number): void => {
+const streakParse = (streak: LeetUserStreak, data: LeetRawStreakData, year: number): void => {
     const completion = (data.matchedUser.submitStats.acSubmissionNum[0]!.count / data.allQuestionsCount[0]!.count * 100).toFixed(2);
     const completeQs = data.matchedUser.submitStats.acSubmissionNum[0]!.count;
     const totalQs = data.allQuestionsCount[0]!.count;
