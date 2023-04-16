@@ -71,9 +71,9 @@ export interface GithRawProfileData {
   };
 }
 
-export type GithUserData = GithStreak | GithProfile;
+export type GithUserData = GithUserStreak | GithUserProfile;
 
-export interface GithStreak {
+export interface GithUserStreak {
   title?: string;
   total: number;
   totalText: string;
@@ -89,7 +89,7 @@ export interface GithStreak {
 
 export type GithRawProfile = GithRawUserStats | GithRawUserLanguages;
 
-export type GithProfile = GithUserStats | GithUserLanguages;
+export type GithUserProfile = GithUserStats | GithUserLanguages;
 
 export interface GithRawUserStats {
   user: {
