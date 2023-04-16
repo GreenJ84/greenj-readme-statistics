@@ -28,7 +28,7 @@ export const WAKA_TIME_AUTH_URL = "https://wakatime.com/oauth/token";
 
 export const DATA_UDPDATE_INTERVAL = PRODUCTION
   ? 1000 * 60 * 60 * 8
-  : 1000 * 30;
+  : 1000 * 60 * 2;
 
 export class ResponseError extends Error {
   error: any;
