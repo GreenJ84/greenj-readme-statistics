@@ -82,16 +82,16 @@ export const displayModals = (app: express.Application) => {
             <img src="https://greenj-readme-stats.onrender.com/leetcode/stats/GreenJ84" alt="Green84 LeetCode Profile Stats">
         
             <h4>Green84 LeetCode Questions Solved</h4>
-            <p>.../leetcode/questions_solved/&lt;username&gt; </p><p>
+            <p>.../leetcode/completion/&lt;username&gt; </p><p>
                 - This route provieds the user's overall leetcode completion and breaks it down by question difficulty. It also provided the leetcode ranking and acceptance percentage. 
             </p>
-            <img src="https://greenj-readme-stats.onrender.com/leetcode/questions_solved/GreenJ84" alt="Green84 LeetCode Questions Solved">
+            <img src="https://greenj-readme-stats.onrender.com/leetcode/completion/GreenJ84" alt="Green84 LeetCode Questions Solved">
         
             <h4>Green84 LeetCode Recent Questions Answered</h4>
-            <p>.../leetcode/recent-questions/&lt;username&gt; </p><p>
+            <p>.../leetcode/submission/&lt;username&gt; </p><p>
                 -This route provides a list of latest 6 questions answered by the user on the leetcode platform.
             </p>
-            <img src="https://greenj-readme-stats.onrender.com/leetcode/recent-questions/GreenJ84" alt="Green84 LeetCode Recent Questions Answered">
+            <img src="https://greenj-readme-stats.onrender.com/leetcode/submission/GreenJ84" alt="Green84 LeetCode Recent Questions Answered">
         
             <h4>Green84 LeetCode Activity Steak</h4>
             <p>.../leetcode/streak/&lt;username&gt; </p><p>
