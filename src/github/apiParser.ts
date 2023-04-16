@@ -6,7 +6,7 @@ import { match } from "ts-pattern";
 import {
   GithUserStats,
   GithRawStreakData,
-  GithStreak,
+  GithUserStreak,
   GithRawUserStats,
   GithUserLanguages,
   GithRawUserLanguages,
@@ -33,7 +33,7 @@ export const getGithResponseParse = (req: Request): Function => {
   return parseFunc;
 };
 
-const streakParse = (streak: GithStreak, data: GithRawStreakData): void => {
+const streakParse = (streak: GithUserStreak, data: GithRawStreakData): void => {
   const created = streak.totalRange[0];
 
   const today = new Date();

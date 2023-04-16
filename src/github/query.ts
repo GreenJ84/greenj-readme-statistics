@@ -21,7 +21,7 @@ import {
   GithRawStreakData,
   GithRawUserData,
   GithRawUserProbe,
-  GithStreak,
+  GithUserStreak,
 } from "./githubTypes";
 import { getGithResponseParse } from "./apiParser";
 
@@ -170,7 +170,7 @@ export const streakProbe = async (
   ];
 };
 
-export const streakQuery = async (req: Request): Promise<GithStreak> => {
+export const streakQuery = async (req: Request): Promise<GithUserStreak> => {
   // Query user data for Creation Date and Years of membership
   const [created, years] = await streakProbe(req.params.username!).catch(
     (err) => {
@@ -178,7 +178,7 @@ export const streakQuery = async (req: Request): Promise<GithStreak> => {
     }
   );
   // Start data with defaults sets
-  let streak: GithStreak = {
+  let streak: GithUserStreak = {
     total: 0,
     totalText: "Total Contributions",
     totalRange: [
