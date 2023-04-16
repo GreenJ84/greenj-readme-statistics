@@ -2,15 +2,15 @@ import { Request, Response } from "express";
 
 // API Global imports
 import { preFlight, sleep } from "../utils/utils";
+import { UserCache, deleteCacheData, getCacheData, getCacheKey, setCacheData } from "../utils/cache";
+import { DATA_UDPDATE_INTERVAL } from "../utils/constants";
 
 // GitHub specific imports
-import { GraphQLResponse, ReadMeData, STREAKTYPE } from "../github/githubTypes";
+import { GithProfile, GithRawProfileData, GithStreak, } from "../github/githubTypes";
 import { preQery, updateStreak, streakQuery, updateUser } from "../github/query";
-import { getResponseParse } from "../github/apiParser";
-import { cardDirect } from "../github/githubUtils";
+import { getGithResponseParse } from "../github/apiParser";
+import { getGithCardDirect } from "../github/githubUtils";
 import { streakCardSetup } from "../github/cards/streak-card";
-import { USER_CACHE, deleteCacheData, getCacheData, getCacheKey, setCacheData } from "../utils/cache";
-import { DATA_UDPDATE_INTERVAL } from "../utils/constants";
 
 let sleepMod = -2;
 
@@ -35,7 +35,9 @@ export const githubRegister = async (req: Request, res: Response) => {
 
     let variables = { login: req.params.username! }
     const queryResponse = await preQery(variables)
-        .then((data) => { return data })
+        .then((data) => {
+            return data as GithRawProfileData
+        })
         .catch (err => {
             throw err;
         });
@@ -78,14 +80,14 @@ export const getProfileStats = async (req: Request, res: Response) => {
         return;
     }
         
-    const data = (cacheData as USER_CACHE)?.data as GraphQLResponse;
+    const data = (cacheData as UserCache)?.data as GithRawProfileData;
 
     // Get Function to parse data type
-    const parse = getResponseParse(req);
-    const parsedData: ReadMeData = parse(data)
+    const parse = getGithResponseParse(req);
+    const parsedData = parse(data) as GithProfile;
 
     // Get Function to create svg card for data type
-    const createCard: Function = cardDirect(req);
+    const createCard: Function = getGithCardDirect(req);
     const card: string = createCard(req, parsedData);
 
     // Send created card as svg string
@@ -153,7 +155,7 @@ export const getCommitStreak = async (req: Request, res: Response) => {
         });
         return;
     }
-    const data = (cacheData as USER_CACHE)?.data as STREAKTYPE;
+    const data = (cacheData as UserCache)?.data as GithStreak;
 
     const card: string = streakCardSetup(req, data);
     res.status(200).send(card);
@@ -178,7 +180,7 @@ export const githubUnregister = async (req: Request, res: Response) => {
         console.error("User's profile data not found.");
     } else {
 
-        const intervalID = (profCache as USER_CACHE)?.interval;
+        const intervalID = (profCache as UserCache)?.interval;
         if (intervalID) {
             clearInterval(intervalID);
         }
@@ -202,7 +204,7 @@ export const githubUnregister = async (req: Request, res: Response) => {
         console.error("User's streak data not found.");
     } else {
         
-        const intervalID = (streakCache as USER_CACHE)?.interval;
+        const intervalID = (streakCache as UserCache)?.interval;
         if (intervalID) {
             clearInterval(intervalID);
         }
