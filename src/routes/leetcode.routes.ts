@@ -43,7 +43,7 @@ export const LeetCodeRoutes = (app: express.Application) => {
 
 
     // Register for LeetCode streak
-    app.get('/leetcode/register/:username/streak',(req: Request, res: Response, next: NextFunction) => {
+    app.get('/leetcode/streak/register/:username',(req: Request, res: Response, next: NextFunction) => {
         leetcodeStreakRegister(req, res)
         .catch(err => {
             next(err)

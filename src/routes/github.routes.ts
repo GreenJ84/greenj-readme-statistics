@@ -38,7 +38,7 @@ export const GithubRoutes = (app: express.Application) => {
 
     
     // Register github user streak in server
-    app.get('/github/register/:username/streak',
+    app.get('/github/streak/register/:username',
     (req: Request, res: Response, next: NextFunction) => {
         githubStreakRegister(req, res)
             .catch(err => {
