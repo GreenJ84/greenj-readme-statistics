@@ -26,7 +26,7 @@ export const LeetCodeRoutes = (app: express.Application) => {
         })
     });
     // Get number of questions solved in total and by level
-    app.get('/leetcode/questions_solved/:username',(req: Request, res: Response, next: NextFunction) => {
+    app.get('/leetcode/completion/:username',(req: Request, res: Response, next: NextFunction) => {
         leetcodeStats(req, res)
         .catch(err => {
             next(err)
@@ -34,7 +34,7 @@ export const LeetCodeRoutes = (app: express.Application) => {
     });
 
     // Display top 5 most recent questions solved and their languages
-    app.get('/leetcode/recent-questions/:username',(req: Request, res: Response, next: NextFunction) => {
+    app.get('/leetcode/submission/:username',(req: Request, res: Response, next: NextFunction) => {
         leetcodeStats(req, res)
         .catch(err => {
             next(err)
@@ -68,7 +68,7 @@ export const LeetCodeRoutes = (app: express.Application) => {
 
 
     // Get a random leetcode problem title
-    app.get('/leetcode/daily-question', (req: Request, res: Response, next: NextFunction) => {
+    app.get('/leetcode/daily', (req: Request, res: Response, next: NextFunction) => {
         leetcodeDaily(req, res)
         .catch(err => {
             next(err)
