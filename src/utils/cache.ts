@@ -2,6 +2,8 @@
 
 import { Request } from "express";
 import { RedisClientType, createClient } from "redis";
+import flatted from "flatted";
+
 import {
   LeetRawDaily,
   LeetRawProfileData,
@@ -14,7 +16,7 @@ import {
   PROD_HOST,
   PROD_PORT,
   REDIS_PASS,
-  REDIS_USER,
+  REDIS_USER
 } from "./constants";
 
 type UserData =
@@ -73,13 +75,13 @@ export const getCacheData = async (
   try {
     const data = await redisClient.get(key);
     if (data == undefined) {
-      console.warn("Empty Cache");
+      !PRODUCTION && console.warn("Empty Cache");
       return [false, null];
     }
     !PRODUCTION && console.log(`Getting ${key}`);
-    return [true, JSON.parse(data)];
-  } catch {
-    console.error("Cache retrieval Error");
+    return [true, flatted.parse(data)];
+  } catch (error) {
+    !PRODUCTION && console.error(`Error getting cache for ${key}: ${error}`);
     return [false, null];
   }
 };
@@ -88,16 +90,17 @@ export const setCacheData = async (
   key: string,
   data: RedisCache
 ): Promise<void> => {
-  await redisClient.set(key, JSON.stringify(data), {
-    // 2 min development cache lifetime
-    // 8hr and 8min production cache lifetime
-    EX: PRODUCTION ? 60 * 61 * 8 : 60 * 2,
-  })
-    .catch(() => {
-      console.error(`Error Setting cache`);
-    })
-  
-  PRODUCTION && console.log(`Set cahche for ${key}`);
+  try {
+    await redisClient.set(key, flatted.stringify(data), {
+      // 2 min development cache lifetime
+      // 8hr and 8min production cache lifetime
+      EX: 60 * 2,
+    });
+  }
+  catch (error) {
+    !PRODUCTION && console.error(`Error setting cache for ${key}: ${error}`);
+  }
+  !PRODUCTION && console.log(`Set cache for ${key}`);
   return;
 };
 
