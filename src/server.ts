@@ -87,7 +87,7 @@ displayModals(app);
 
 // error handling middleware
 app.use((err: Error, _: Request, res: Response, __: NextFunction) => {
-  res.setHeader("Content-Type", "text/json");
+  res.set("Content-Type", "application/json");
   if (err && err instanceof ResponseError) {
     res.status(err.error_code).json({
       message: err.message,
