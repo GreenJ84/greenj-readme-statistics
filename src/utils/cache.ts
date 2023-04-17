@@ -31,8 +31,8 @@ type UserData =
 
 export type RedisCache =
   | UserData
+  | NodeJS.Timer
   | LeetRawDaily
-  | { interval: NodeJS.Timer }
   | { times: number };
 
 export const redisClient: RedisClientType = PRODUCTION
