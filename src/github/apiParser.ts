@@ -7,10 +7,11 @@ import {
   GithUserStats,
   GithRawStreakData,
   GithUserStreak,
-  GithRawUserStats,
   GithUserLanguages,
-  GithRawUserLanguages,
   GithLanguageData,
+  GithRawProfileData,
+  GithRawUserStats,
+  GithRawUserLanguages,
 } from "./githubTypes";
 import { calculateGithRank } from "./githubUtils";
 
@@ -26,14 +27,19 @@ export const getGithResponseParse = (req: Request): Function => {
     .with("languages", () => {
       return langsParse;
     })
-    .with("streak", () => {
-      return streakParse;
-    })
     .run();
   return parseFunc;
 };
 
-const streakParse = (streak: GithUserStreak, data: GithRawStreakData): void => {
+export const githRawParse = (data: GithRawProfileData): [GithUserStats, GithUserLanguages] => {
+
+  const stats = statsParse(data as GithRawUserStats);
+  const langauges = langsParse(data as GithRawUserLanguages)
+  return [stats, langauges];
+
+}
+
+export const streakParse = (streak: GithUserStreak, data: GithRawStreakData): void => {
   const created = streak.totalRange[0];
 
   const today = new Date();
