@@ -13,7 +13,17 @@ export function sanitizeText(value: string): string {
   // Match letters, digits, underscores, and spaces
   const match = value.match(/^[a-zA-Z_]+$/);
   if (match) {
-    return match[0].replace("_", " ");
+    return match[0].replace("_", "");
+  } else {
+    throw new Error(`Invalid text value: ${value}`);
+  }
+}
+
+export function sanitizeParam(value: string): string {
+  // Match letters, digits, underscores, and spaces
+  const match = value.match(/^[a-zA-Z_]+$/);
+  if (match) {
+    return match[0].replace("_", "-");
   } else {
     throw new Error(`Invalid text value: ${value}`);
   }
@@ -87,7 +97,7 @@ export function sanitizeQuery(req: Request): boolean {
     "dates",
   ];
   const number: string[] = ["borderRadius"];
-  const text: string[] = ["theme", "locale", "title"];
+  const params: string[] = ["theme", "locale"];
   const boolean: string[] = ["hideBorder"];
 
   const sanitizedParams: Record<string, any> = {};
@@ -97,7 +107,7 @@ export function sanitizeQuery(req: Request): boolean {
       req.query = {};
       return false;
     }
-
+    console.log(param)
     switch (true) {
       case color.includes(param):
         try {
@@ -113,9 +123,9 @@ export function sanitizeQuery(req: Request): boolean {
           console.error(error);
         }
         break;
-      case text.includes(param):
+      case params.includes(param):
         try {
-          sanitizedParams[param] = sanitizeText(value as string);
+          sanitizedParams[param] = sanitizeParam(value as string);
         } catch (error) {
           console.error(error);
         }
@@ -127,11 +137,18 @@ export function sanitizeQuery(req: Request): boolean {
           console.error(error);
         }
         break;
+      case param == "title":
+        try {
+          sanitizedParams[param] = sanitizeText(value as string);
+        } catch (error) {
+          console.error(error);
+        }
       // Remove all unwarrented parameters
       default:
         break;
     }
   }
+  console.log(sanitizedParams)
   req.query = sanitizedParams;
   return true;
 }
@@ -183,16 +200,6 @@ export const preFlight = (req: Request, res: Response): boolean => {
 };
 
 /**
- *  Normalize a param name
- *  @param param param name
- *  @return Normalized param name
- */
-export function normalizeParam(param: string): string {
-  // Convert to lower and ensure kebab case
-  return param.toLowerCase().replace("_", "-");
-}
-
-/**
  * Normalize a locale code
  * @param localeCode Locale code
  * @return Normalized locale code
@@ -228,13 +235,13 @@ export const baseCardThemeParse = (req: Request) => {
     borderRadius,
     locale,
   } = req.query;
+  console.log(theme)
 
   let _theme: ThemeType = Themes["default"]!;
   // Set all properties base to theme first
   if (theme != undefined) {
-    const normTheme = normalizeParam(theme as string);
-    if ((normTheme as string) in Themes) {
-      _theme = Themes[normTheme]!;
+    if (theme as string in Themes) {
+      _theme = Themes[theme as string]!;
     }
   }
 
