@@ -22,8 +22,8 @@ export type RedisCache =
   | LeetUserData
   | GithUserData
   | LeetRawDaily
-  | WakaProfileData
   | NodeJS.Timer
+  | WakaProfileData
   | { times: number };
 
 export const redisClient: RedisClientType = PRODUCTION
@@ -77,6 +77,21 @@ export const getCacheData = async (
   }
 };
 
+export const setRegistrationCache = async (
+  key: string,
+  data: NodeJS.Timer
+): Promise<void> => {
+  try {
+      await redisClient.set(key, flatted.stringify(data));
+    }
+  catch (error) {
+    !PRODUCTION && console.error(`Error setting cache for ${key}: ${error}`);
+  }
+  !PRODUCTION && console.log(`Set cache for ${key}`);
+  return;
+};
+
+
 export const setCacheData = async (
   key: string,
   data: RedisCache
@@ -85,12 +100,12 @@ export const setCacheData = async (
     ? 1000 * 60 * 8
     : 1000 * 30;
   try {
-    await redisClient.set(key, flatted.stringify(data), {
-      // 2 min 30 sec development cache lifetime
-      // 8hr and 8min production cache lifetime
-      PX: DATA_UDPDATE_INTERVAL + ExpirationBuffer
-    });
-  }
+      await redisClient.set(key, flatted.stringify(data), {
+        // 2 min 30 sec development cache lifetime
+        // 8hr and 8min production cache lifetime
+        PX: DATA_UDPDATE_INTERVAL + ExpirationBuffer
+      });
+    }
   catch (error) {
     !PRODUCTION && console.error(`Error setting cache for ${key}: ${error}`);
   }
