@@ -53,7 +53,7 @@ export const getCacheKey = (req: Request) => {
     req.params.username !== undefined ? `:${req.params.username!}` : "";
   // Get subroute if not wakatime else set profile
   const subroute =
-    path[2] == "streak" || path[2] == "daily" ? path[2] : "profile";
+    path[2] == "register" || path[2] == "unregister" ? "profile" : path[2];
   // User terirnary for not user routes
   return `${route}${user}:${subroute}`;
 };

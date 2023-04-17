@@ -4,7 +4,7 @@ import {getCommitStreak, getProfileStats, githubRegister, githubStreakRegister, 
 
 export const GithubRoutes = (app: express.Application) => {
     // Register github user in server
-    app.get('/github/register/:username/profile',
+    app.get('/github/register/:username',
     (req: Request, res: Response, next: NextFunction) => {
         githubRegister(req, res)
             .catch(err => {
@@ -36,7 +36,7 @@ export const GithubRoutes = (app: express.Application) => {
             })
         });
 
-    
+
     // Register github user streak in server
     app.get('/github/streak/register/:username',
     (req: Request, res: Response, next: NextFunction) => {

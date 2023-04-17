@@ -4,7 +4,7 @@ import {leetcodeDaily, leetcodeRegister, leetcodeStats, leetcodeStreak, leetcode
 
 export const LeetCodeRoutes = (app: express.Application) => {
     // Register leetcode user in server
-    app.get('/leetcode/register/:username/profile',
+    app.get('/leetcode/register/:username',
     (req: Request, res: Response, next: NextFunction) => {
         leetcodeRegister(req, res)
             .catch(err => {
