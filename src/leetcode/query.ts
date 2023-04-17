@@ -13,7 +13,7 @@ import {
 } from "../utils/constants";
 import { Themes } from "../utils/themes";
 import { get_csrf } from "../utils/credentials";
-import { setCacheData } from "../utils/cache";
+import { getCacheKey, setCacheData } from "../utils/cache";
 
 import {
   LeetRawDaily,
@@ -24,8 +24,7 @@ import {
   LeetRawStreakData,
 } from "./leetcodeTypes";
 import * as leetcode from "../leetcode/query";
-import { leetParseDirect } from "./apiParser";
-import { getLeetGraph } from "./leetcodeUtils";
+import { leetParseDirect, leetRawProfileParse } from "./apiParser";
 
 
 // Universal query for GitHub
@@ -78,9 +77,8 @@ export const leetProfilePreQuery = async (username: string): Promise<LeetRawProf
     });
 
   // Get correct query based on api called
-  const path = getLeetGraph('all');
   const graphql = gql(
-    fs.readFileSync(path, "utf8")
+    fs.readFileSync('src/leetcode/graphql/leetcode-all-profile.graphql', "utf8")
   );
 
   // Call the universal leeetCode querier
@@ -101,19 +99,41 @@ export const leetProfilePreQuery = async (username: string): Promise<LeetRawProf
   return data;
 };
 
-export const updateUser = async (
-  key: string,
-  intervalId: NodeJS.Timer,
+export const setLeetUserProfile = async (username: string): Promise<void> => {
+  const queryResponse = await leetProfilePreQuery(username)
+    .catch((err) => {
+      throw err;
+    });
+  
+  const [stats, badges, completion, submission] = leetRawProfileParse(queryResponse);
+
+  await setCacheData(
+    getCacheKey("url/leetcode/stats", username),
+    stats!
+  )
+
+  await setCacheData(
+    getCacheKey("url/leetcode/badges", username),
+    badges!
+  )
+
+  await setCacheData(
+    getCacheKey("url/leetcode/completion", username),
+    completion!
+  )
+
+  await setCacheData(
+    getCacheKey("url/leetcode/submission", username),
+    submission!
+  )
+}
+
+export const updateLeetUserProfile = async (
   username: string
 ): Promise<void> => {
   try {
-    const queryResponse = await leetProfilePreQuery(username).catch((err) => {
+    await setLeetUserProfile(username).catch((err) => {
       throw err;
-    });
-
-    await setCacheData(key, {
-      interval: intervalId,
-      data: queryResponse,
     });
   } catch (err) {
     if (err instanceof ResponseError) {
@@ -161,7 +181,7 @@ export const leetPreProbe = async (req: Request): Promise<[number[], string]> =>
   return [data.matchedUser.userCalendar.activeYears, csrf_credential];
 };
 
-export const leetStreakPreQuery = async (req: Request): Promise<LeetUserStreak> => {
+export const setLeetUserStreak = async (req: Request): Promise<void> => {
   const parseStreak = leetParseDirect(req);
 
   const preSet = await leetPreProbe(req).catch((err) => {
@@ -207,24 +227,21 @@ export const leetStreakPreQuery = async (req: Request): Promise<LeetUserStreak> 
 
     parseStreak(streakData, data, year);
   }
-  return streakData;
+  setCacheData(
+    getCacheKey(req.path, req.params.username!),
+    streakData
+  )
+  return;
 };
 
-export const updateStreak = async (
-  key: string,
-  intervalId: NodeJS.Timer,
+export const updateLeetUserStreak = async (
   req: Request
 ): Promise<void> => {
   try {
-      const queryResponse = await leetStreakPreQuery(req)
+      await setLeetUserStreak(req)
           .catch((err) => {
             throw err;
           });
-    
-    await setCacheData(key, {
-      interval: intervalId,
-      data: queryResponse,
-    });
   } catch (err) {
     if (err instanceof ResponseError) {
       console.error(
@@ -236,6 +253,7 @@ export const updateStreak = async (
       );
     }
   }
+  return;
 };
 
 export const startLeetcodeDaily = async () => {
