@@ -12,7 +12,7 @@ import {
   GIT_URL,
   GITHUB_TOKEN,
 } from "../utils/constants";
-import { setCacheData } from "../utils/cache";
+import { getCacheKey, setCacheData } from "../utils/cache";
 import { Themes, ThemeType } from "../utils/themes";
 
 import {
@@ -23,7 +23,7 @@ import {
   GithRawUserProbe,
   GithUserStreak,
 } from "./githubTypes";
-import { getGithResponseParse } from "./apiParser";
+import { getGithResponseParse, githRawParse } from "./apiParser";
 
 // Get the GraphQL file location based on type
 const getGraph = (type: string): string => {
@@ -107,24 +107,42 @@ export const preQery = async (
   return data;
 };
 
-export const updateUser = async (
-  key: string,
-  intervalId: NodeJS.Timer,
+export const setGithUserProfile = async (username: string): Promise<void> => {
+  let variables = { login: username };
+  const queryResponse = await preQery(variables)
+    .then((data) => {
+      return data as GithRawProfileData;
+    })
+    .catch((err) => {
+      throw err;
+    });
+  
+  const [stats, languages] = githRawParse(queryResponse);
+  await setCacheData(
+    getCacheKey('url/github/stats', username),
+    stats
+  );
+
+  await setCacheData(
+    getCacheKey('url/github/languages', username),
+    languages
+  );
+
+  await setCacheData(
+    getCacheKey('url/github/trophies', username),
+    stats
+  );
+  
+}
+
+export const updateGithUserProfile = async (
   username: string
 ) => {
   try {
-    const queryRepsonse = await preQery({ login: username })
-      .then((data) => {
-        return data as GithRawProfileData;
-      })
+    await setGithUserProfile(username)
       .catch((err) => {
         throw err;
       });
-
-    await setCacheData(key, {
-      interval: intervalId,
-      data: queryRepsonse,
-    });
   } catch (err) {
     if (err instanceof ResponseError) {
       console.error(
@@ -137,7 +155,7 @@ export const updateUser = async (
 };
 
 // Probes user creation date and years a member for streak query
-export const streakProbe = async (
+const streakProbe = async (
   username: string
 ): Promise<[string, number[]]> => {
   const now = new Date().toISOString();
@@ -170,7 +188,7 @@ export const streakProbe = async (
   ];
 };
 
-export const streakQuery = async (req: Request): Promise<GithUserStreak> => {
+export const setGithUserStreak = async (req: Request): Promise<void> => {
   // Query user data for Creation Date and Years of membership
   const [created, years] = await streakProbe(req.params.username!).catch(
     (err) => {
@@ -234,23 +252,23 @@ export const streakQuery = async (req: Request): Promise<GithUserStreak> => {
     // Parse that data with our current stats to update
     parse(streak, data);
   }
-  return streak;
+
+  await setCacheData(
+    getCacheKey(req.path, req.params.username!),
+    streak
+  )
+  return;
 };
 
-export const updateStreak = async (
-  key: string,
-  intervalId: NodeJS.Timer,
+export const updateGithUserStreak = async (
   req: Request
 ) => {
   try {
-    const queryResponse = await streakQuery(req).catch((err) => {
-      throw err;
-    });
-
-    await setCacheData(key, {
-      interval: intervalId,
-      data: queryResponse,
-    });
+    await setGithUserStreak(req)
+      .catch((err) => {
+        throw err;
+      });
+    
   } catch (err) {
     if (err instanceof ResponseError) {
       console.error(
@@ -262,4 +280,5 @@ export const updateStreak = async (
       );
     }
   }
+  return;
 };
