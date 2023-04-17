@@ -3,7 +3,7 @@
 import { Request, Response } from "express";
 
 import {
-  UserCache,
+  RedisCache,
   deleteCacheData,
   getCacheData,
   getCacheKey,
@@ -18,14 +18,16 @@ import { preFlight, sleep } from "../utils/utils";
 import {
   LeetRawDaily,
   LeetRawProfileData,
+  LeetUserData,
+  LeetUserProfile,
   LeetUserStreak,
 } from "../leetcode/leetcodeTypes";
 import {
-  leetProfilePreQuery,
-  updateUser,
-  leetStreakPreQuery,
-  updateStreak,
+  updateLeetUserProfile,
+  setLeetUserStreak,
+  updateLeetUserStreak,
   startLeetcodeDaily,
+  setLeetUserProfile,
 } from "../leetcode/query";
 import { leetParseDirect } from "../leetcode/apiParser";
 import { leetCardDirect } from "../leetcode/leetcodeUtils";
@@ -40,7 +42,7 @@ export const leetcodeRegister = async (req: Request, res: Response) => {
   res.set("Content-Type", "application/json");
   const username = req.params.username!;
   console.log(username)
-  const cacheKey = getCacheKey(req);
+  const cacheKey = getCacheKey(req.path, username);
   // Try for cached data, Query API if not present
   const [success, _] = await getCacheData(cacheKey);
   if (success) {
@@ -51,19 +53,15 @@ export const leetcodeRegister = async (req: Request, res: Response) => {
     return;
   }
 
-  const queryResponse = await leetProfilePreQuery(username).catch((err) => {
+  await setLeetUserProfile(username).catch((err) => {
     throw err;
   });
 
   const intervalId = setInterval(() => {
-    // console.log(intervalId);
-    updateUser(cacheKey, intervalId, username);
+    updateLeetUserProfile(username);
   }, DATA_UDPDATE_INTERVAL);
 
-  await setCacheData(cacheKey, {
-    interval: intervalId,
-    data: queryResponse,
-  })
+  await setCacheData(cacheKey, intervalId)
     .catch(err => { throw err; })
   
   res.status(201).json({
@@ -81,7 +79,7 @@ export const leetcodeStats = async (
   if (!preFlight(req, res)) {
     return;
   }
-  const cacheKey = getCacheKey(req);
+  const cacheKey = getCacheKey(req.path, req.params.username!);
 
   sleepMod = (sleepMod + 2) % 10;
   await sleep(sleepMod);
@@ -96,13 +94,10 @@ export const leetcodeStats = async (
     return;
   }
   // console.log(success, cacheData);
-  const data = (cacheData as UserCache)?.data as LeetRawProfileData;
-
-  const parse = leetParseDirect(req);
-  const parsedData = parse(data);
+  const data = cacheData as LeetUserProfile;
 
   const createCard = leetCardDirect(req);
-  const card = createCard(req, parsedData);
+  const card = createCard(req, data);
 
   res.status(200).send(card);
   return;
@@ -114,7 +109,7 @@ export const leetcodeStreakRegister = async (req: Request, res: Response) => {
     return;
   }
   res.set("Content-Type", "application/json");
-  const cacheKey = getCacheKey(req);
+  const cacheKey = getCacheKey(req.path, req.params.username!);
   // Try for cached data, Query API if not present
   const [success, _] = await getCacheData(cacheKey);
   if (success) {
@@ -125,19 +120,16 @@ export const leetcodeStreakRegister = async (req: Request, res: Response) => {
     return;
   }
 
-  const queryResponse = await leetStreakPreQuery(req).catch((err) => {
+  await setLeetUserStreak(req).catch((err) => {
     throw err;
   });
 
   const intervalId = setInterval(() => {
     // console.log(intervalId);
-    updateStreak(cacheKey, intervalId, req);
+    updateLeetUserStreak(req);
   }, DATA_UDPDATE_INTERVAL);
 
-  await setCacheData(cacheKey, {
-    interval: intervalId,
-    data: queryResponse,
-  });
+  await setCacheData(cacheKey, intervalId);
 
   res.status(201).json({
     message: "User Registered",
@@ -155,7 +147,7 @@ export const leetcodeStreak = async (
   if (!preFlight(req, res)) {
     return;
   }
-  const cacheKey = getCacheKey(req);
+  const cacheKey = getCacheKey(req.path, req.params.username!);
 
   const [success, cacheData] = await getCacheData(cacheKey);
   if (!success) {
@@ -166,7 +158,7 @@ export const leetcodeStreak = async (
     });
     return;
   }
-  const data = (cacheData as UserCache)?.data as LeetUserStreak;
+  const data = cacheData as LeetUserStreak;
 
   const streakCard = leetCardDirect(req);
   const card = streakCard(req, data);
@@ -180,8 +172,8 @@ export const leetcodeUnregister = async (req: Request, res: Response) => {
   if (!preFlight(req, res)) {
     return;
   }
-
-  let cacheKey = getCacheKey(req);
+  const username = req.params.username!
+  let cacheKey = getCacheKey(req.path, username);
   res.set("Content-Type", "application/json");
 
   // Try for cached data, Query API if not present
@@ -189,7 +181,7 @@ export const leetcodeUnregister = async (req: Request, res: Response) => {
   if (!profSuccess) {
     console.error("User's profile data not found.");
   } else {
-    const intervalID = (profCache as UserCache)?.interval;
+    const intervalID = profCache as NodeJS.Timer;
     if (intervalID) {
       clearInterval(intervalID);
     }
@@ -199,7 +191,7 @@ export const leetcodeUnregister = async (req: Request, res: Response) => {
     }
   }
 
-  req.path = req.path
+  const streakPath = req.path
     .split("/")
     .map((sec, idx) => {
       if (idx == 2) {
@@ -209,13 +201,13 @@ export const leetcodeUnregister = async (req: Request, res: Response) => {
       }
     })
     .join("/");
-  cacheKey = getCacheKey(req);
+  cacheKey = getCacheKey(streakPath, username);
   // Try for cached data, Query API if not present
   const [streakSuccess, streakCache] = await getCacheData(cacheKey);
   if (!streakSuccess) {
     console.error("User's streak data not found.");
   } else {
-    const intervalID = (streakCache as UserCache)?.interval;
+    const intervalID = streakCache as NodeJS.Timer;
     if (intervalID) {
       clearInterval(intervalID);
     }
@@ -263,11 +255,11 @@ export const leetcodeDaily = async (
     });
     return;
   }
-  const data = cacheData! as LeetRawDaily;
+  const data = cacheData as LeetRawDaily;
 
   console.log(data);
   // const card = createCard(req, parsedData);
-
+  res.set("Content-Type", "application/json");
   res.status(200).send(data);
   return;
 };
