@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { match } from "ts-pattern";
 
-import { LeetRawProfileData, LeetUserBadges, LeetUserStats, LeetUserCompletion, LeetUserStreak, LeetRawStreakData, LeetUserSubmissions } from "./leetcodeTypes"
+import { LeetRawProfileData, LeetUserBadges, LeetUserStats, LeetUserCompletion, LeetUserStreak, LeetRawStreakData, LeetUserSubmissions, LeetUserProfile } from "./leetcodeTypes"
 import { calculateRank } from "./leetcodeUtils";
 
 // Returns the parse creation function depending on path
@@ -15,6 +15,16 @@ export const leetParseDirect = (req: Request): Function => {
         .with("streak", () => {return streakParse})
         .run()
     return parseFunc
+}
+
+export const leetRawProfileParse = (data: LeetRawProfileData): LeetUserProfile[] => {
+
+    const stats = leetUserStatsParse(data);
+    const badges = leetUserBadgesParse(data);
+    const completion = leetCompletionParse(data);
+    const submission = leetSubmissionParse(data);
+
+    return [stats, badges, completion, submission];
 }
 
 const leetUserStatsParse = (data: LeetRawProfileData): LeetUserStats => {
