@@ -92,9 +92,9 @@ export const setCacheData = async (
 ): Promise<void> => {
   try {
     await redisClient.set(key, flatted.stringify(data), {
-      // 2 min development cache lifetime
+      // 2 min 30 sec development cache lifetime
       // 8hr and 8min production cache lifetime
-      EX: 60 * 2,
+      EX: PRODUCTION ? (60 * 60 * 8 + 60 * 8) : (60 * 2 + 30),
     });
   }
   catch (error) {
