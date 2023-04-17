@@ -1,26 +1,13 @@
 import { Request, Response } from 'express';
-import { buildRedis, teardownRedis } from '../../src/utils/cache';
-import { THEMES } from '../../src/utils/themes';
-import { preFlight, normalizeLocaleCode, normalizeParam, sanitizeText, sanitizeColor, sanitizeNumber, sanitizeBoolean, sanitizeUsername, sanitizeQuery, baseCardThemeParse, parse_cookie, getFormatDate } from '../../src/utils/utils';
-
-
-beforeAll(async () => {
-    await buildRedis();
-})
-
-afterAll(async () => {
-    await teardownRedis();
-});
+import { Themes } from '../../src/utils/themes';
+import { preFlight, normalizeLocaleCode, sanitizeText, sanitizeColor, sanitizeNumber, sanitizeBoolean, sanitizeUsername, sanitizeQuery, baseCardThemeParse, parseCookie, getFormatDate, sanitizeParam } from '../../src/utils/utils';
 
 describe('sanitizeText', () => {
     it('returns the sanitized value for valid input', () => {
-    // Theme Names
-    expect(sanitizeText('black_ice')).toEqual('black_ice');
-    expect(sanitizeText('synthwave')).toEqual('synthwave');
-    expect(sanitizeText('buefy_dark')).toEqual('buefy_dark');
     // Titles
-    expect(sanitizeText('Commit_Statistics')).toEqual('Commit_Statistics');
-    expect(sanitizeText('My_GitHub')).toEqual('My_GitHub');
+    expect(sanitizeText('Commit_Statistics')).toEqual('Commit Statistics');
+    expect(sanitizeText('My_GitHub')).toEqual('My GitHub');
+    expect(sanitizeText('My_GitHub_Stats')).toEqual('My GitHub Stats');
     });
 
     it('throws an error for invalid input', () => {
@@ -28,6 +15,22 @@ describe('sanitizeText', () => {
     expect(() => sanitizeText('hello123!')).toThrowError('Invalid text value: hello123!');
     expect(() => sanitizeText('"<script>alert("Broken");</script>"')).toThrowError('Invalid text value: "<script>alert("Broken");</script>"');
     expect(() => sanitizeText('"axios.get("http://my.trojan.net")"')).toThrowError('Invalid text value: "axios.get("http://my.trojan.net")"');
+    });
+});
+
+describe('sanitizeParam', () => {
+    it('returns the sanitized value for valid input', () => {
+    // Theme Names
+    expect(sanitizeParam('black_ice')).toEqual('black-ice');
+    expect(sanitizeParam('synthwave')).toEqual('synthwave');
+    expect(sanitizeParam('buefy_dark')).toEqual('buefy-dark');
+    });
+
+    it('throws an error for invalid input', () => {
+    expect(() => sanitizeParam('!@#$%')).toThrowError('Invalid text value: !@#$%');
+    expect(() => sanitizeParam('hello123!')).toThrowError('Invalid text value: hello123!');
+    expect(() => sanitizeParam('"<script>alert("Broken");</script>"')).toThrowError('Invalid text value: "<script>alert("Broken");</script>"');
+    expect(() => sanitizeParam('"axios.get("http://my.trojan.net")"')).toThrowError('Invalid text value: "axios.get("http://my.trojan.net")"');
     });
 });
 
@@ -146,7 +149,7 @@ describe('sanitizeQuery', () => {
             "textMain": "#FB8C00",
             "textSub": "#FEFEFE",
             "dates": "#9E9E9E",
-            "title": "My_New_Streak",
+            "title": "My New Streak",
             "borderRadius": "14",
             "hideBorder": "true"
         });
@@ -218,15 +221,6 @@ describe('preFlight', () => {
     });
 });
 
-describe('normalize Parameters', () => {
-    it('returns lowercase language, title case script, and uppercase region', () => {
-        expect(normalizeParam('Black_Ice')).toBe('black-ice');
-        expect(normalizeParam('CORAL_RED')).toBe('coral-red');
-        expect(normalizeParam('light_Green')).toBe('light-green');
-    });
-});
-
-
 describe('normalize Locale Code', () => {
     it('returns lowercase language, title case script, and uppercase region', () => {
         expect(normalizeLocaleCode('en')).toBe('en');
@@ -242,7 +236,7 @@ describe('normalize Locale Code', () => {
 
 describe('basicCardThemeParse', () => {
     const defaultTheme = {
-        ...THEMES["default"]!,
+        ...Themes["default"]!,
         hideBorder: false,
         borderRadius: 10,
         locale: 'en-US'
@@ -279,17 +273,17 @@ describe('basicCardThemeParse', () => {
         }
         card = baseCardThemeParse(mockRequest)
         expect(card).toEqual({
-            ...THEMES["black-ice"]!,
+            ...Themes["black-ice"]!,
             borderRadius: 14,
             hideBorder: true
         });
     });
 });
 
-describe("parse_cookie", () => {
+describe("parseCookie", () => {
     it("should parse a valid cookie string", () => {
     const cookie = "foo=bar;baz=qux;abc=def";
-    const parsedCookie = parse_cookie(cookie);
+    const parsedCookie = parseCookie(cookie);
     expect(parsedCookie).toEqual({
         foo: "bar",
         baz: "qux",
@@ -299,7 +293,7 @@ describe("parse_cookie", () => {
 
     it("should parse a cookie with spaces around keys and values", () => {
     const cookie = " foo = bar ; baz = qux ; abc = def ";
-    const parsedCookie = parse_cookie(cookie);
+    const parsedCookie = parseCookie(cookie);
     expect(parsedCookie).toEqual({
         foo: "bar",
         baz: "qux",
@@ -309,7 +303,7 @@ describe("parse_cookie", () => {
 
     it("should ignore cookies with no values", () => {
     const cookie = "foo=bar;;baz=qux;abc=def;;";
-    const parsedCookie = parse_cookie(cookie);
+    const parsedCookie = parseCookie(cookie);
     expect(parsedCookie).toEqual({
         foo: "bar",
         baz: "qux",
@@ -319,7 +313,7 @@ describe("parse_cookie", () => {
 
     it("should handle cookies with special characters", () => {
     const cookie = "foo=bar;baz=%20qux%20;abc=%3Ddef%3D";
-    const parsedCookie = parse_cookie(cookie);
+    const parsedCookie = parseCookie(cookie);
     expect(parsedCookie).toEqual({
         foo: "bar",
         baz: "qux",
@@ -329,7 +323,7 @@ describe("parse_cookie", () => {
 
     it("should return an empty object for an empty string", () => {
     const cookie = "";
-    const parsedCookie = parse_cookie(cookie);
+    const parsedCookie = parseCookie(cookie);
     expect(parsedCookie).toEqual({});
     });
 });
