@@ -14,6 +14,7 @@ export interface GithRawUserProbe {
 }
 
 export type GithRawUserData = GithRawStreakData | GithRawProfileData;
+export type GithUserData = GithUserStreak | GithUserProfile;
 
 export interface GithRawStreakData {
   user: {
@@ -71,8 +72,6 @@ export interface GithRawProfileData {
   };
 }
 
-export type GithUserData = GithUserStreak | GithUserProfile;
-
 export interface GithUserStreak {
   title?: string;
   total: number;
@@ -87,8 +86,7 @@ export interface GithUserStreak {
   theme?: ThemeType;
 }
 
-export type GithRawProfile = GithRawUserStats | GithRawUserLanguages;
-
+export type GithRawUserProfile = GithRawUserStats | GithRawUserLanguages;
 export type GithUserProfile = GithUserStats | GithUserLanguages;
 
 export interface GithRawUserStats {
@@ -161,6 +159,7 @@ export interface GithLanguageData {
   width: number;
   color: string;
 }
+
 export interface GithUserLanguages {
   title?: string;
   totalSize: number;
