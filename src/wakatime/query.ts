@@ -3,16 +3,16 @@
 import axios from "axios";
 import dotenv from "dotenv";
 
-import { WakaRawData, WakaProfileData } from "./wakatimeTypes";
+import { WakaRawData } from "./wakatimeTypes";
 import { ResponseError, WAKA_TIME_URL } from "../utils/constants";
-import { setCacheData } from "../utils/cache";
-import { wakaRawShave } from "./apiParse";
+import { wakaRawParse } from "./apiParse";
+import { getCacheKey, setCacheData } from "../utils/cache";
 
 dotenv.config();
 
-export const getWakaStats = async (
+export const queryWakatime = async (
   username: string
-): Promise<WakaProfileData> => {
+): Promise<WakaRawData> => {
   if (process.env.WAKATIME_TOKEN === undefined) {
     throw new ResponseError(
       "Error accessing WakaTime API Token",
@@ -43,29 +43,41 @@ export const getWakaStats = async (
         err.response.status
       );
     });
-  // Shave unnecessary data to spare cache
-  const data = wakaRawShave(response);
-  return data;
+  return response;
 };
 
+export const setWakaProfile = async (username: string): Promise<void> => {
+  // Query WakaTime api
+  const queryRepsonse = await queryWakatime(username)
+    .catch(err => {
+      throw err;
+    });
+  
+  const [insights, languages, stats] = wakaRawParse(queryRepsonse);
+  await setCacheData(
+    getCacheKey('url/wakatime/insights', username),
+    insights
+  );
+
+  await setCacheData(
+    getCacheKey('url/wakatime/languages', username),
+    languages
+  );
+
+  await setCacheData(
+    getCacheKey('url/wakatime/stats', username),
+    stats
+  );
+  return;
+}
+
 export const updateWakaProfile = async (
-  cacheKey: string,
-  intervalID: NodeJS.Timer,
   username: string
 ): Promise<void> => {
   try {
-    // Query WakaTime api
-    const queryRepsonse: WakaProfileData = await getWakaStats(username).catch(
-      (err) => {
-        throw err;
-      }
-    );
-
-    await setCacheData(cacheKey, {
-      interval: intervalID,
-      data: queryRepsonse,
-    });
-  } catch (err) {
+    await setWakaProfile(username);
+  }
+  catch (err) {
     if (err instanceof ResponseError) {
       console.error(
         `Error (${err.error}) updating user data for ${username}: ${err.message}`
@@ -74,4 +86,5 @@ export const updateWakaProfile = async (
       console.error(`Error updating user data for ${username}: ${err}`);
     }
   }
+  return;
 };
