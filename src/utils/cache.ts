@@ -12,6 +12,7 @@ import {
 import { GithRawProfileData, GithUserStreak } from "../github/githubTypes";
 import { WakaProfileData } from "../wakatime/wakatimeTypes";
 import {
+  DATA_UDPDATE_INTERVAL,
   PRODUCTION,
   PROD_HOST,
   PROD_PORT,
@@ -90,11 +91,14 @@ export const setCacheData = async (
   key: string,
   data: RedisCache
 ): Promise<void> => {
+  const ExpirationBuffer = PRODUCTION
+    ? 1000 * 60 * 8
+    : 1000 * 30;
   try {
     await redisClient.set(key, flatted.stringify(data), {
       // 2 min 30 sec development cache lifetime
       // 8hr and 8min production cache lifetime
-      EX: PRODUCTION ? (60 * 60 * 8 + 60 * 8) : (60 * 2 + 30),
+      PX: DATA_UDPDATE_INTERVAL + ExpirationBuffer
     });
   }
   catch (error) {
