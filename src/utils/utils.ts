@@ -8,6 +8,7 @@ import { addToBlacklist, checkBlacklistRequest } from "./blacklist";
 import { Themes, ThemeType } from "./themes";
 import { Colors } from "./colors";
 import xss from "xss";
+import { PRODUCTION } from "./constants";
 
 export function sanitizeText(value: string): string {
   // Match letters, digits, underscores, and spaces
@@ -107,7 +108,7 @@ export function sanitizeQuery(req: Request): boolean {
       req.query = {};
       return false;
     }
-    console.log(param)
+    !PRODUCTION && console.log(param)
     switch (true) {
       case color.includes(param):
         try {
@@ -148,7 +149,7 @@ export function sanitizeQuery(req: Request): boolean {
         break;
     }
   }
-  console.log(sanitizedParams)
+  !PRODUCTION && console.log(sanitizedParams)
   req.query = sanitizedParams;
   return true;
 }
