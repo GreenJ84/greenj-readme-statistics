@@ -1,6 +1,5 @@
 /** @format */
 
-import { Request } from "express";
 import { RedisClientType, createClient } from "redis";
 import flatted from "flatted";
 
@@ -10,7 +9,6 @@ import {
   LeetUserStreak,
 } from "../leetcode/leetcodeTypes";
 import { GithRawProfileData, GithUserStreak } from "../github/githubTypes";
-import { WakaProfileData } from "../wakatime/wakatimeTypes";
 import {
   DATA_UDPDATE_INTERVAL,
   PRODUCTION,
@@ -19,6 +17,7 @@ import {
   REDIS_PASS,
   REDIS_USER
 } from "./constants";
+import { WakaInsight, WakaLang, WakaStat } from "../wakatime/wakatimeTypes";
 
 type UserData =
   | LeetRawProfileData
@@ -26,15 +25,15 @@ type UserData =
   | LeetRawDaily
   | GithRawProfileData
   | GithUserStreak
-  | WakaProfileData
+  | WakaInsight
+  | WakaLang
+  | WakaStat
+
+export type RedisCache =
+  | UserData
+  | LeetRawDaily
+  | { interval: NodeJS.Timer }
   | { times: number };
-
-export type RedisCache = UserCache | LeetRawDaily | { times: number };
-
-export interface UserCache {
-  interval: NodeJS.Timer;
-  data: UserData;
-}
 
 export const redisClient: RedisClientType = PRODUCTION
   ? createClient({
@@ -44,13 +43,13 @@ export const redisClient: RedisClientType = PRODUCTION
 
 redisClient.on("error", (err) => console.error(`Redis Client error: ${err}`));
 
-export const getCacheKey = (req: Request) => {
-  const path = req.path.split("/");
+export const getCacheKey = (reqPath: string, username: string | null = null) => {
+  const path = reqPath.split("/");
 
   // Get platform route
   const route = path[1];
   const user =
-    req.params.username !== undefined ? `:${req.params.username!}` : "";
+    username !== null ? `:${username}` : "";
   // Get subroute if not wakatime else set profile
   const subroute =
     path[2] == "register" || path[2] == "unregister" ? "profile" : path[2];
