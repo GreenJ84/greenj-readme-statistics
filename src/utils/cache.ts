@@ -5,10 +5,9 @@ import flatted from "flatted";
 
 import {
   LeetRawDaily,
-  LeetRawProfileData,
-  LeetUserStreak,
+  LeetUserData,
 } from "../leetcode/leetcodeTypes";
-import { GithRawProfileData, GithUserStreak } from "../github/githubTypes";
+import { GithUserData } from "../github/githubTypes";
 import {
   DATA_UDPDATE_INTERVAL,
   PRODUCTION,
@@ -17,22 +16,14 @@ import {
   REDIS_PASS,
   REDIS_USER
 } from "./constants";
-import { WakaInsight, WakaLang, WakaStat } from "../wakatime/wakatimeTypes";
-
-type UserData =
-  | LeetRawProfileData
-  | LeetUserStreak
-  | LeetRawDaily
-  | GithRawProfileData
-  | GithUserStreak
-  | WakaInsight
-  | WakaLang
-  | WakaStat
+import { WakaProfileData } from "../wakatime/wakatimeTypes";
 
 export type RedisCache =
-  | UserData
-  | NodeJS.Timer
+  | LeetUserData
+  | GithUserData
   | LeetRawDaily
+  | WakaProfileData
+  | NodeJS.Timer
   | { times: number };
 
 export const redisClient: RedisClientType = PRODUCTION
