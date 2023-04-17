@@ -5,7 +5,6 @@ import { Request, Response } from "express";
 // API Global imports
 import { preFlight, sleep } from "../utils/utils";
 import {
-  UserCache,
   deleteCacheData,
   getCacheData,
   getCacheKey,
@@ -15,19 +14,17 @@ import { DATA_UDPDATE_INTERVAL } from "../utils/constants";
 
 // GitHub specific imports
 import {
-  GithRawProfile,
-  GithRawProfileData,
+  GithUserProfile,
   GithUserStreak,
 } from "../github/githubTypes";
 import {
-  preQery,
-  updateStreak,
-  streakQuery,
-  updateUser,
+  setGithUserProfile,
+  setGithUserStreak,
+  updateGithUserStreak,
+  updateGithUserProfile,
 } from "../github/query";
-import { getGithResponseParse } from "../github/apiParser";
-import { getGithCardDirect } from "../github/githubUtils";
 import { streakCardSetup } from "../github/cards/streak-card";
+import { getGithCardDirect } from "../github/githubUtils";
 
 let sleepMod = -2;
 
@@ -36,7 +33,8 @@ export const githubRegister = async (req: Request, res: Response) => {
   if (!preFlight(req, res)) {
     return;
   }
-  const cacheKey = getCacheKey(req);
+  const username = req.params.username!;
+  const cacheKey = getCacheKey(req.path, username);
   res.set("Content-Type", "application/json");
 
   // Try for cached data, Query API if not present
@@ -49,24 +47,16 @@ export const githubRegister = async (req: Request, res: Response) => {
     return;
   }
 
-  let variables = { login: req.params.username! };
-  const queryResponse = await preQery(variables)
-    .then((data) => {
-      return data as GithRawProfileData;
-    })
+  await setGithUserProfile(username)
     .catch((err) => {
       throw err;
     });
 
   const intervalId = setInterval(() => {
-    // console.log(intervalId);
-    updateUser(cacheKey, intervalId, req.params.username!);
+    updateGithUserProfile(username);
   }, DATA_UDPDATE_INTERVAL);
 
-  await setCacheData(cacheKey, {
-    interval: intervalId,
-    data: queryResponse,
-  });
+  await setCacheData(cacheKey, intervalId);
 
   res.status(201).json({
     message: "User Registered",
@@ -81,7 +71,7 @@ export const getProfileStats = async (req: Request, res: Response) => {
     return;
   }
 
-  const cacheKey = getCacheKey(req);
+  const cacheKey = getCacheKey(req.path, req.params.username!);
 
   sleepMod = (sleepMod + 2) % 10;
   await sleep(sleepMod);
@@ -96,15 +86,11 @@ export const getProfileStats = async (req: Request, res: Response) => {
     return;
   }
 
-  const data = (cacheData as UserCache)?.data as GithRawProfileData;
-
-  // Get Function to parse data type
-  const parse = getGithResponseParse(req);
-  const parsedData = parse(data) as GithRawProfile;
+  const data = cacheData as GithUserProfile;
 
   // Get Function to create svg card for data type
   const createCard: Function = getGithCardDirect(req);
-  const card: string = createCard(req, parsedData);
+  const card: string = createCard(req, data);
 
   // Send created card as svg string
   res.status(200).send(card);
@@ -116,7 +102,7 @@ export const githubStreakRegister = async (req: Request, res: Response) => {
   if (!preFlight(req, res)) {
     return;
   }
-  const cacheKey = getCacheKey(req);
+  const cacheKey = getCacheKey(req.path, req.params.username!);
   res.set("Content-Type", "application/json");
 
   // Try for cached data, Query API if not present
@@ -129,19 +115,16 @@ export const githubStreakRegister = async (req: Request, res: Response) => {
     return;
   }
 
-  const queryResponse = await streakQuery(req).catch((err) => {
-    throw err;
-  });
+  await setGithUserStreak(req)
+    .catch((err) => {
+      throw err;
+    });
 
   const intervalId = setInterval(() => {
-    // console.log(intervalId);
-    updateStreak(cacheKey, intervalId, req);
+    updateGithUserStreak(req);
   }, DATA_UDPDATE_INTERVAL);
 
-  await setCacheData(cacheKey, {
-    interval: intervalId,
-    data: queryResponse,
-  });
+  await setCacheData(cacheKey, intervalId );
 
   res.status(201).json({
     message: "User Registered",
@@ -155,7 +138,7 @@ export const getCommitStreak = async (req: Request, res: Response) => {
   if (!preFlight(req, res)) {
     return;
   }
-  const cacheKey = getCacheKey(req);
+  const cacheKey = getCacheKey(req.path, req.params.username!);
 
   const [success, cacheData] = await getCacheData(cacheKey);
   if (!success) {
@@ -166,7 +149,7 @@ export const getCommitStreak = async (req: Request, res: Response) => {
     });
     return;
   }
-  const data = (cacheData as UserCache)?.data as GithUserStreak;
+  const data = cacheData as GithUserStreak;
 
   const card: string = streakCardSetup(req, data);
   res.status(200).send(card);
@@ -179,7 +162,7 @@ export const githubUnregister = async (req: Request, res: Response) => {
     return;
   }
 
-  let cacheKey = getCacheKey(req);
+  let cacheKey = getCacheKey(req.path, req.params.username!);
   res.set("Content-Type", "application/json");
 
   // Try for cached data, Query API if not present
@@ -187,7 +170,7 @@ export const githubUnregister = async (req: Request, res: Response) => {
   if (!profSuccess) {
     console.error("User's profile data not found.");
   } else {
-    const intervalID = (profCache as UserCache)?.interval;
+    const intervalID = profCache as NodeJS.Timer;
     if (intervalID) {
       clearInterval(intervalID);
     }
@@ -197,7 +180,7 @@ export const githubUnregister = async (req: Request, res: Response) => {
     }
   }
 
-  req.path = req.path
+  const streakPath = req.path
     .split("/")
     .map((sec, idx) => {
       if (idx == 2) {
@@ -207,13 +190,13 @@ export const githubUnregister = async (req: Request, res: Response) => {
       }
     })
     .join("/");
-  cacheKey = getCacheKey(req);
+  cacheKey = getCacheKey(streakPath, req.params.username!);
   // Try for cached data, Query API if not present
   const [streakSuccess, streakCache] = await getCacheData(cacheKey);
   if (!streakSuccess) {
     console.error("User's streak data not found.");
   } else {
-    const intervalID = (streakCache as UserCache)?.interval;
+    const intervalID = streakCache as NodeJS.Timer;
     if (intervalID) {
       clearInterval(intervalID);
     }
