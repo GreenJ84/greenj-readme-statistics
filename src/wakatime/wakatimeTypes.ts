@@ -62,6 +62,10 @@ export interface WakaRawData {
     total_seconds: number; // 29398.761891
   };
 }
+export type WakaProfileData =
+  | WakaInsight
+  | WakaLang
+  | WakaStat
 
 export interface WakaTopic {
   name: string;
@@ -69,25 +73,6 @@ export interface WakaTopic {
   percent: number;
 }
 
-export interface WakaProfileData {
-  start: string; // '2023-03-16T07:00:00Z',
-  daily_average: number; // 18882,
-  daily_average_including_other_language: number; // 18891,
-  days_minus_holidays: number; // 11,
-  total_seconds: number; // 207703.81587,
-  total_seconds_including_other_language: number; // 207804.709525,
-  categories: WakaTopic[];
-  projects: WakaTopic[];
-  languages: WakaTopic[];
-  editors: WakaTopic[];
-  operating_systems: WakaTopic[];
-  dependencies: WakaTopic[];
-  machines: WakaTopic[];
-  best_day: {
-    date: string; // '2023-03-19',
-    total_seconds: number; // 29398.761891
-  };
-}
 
 export interface WakaInsight {
   dailyAverage: string;
