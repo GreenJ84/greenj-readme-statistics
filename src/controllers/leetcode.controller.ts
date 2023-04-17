@@ -3,11 +3,10 @@
 import { Request, Response } from "express";
 
 import {
-  RedisCache,
   deleteCacheData,
   getCacheData,
   getCacheKey,
-  setCacheData,
+  setRegistrationCache,
 } from "../utils/cache";
 import {
   DATA_UDPDATE_INTERVAL,
@@ -17,8 +16,6 @@ import { preFlight, sleep } from "../utils/utils";
 
 import {
   LeetRawDaily,
-  LeetRawProfileData,
-  LeetUserData,
   LeetUserProfile,
   LeetUserStreak,
 } from "../leetcode/leetcodeTypes";
@@ -29,7 +26,6 @@ import {
   startLeetcodeDaily,
   setLeetUserProfile,
 } from "../leetcode/query";
-import { leetParseDirect } from "../leetcode/apiParser";
 import { leetCardDirect } from "../leetcode/leetcodeUtils";
 
 let sleepMod = -2;
@@ -61,7 +57,7 @@ export const leetcodeRegister = async (req: Request, res: Response) => {
     updateLeetUserProfile(username);
   }, DATA_UDPDATE_INTERVAL);
 
-  await setCacheData(cacheKey, intervalId)
+  await setRegistrationCache(cacheKey, intervalId)
     .catch(err => { throw err; })
   
   res.status(201).json({
@@ -129,7 +125,7 @@ export const leetcodeStreakRegister = async (req: Request, res: Response) => {
     updateLeetUserStreak(req);
   }, DATA_UDPDATE_INTERVAL);
 
-  await setCacheData(cacheKey, intervalId);
+  await setRegistrationCache(cacheKey, intervalId);
 
   res.status(201).json({
     message: "User Registered",

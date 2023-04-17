@@ -8,7 +8,7 @@ import {
   deleteCacheData,
   getCacheData,
   getCacheKey,
-  setCacheData,
+  setRegistrationCache,
 } from "../utils/cache";
 import { DATA_UDPDATE_INTERVAL } from "../utils/constants";
 
@@ -56,7 +56,7 @@ export const githubRegister = async (req: Request, res: Response) => {
     updateGithUserProfile(username);
   }, DATA_UDPDATE_INTERVAL);
 
-  await setCacheData(cacheKey, intervalId);
+  await setRegistrationCache(cacheKey, intervalId);
 
   res.status(201).json({
     message: "User Registered",
@@ -124,7 +124,7 @@ export const githubStreakRegister = async (req: Request, res: Response) => {
     updateGithUserStreak(req);
   }, DATA_UDPDATE_INTERVAL);
 
-  await setCacheData(cacheKey, intervalId );
+  await setRegistrationCache(cacheKey, intervalId );
 
   res.status(201).json({
     message: "User Registered",

@@ -6,7 +6,7 @@ import { preFlight, sleep } from "../utils/utils";
 import {
   getCacheKey,
   getCacheData,
-  setCacheData,
+  setRegistrationCache,
   deleteCacheData,
 } from "../utils/cache";
 import { DATA_UDPDATE_INTERVAL } from "../utils/constants";
@@ -51,7 +51,7 @@ export const wakatimeRegister = async (
   }, DATA_UDPDATE_INTERVAL);
 
   // Cache the users refresh key
-  await setCacheData(cacheKey, intervalID);
+  await setRegistrationCache(cacheKey, intervalID);
 
   res.status(201).json({
     message: "User Registered",
