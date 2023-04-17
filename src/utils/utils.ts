@@ -14,7 +14,7 @@ export function sanitizeText(value: string): string {
   // Match letters, digits, underscores, and spaces
   const match = value.match(/^[a-zA-Z_]+$/);
   if (match) {
-    return match[0].replace("_", "");
+    return match[0].replaceAll("_", " ");
   } else {
     throw new Error(`Invalid text value: ${value}`);
   }
@@ -24,7 +24,7 @@ export function sanitizeParam(value: string): string {
   // Match letters, digits, underscores, and spaces
   const match = value.match(/^[a-zA-Z_]+$/);
   if (match) {
-    return match[0].replace("_", "-");
+    return match[0].replaceAll("_", "-");
   } else {
     throw new Error(`Invalid text value: ${value}`);
   }
