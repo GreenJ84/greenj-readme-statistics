@@ -207,7 +207,7 @@ describe('preFlight', () => {
         expect(mockResponse.status).toHaveBeenCalledWith(400);
     });
 
-    it('returns false and sends 403 if request is blacklisted', () => {
+    it('returns false and sends 403 if request is not allowed', () => {
         mockRequest.params.username = 'blacklistedUser';
         const result = preFlight(mockRequest, mockResponse);
         expect(result).toBe(false);
@@ -215,7 +215,7 @@ describe('preFlight', () => {
     });
 
     it('returns true if request is allowed', () => {
-        mockRequest.params.username = 'allowedUser';
+        mockRequest.params.username = 'GreenJ84';
         const result = preFlight(mockRequest, mockResponse);
         expect(result).toBe(true);
     });
