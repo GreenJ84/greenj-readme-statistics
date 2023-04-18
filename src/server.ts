@@ -11,7 +11,6 @@ import { GithubRoutes } from "./routes/github.routes";
 import { WakaTimeRoutes } from "./routes/wakatime.routes";
 import { displayModals } from "./routes/display";
 
-import { manageLimiter } from "./utils/blacklist";
 import { PRODUCTION, ResponseError } from "./utils/constants";
 import { buildRedis, teardownRedis } from "./utils/cache";
 
@@ -55,8 +54,9 @@ const limiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 100,
   handler: async (req, res) => {
-    const err: ResponseError = await manageLimiter(req);
-    res.status(err.error_code).send(err);
+    res.status(400).send({
+      message: `${req.params.username ?? "This caller"} has made to many calls. You have been limited.`
+    })
     return;
   },
 });
