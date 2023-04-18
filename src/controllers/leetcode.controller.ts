@@ -96,6 +96,7 @@ export const leetcodeStats = async (
   const createCard = leetCardDirect(req);
   const card = createCard(req, data);
 
+  res.setHeader("Content-Type", "image/svg+xml");
   res.status(200).send(card);
   return;
 };
@@ -160,6 +161,7 @@ export const leetcodeStreak = async (
   const streakCard = leetCardDirect(req);
   const card = streakCard(req, data);
 
+  res.setHeader("Content-Type", "image/svg+xml");
   res.status(200).send(card);
   return;
 };

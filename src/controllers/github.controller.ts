@@ -94,6 +94,7 @@ export const getProfileStats = async (req: Request, res: Response) => {
   const card: string = createCard(req, data);
 
   // Send created card as svg string
+  res.setHeader("Content-Type", "image/svg+xml");
   res.status(200).send(card);
   return;
 };
@@ -153,6 +154,8 @@ export const getCommitStreak = async (req: Request, res: Response) => {
   const data = cacheData as GithUserStreak;
 
   const card: string = streakCardSetup(req, data);
+
+  res.setHeader("Content-Type", "image/svg+xml");
   res.status(200).send(card);
   return;
 };

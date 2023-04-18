@@ -133,6 +133,7 @@ export const wakatimeProfile = async (
   const cardCreate = wakaCardDirect(subRoute);
   const card: string = cardCreate(req, data);
 
+  res.setHeader("Content-Type", "image/svg+xml");
   res.status(200).send(card);
   return;
 };
