@@ -8,6 +8,7 @@ import { Themes, ThemeType } from "./themes";
 import { Colors } from "./colors";
 import xss from "xss";
 import { PRODUCTION } from "./constants";
+import { checkAllowlistRequest } from "./allowlist";
 
 export function sanitizeText(value: string): string {
   // Match letters, digits, underscores, and spaces
@@ -156,7 +157,6 @@ export function sanitizeQuery(req: Request): boolean {
 // API Security
 export const preFlight = (req: Request, res: Response): boolean => {
   if (req.params.username == undefined) {
-    res.set("Content-Type", "application/json");
     res.status(400).send({
       message: "No username found on API Call that requires username",
       error: "Missing username parameter.",
@@ -165,13 +165,12 @@ export const preFlight = (req: Request, res: Response): boolean => {
     return false;
   }
 
-  if (req.params.username !== "GreenJ84"){
-    res.set("Content-Type", "application/json");
+  if (!checkAllowlistRequest(req.params.username!)){
     res.status(403).send({
       message:
         "Username found on API Call is not Authorized. Submit username for approval.",
       error: "Access not granted",
-      error_code: 400,
+      error_code: 403,
     });
     return false;
   }
