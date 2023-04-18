@@ -174,6 +174,7 @@ export const preFlight = (req: Request, res: Response): boolean => {
     });
     return false;
   }
+  sanitizeQuery(req);
   return true;
 };
 
@@ -217,9 +218,11 @@ export const baseCardThemeParse = (req: Request) => {
   let _theme: ThemeType = Themes["default"]!;
   // Set all properties base to theme first
   if (theme != undefined) {
+    !PRODUCTION && console.log(theme);
     if (theme as string in Themes) {
       _theme = Themes[theme as string]!;
     }
+    !PRODUCTION && console.log(_theme);
   }
 
   if (background !== undefined) {
