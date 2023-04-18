@@ -213,7 +213,6 @@ export const baseCardThemeParse = (req: Request) => {
     borderRadius,
     locale,
   } = req.query;
-  console.log(theme)
 
   let _theme: ThemeType = Themes["default"]!;
   // Set all properties base to theme first
