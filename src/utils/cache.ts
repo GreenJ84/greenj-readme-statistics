@@ -115,13 +115,13 @@ export const setCacheData = async (
   data: RedisCache
 ): Promise<void> => {
   const ExpirationBuffer = PRODUCTION
-    ? 1000 * 60 * 8
-    : 1000 * 30;
+    ? 2
+    : 1;
   try {
       await redisClient.set(key, flatted.stringify(data), {
         // 2 min 30 sec development cache lifetime
         // 8hr and 8min production cache lifetime
-        PX: DATA_UDPDATE_INTERVAL + ExpirationBuffer
+        PX: DATA_UDPDATE_INTERVAL * ExpirationBuffer
       });
     }
   catch (error) {
