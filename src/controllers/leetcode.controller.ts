@@ -12,7 +12,7 @@ import {
 import {
   DATA_UDPDATE_INTERVAL,
 } from "../utils/constants";
-import { preFlight, sleep } from "../utils/utils";
+import { preFlight } from "../utils/utils";
 
 
 import {
@@ -28,8 +28,6 @@ import {
   setLeetUserProfile,
 } from "../leetcode/query";
 import { leetCardDirect } from "../leetcode/leetcodeUtils";
-
-let sleepMod = -2;
 
 export const leetcodeRegister = async (req: Request, res: Response) => {
   // PreFlight checks for user based routes
@@ -77,9 +75,6 @@ export const leetcodeStats = async (
     return;
   }
   const cacheKey = getCacheKey(req.path, req.params.username!);
-
-  sleepMod = (sleepMod + 2) % 10;
-  await sleep(sleepMod);
 
   const [success, cacheData] = await getCacheData(cacheKey);
   if (!success) {

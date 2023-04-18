@@ -3,7 +3,7 @@
 import { Request, Response } from "express";
 
 // API Global imports
-import { preFlight, sleep } from "../utils/utils";
+import { preFlight } from "../utils/utils";
 import {
   deleteCacheData,
   getCacheData,
@@ -26,8 +26,6 @@ import {
 } from "../github/query";
 import { streakCardSetup } from "../github/cards/streak-card";
 import { getGithCardDirect } from "../github/githubUtils";
-
-let sleepMod = -2;
 
 export const githubRegister = async (req: Request, res: Response) => {
   // Ensure Caller is viable
@@ -73,9 +71,6 @@ export const getProfileStats = async (req: Request, res: Response) => {
   }
 
   const cacheKey = getCacheKey(req.path, req.params.username!);
-
-  sleepMod = (sleepMod + 2) % 10;
-  await sleep(sleepMod);
 
   const [success, cacheData] = await getCacheData(cacheKey);
   if (!success) {

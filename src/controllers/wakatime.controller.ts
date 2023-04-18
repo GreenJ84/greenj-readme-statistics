@@ -2,7 +2,7 @@
 
 import { Request, Response } from "express";
 
-import { preFlight, sleep } from "../utils/utils";
+import { preFlight } from "../utils/utils";
 import {
   getCacheKey,
   getCacheData,
@@ -15,8 +15,6 @@ import { DATA_UDPDATE_INTERVAL } from "../utils/constants";
 import { WakaProfileData } from "../wakatime/wakatimeTypes";
 import { setWakaProfile, updateWakaProfile } from "../wakatime/query";
 import { wakaCardDirect } from "../wakatime/wakatimeUtils";
-
-let sleepMod = -2;
 
 export const wakatimeRegister = async (
   req: Request,
@@ -113,9 +111,6 @@ export const wakatimeProfile = async (
     return;
   }
   const cacheKey = getCacheKey(req.path, req.params.username!);
-  
-  sleepMod = (sleepMod + 2) % 10;
-  await sleep(sleepMod);
   
   // Try for cached data, Query API if not present
   const [success, cacheData] = await getCacheData(cacheKey);
