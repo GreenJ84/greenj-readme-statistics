@@ -12,13 +12,11 @@ import { WakaTimeRoutes } from "./routes/wakatime.routes";
 import { displayModals } from "./routes/display";
 
 import { manageLimiter } from "./utils/blacklist";
-import { ResponseError } from "./utils/constants";
+import { PRODUCTION, ResponseError } from "./utils/constants";
 import { buildRedis, teardownRedis } from "./utils/cache";
 
 const PORT = 8000;
 const app = express();
-
-app.use(express.json(), express.urlencoded({ extended: true }));
 
 // Open cross origin access
 app.use(
@@ -65,18 +63,11 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Cache api calls
-app.use(
+PRODUCTION && app.use(
   cacheControl({
-    maxAge: 60 * 20, // Dev Cache for 20 min
+    maxAge: 60 * 60 * 4, // Dev Cache for 20 min
   })
 );
-
-// Set svg content headers for all routes
-app.use((_: Request, res: Response, next: NextFunction) => {
-  // Set svg response headers as default
-  res.setHeader("Content-Type", "image/svg+xml");
-  next();
-});
 
 LeetCodeRoutes(app);
 GithubRoutes(app);
