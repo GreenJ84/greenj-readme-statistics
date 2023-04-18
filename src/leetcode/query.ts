@@ -11,7 +11,6 @@ import {
   LEET_GRAPHQL_URL,
   ResponseError,
 } from "../utils/constants";
-import { Themes } from "../utils/themes";
 import { get_csrf } from "../utils/credentials";
 import { getCacheKey, setCacheData } from "../utils/cache";
 
@@ -202,7 +201,6 @@ export const setLeetUserStreak = async (req: Request): Promise<void> => {
     mostActiveYear: 0,
     completion: "0.00",
     completionActuals: [0, 0],
-    theme: Themes["black-ice"]!,
   };
   // Call the universal leetCode querier for each year
   for (let year of membershipYears) {

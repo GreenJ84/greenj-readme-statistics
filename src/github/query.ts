@@ -13,7 +13,6 @@ import {
   GITHUB_TOKEN,
 } from "../utils/constants";
 import { getCacheKey, setCacheData } from "../utils/cache";
-import { Themes, ThemeType } from "../utils/themes";
 
 import {
   GithRawGraphResponse,
@@ -23,7 +22,7 @@ import {
   GithRawUserProbe,
   GithUserStreak,
 } from "./githubTypes";
-import { getGithResponseParse, githRawParse } from "./apiParser";
+import { githRawParse, streakParse } from "./apiParser";
 
 // Get the GraphQL file location based on type
 const getGraph = (type: string): string => {
@@ -132,7 +131,7 @@ export const setGithUserProfile = async (username: string): Promise<void> => {
     getCacheKey('url/github/trophies', username),
     stats
   );
-  
+  return;
 }
 
 export const updateGithUserProfile = async (
@@ -152,6 +151,7 @@ export const updateGithUserProfile = async (
       console.error(`Error updating user data for ${username}: ${err}`);
     }
   }
+  return;
 };
 
 // Probes user creation date and years a member for streak query
@@ -208,16 +208,7 @@ export const setGithUserStreak = async (req: Request): Promise<void> => {
     currDate: ["", ""],
     longest: 0,
     longestText: "Longest Streak",
-    longestDate: ["", ""],
-    theme:
-      req.query.theme !== undefined
-        ? (Themes[req.query.theme! as string] as ThemeType)
-        : ({
-            ...Themes["black-ice"]!,
-            hideBorder: false,
-            borderRadius: 10,
-            locale: "en",
-          } as ThemeType),
+    longestDate: ["", ""]
   };
   // starting template variables for query
   const { username } = req.params;
@@ -247,10 +238,8 @@ export const setGithUserStreak = async (req: Request): Promise<void> => {
         throw err;
       });
 
-    // Get Function to parse data
-    const parse = getGithResponseParse(req);
     // Parse that data with our current stats to update
-    parse(streak, data);
+    streakParse(streak, data);
   }
 
   await setCacheData(
