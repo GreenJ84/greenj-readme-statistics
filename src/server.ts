@@ -5,7 +5,6 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import cacheControl from "express-cache-controller";
-import { spawn } from "child_process";
 
 import { LeetCodeRoutes } from "./routes/leetcode.routes";
 import { GithubRoutes } from "./routes/github.routes";
@@ -16,7 +15,6 @@ import { manageLimiter } from "./utils/blacklist";
 import { ResponseError } from "./utils/constants";
 import { buildRedis, teardownRedis } from "./utils/cache";
 
-const npmProcess = spawn("npm", ["start"]);
 const PORT = 8000;
 const app = express();
 
@@ -105,25 +103,7 @@ const server = app.listen(PORT, async () => {
   console.log(`Express server running on port ${PORT}`);
   await buildRedis();
 });
-server.timeout = 30000;
-
-// NPM error handling
-npmProcess.stderr.on("data", (data) => {
-  const errorMessage = data.toString();
-  if (errorMessage.includes("npm ERR!")) {
-    console.error(errorMessage);
-  } else {
-    console.error(`npm stderr: ${data}`);
-  }
-});
-
-npmProcess.on("close", (code) => {
-  if (code != 0) {
-    console.log(`npm exited with code ${code}`);
-  } else {
-    console.log("npm successful closure");
-  }
-});
+server.setTimeout(60000);
 
 let shuttingDown = false;
 // Stop the Redis server and close the Express server
