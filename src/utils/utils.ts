@@ -157,6 +157,7 @@ export function sanitizeQuery(req: Request): boolean {
 // API Security
 export const preFlight = (req: Request, res: Response): boolean => {
   if (req.params.username == undefined) {
+    res.set("Content-Type", "application/json");
     res.status(400).send({
       message: "No username found on API Call that requires username",
       error: "Missing username parameter.",
@@ -165,37 +166,15 @@ export const preFlight = (req: Request, res: Response): boolean => {
     return false;
   }
 
-  try {
-    req.params.username = sanitizeUsername(req.params.username!);
-  } catch (err) {
+  if (req.params.username !== "GreenJ84"){
+    res.set("Content-Type", "application/json");
     res.status(403).send({
       message:
-        "Username found on API Call did not pass sanitization. Check name or submit support issue.",
-      error: err,
+        "Username found on API Call is not Authorized. Submit username for approval.",
+      error: "Access not granted",
       error_code: 400,
     });
     return false;
-  }
-
-  let accessCheck = checkBlacklistRequest(req, req.params.username);
-  if (!accessCheck[0]) {
-    res.status(403).send({
-      message: accessCheck[1],
-      error: "Caller Black Listed",
-      error_code: 403,
-    });
-    return false;
-  }
-
-  if (!sanitizeQuery(req)) {
-    addToBlacklist(req.params.username);
-    addToBlacklist(req.ip);
-    res.status(400).send({
-      error: "Malicious Parameter Content",
-      error_code: 400,
-      message:
-        "Malicious xss content found within api call. Immediate API exile.",
-    });
   }
   return true;
 };
