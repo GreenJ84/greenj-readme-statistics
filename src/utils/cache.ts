@@ -60,6 +60,24 @@ export const teardownRedis = async () => {
     .then(() => console.log("Redis server disconnected."));
 };
 
+export const getRegistrationCache = async (
+  key: string
+): Promise<[boolean, number | null]> => {
+  try {
+    const data = await redisClient.get(key);
+    if (data == undefined) {
+      !PRODUCTION && console.warn("Empty Cache");
+      return [false, null];
+    }
+    !PRODUCTION && console.log(`Getting ${key}`);
+    return [true, parseInt(data)];
+    }
+  catch (error) {
+    !PRODUCTION && console.error(`Error getting cache for ${key}: ${error}`);
+    return [false, null];
+  }
+};
+
 export const getCacheData = async (
   key: string
 ): Promise<[boolean, RedisCache | null]> => {
@@ -82,7 +100,7 @@ export const setRegistrationCache = async (
   data: NodeJS.Timer
 ): Promise<void> => {
   try {
-      await redisClient.set(key, flatted.stringify(data));
+      await redisClient.set(key, data[Symbol.toPrimitive]());
     }
   catch (error) {
     !PRODUCTION && console.error(`Error setting cache for ${key}: ${error}`);
