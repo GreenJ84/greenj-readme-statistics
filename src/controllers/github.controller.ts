@@ -55,7 +55,7 @@ export const githubRegister = async (req: Request, res: Response) => {
     updateGithUserProfile(username);
   }, DATA_UDPDATE_INTERVAL);
 
-  await setRegistrationCache(cacheKey, intervalId);
+  await setRegistrationCache(cacheKey, intervalId[Symbol.toPrimitive]());
 
   res.status(201).json({
     message: "User Registered",
@@ -121,7 +121,7 @@ export const githubStreakRegister = async (req: Request, res: Response) => {
     updateGithUserStreak(req);
   }, DATA_UDPDATE_INTERVAL);
 
-  await setRegistrationCache(cacheKey+'reg', intervalId );
+  await setRegistrationCache(cacheKey+'reg', intervalId[Symbol.toPrimitive]() );
 
   res.status(201).json({
     message: "User Registered",

@@ -56,7 +56,7 @@ export const leetcodeRegister = async (req: Request, res: Response) => {
     updateLeetUserProfile(username);
   }, DATA_UDPDATE_INTERVAL);
 
-  await setRegistrationCache(cacheKey, intervalId)
+  await setRegistrationCache(cacheKey, intervalId[Symbol.toPrimitive]())
     .catch(err => { throw err; })
   
   res.status(201).json({
@@ -122,7 +122,7 @@ export const leetcodeStreakRegister = async (req: Request, res: Response) => {
     updateLeetUserStreak(req);
   }, DATA_UDPDATE_INTERVAL);
 
-  await setRegistrationCache(cacheKey+'reg', intervalId);
+  await setRegistrationCache(cacheKey+'reg', intervalId[Symbol.toPrimitive]());
 
   res.status(201).json({
     message: "User Registered",

@@ -45,12 +45,12 @@ export const wakatimeRegister = async (
   });
 
   // Start the refresh cycle
-  const intervalID = setInterval(() => {
+  const intervalId = setInterval(() => {
     updateWakaProfile(username);
   }, DATA_UDPDATE_INTERVAL);
 
   // Cache the users refresh key
-  await setRegistrationCache(cacheKey, intervalID);
+  await setRegistrationCache(cacheKey, intervalId[Symbol.toPrimitive]());
 
   res.status(201).json({
     message: "User Registered",
