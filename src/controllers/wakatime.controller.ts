@@ -30,14 +30,6 @@ export const wakatimeRegister = async (
 
   // Try for cached data, Query API if not present
   const [success, _] = await getRegistrationCache(cacheKey);
-  if (success) {
-    res.status(208).json({
-      message: "User already registered",
-      code: "208",
-    });
-    return;
-  }
-  
 
   await setWakaProfile(username)
     .catch((err) => {
@@ -52,10 +44,17 @@ export const wakatimeRegister = async (
   // Cache the users refresh key
   await setRegistrationCache(cacheKey, intervalId[Symbol.toPrimitive]());
 
-  res.status(201).json({
-    message: "User Registered",
-    code: "201",
-  });
+  if (success) {
+    res.status(208).json({
+      message: "User was already registered. Stats refreshed.",
+      code: "208",
+    });
+  } else {
+    res.status(201).json({
+      message: "User Registered",
+      code: "201",
+    });
+  }
   return;
 };
 

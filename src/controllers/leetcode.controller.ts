@@ -36,17 +36,10 @@ export const leetcodeRegister = async (req: Request, res: Response) => {
   }
   res.set("Content-Type", "application/json");
   const username = req.params.username!;
-  console.log(username)
+
   const cacheKey = getCacheKey(req.path, username);
   // Try for cached data, Query API if not present
   const [success, _] = await getRegistrationCache(cacheKey);
-  if (success) {
-    res.status(208).json({
-      message: "User already registered",
-      code: "208",
-    });
-    return;
-  }
 
   await setLeetUserProfile(username).catch((err) => {
     throw err;
@@ -58,11 +51,18 @@ export const leetcodeRegister = async (req: Request, res: Response) => {
 
   await setRegistrationCache(cacheKey, intervalId[Symbol.toPrimitive]())
     .catch(err => { throw err; })
-  
-  res.status(201).json({
-    message: "User Registered",
-    code: "201",
-  });
+
+  if (success) {
+    res.status(208).json({
+      message: "User was already registered. Stats refreshed.",
+      code: "208",
+    });
+  } else {
+    res.status(201).json({
+      message: "User Registered",
+      code: "201",
+    });
+  }
   return;
 };
 // Main Controller for GitHub
@@ -105,13 +105,6 @@ export const leetcodeStreakRegister = async (req: Request, res: Response) => {
   const cacheKey = getCacheKey(req.path, req.params.username!);
   // Try for cached data, Query API if not present
   const [success, _] = await getRegistrationCache(cacheKey);
-  if (success) {
-    res.status(208).json({
-      message: "User already registered",
-      code: "208",
-    });
-    return;
-  }
 
   await setLeetUserStreak(req).catch((err) => {
     throw err;
@@ -124,10 +117,17 @@ export const leetcodeStreakRegister = async (req: Request, res: Response) => {
 
   await setRegistrationCache(cacheKey+'reg', intervalId[Symbol.toPrimitive]());
 
-  res.status(201).json({
-    message: "User Registered",
-    code: "201",
-  });
+  if (success) {
+    res.status(208).json({
+      message: "User was already registered. Stats refreshed.",
+      code: "208",
+    });
+  } else {
+    res.status(201).json({
+      message: "User Registered",
+      code: "201",
+    });
+  }
   return;
 };
 

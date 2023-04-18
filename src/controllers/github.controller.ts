@@ -11,7 +11,7 @@ import {
   getRegistrationCache,
   setRegistrationCache,
 } from "../utils/cache";
-import { DATA_UDPDATE_INTERVAL } from "../utils/constants";
+import { DATA_UDPDATE_INTERVAL, PRODUCTION } from "../utils/constants";
 
 // GitHub specific imports
 import {
@@ -38,13 +38,6 @@ export const githubRegister = async (req: Request, res: Response) => {
 
   // Try for cached data, Query API if not present
   const [success, _] = await getRegistrationCache(cacheKey);
-  if (success) {
-    res.status(208).json({
-      message: "User already registered",
-      code: "208",
-    });
-    return;
-  }
 
   await setGithUserProfile(username)
     .catch((err) => {
@@ -57,10 +50,17 @@ export const githubRegister = async (req: Request, res: Response) => {
 
   await setRegistrationCache(cacheKey, intervalId[Symbol.toPrimitive]());
 
-  res.status(201).json({
-    message: "User Registered",
-    code: "201",
-  });
+  if (success) {
+    res.status(208).json({
+      message: "User was already registered. Stats refreshed.",
+      code: "208",
+    });
+  } else {
+    res.status(201).json({
+      message: "User Registered",
+      code: "201",
+    });
+  }
   return;
 };
 
@@ -104,13 +104,6 @@ export const githubStreakRegister = async (req: Request, res: Response) => {
 
   // Try for cached data, Query API if not present
   const [success, _] = await getRegistrationCache(cacheKey);
-  if (success) {
-    res.status(208).json({
-      message: "User already registered",
-      code: "208",
-    });
-    return;
-  }
 
   await setGithUserStreak(req)
     .catch((err) => {
@@ -123,10 +116,17 @@ export const githubStreakRegister = async (req: Request, res: Response) => {
 
   await setRegistrationCache(cacheKey+'reg', intervalId[Symbol.toPrimitive]() );
 
-  res.status(201).json({
-    message: "User Registered",
-    code: "201",
-  });
+  if (success) {
+    res.status(208).json({
+      message: "User was already registered. Stats refreshed.",
+      code: "208",
+    });
+  } else {
+    res.status(201).json({
+      message: "User Registered",
+      code: "201",
+    });
+  }
   return;
 };
 
@@ -171,7 +171,7 @@ export const githubUnregister = async (req: Request, res: Response) => {
   } else {
     const intervalID = profCache!;
     
-    console.log( `Clearing ${intervalID}`)
+    !PRODUCTION && console.log( `Clearing ${intervalID}`)
     clearInterval(intervalID);
 
     const deleted = await deleteCacheData(cacheKey);
@@ -198,7 +198,7 @@ export const githubUnregister = async (req: Request, res: Response) => {
   } else {
     const intervalID = streakCache!;
 
-    console.log( `Clearing ${intervalID}`)
+    !PRODUCTION && console.log( `Clearing ${intervalID}`)
     clearInterval(intervalID);
 
     const deleted = await deleteCacheData(cacheKey);
