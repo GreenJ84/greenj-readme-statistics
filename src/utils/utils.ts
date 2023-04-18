@@ -4,7 +4,6 @@ import { DateTime } from "luxon";
 import { Request, Response } from "express";
 import { createIntl, createIntlCache } from "@formatjs/intl";
 
-import { addToBlacklist, checkBlacklistRequest } from "./blacklist";
 import { Themes, ThemeType } from "./themes";
 import { Colors } from "./colors";
 import xss from "xss";
