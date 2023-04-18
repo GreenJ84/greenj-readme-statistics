@@ -8,6 +8,7 @@ import {
   deleteCacheData,
   getCacheData,
   getCacheKey,
+  getRegistrationCache,
   setRegistrationCache,
 } from "../utils/cache";
 import { DATA_UDPDATE_INTERVAL } from "../utils/constants";
@@ -38,7 +39,7 @@ export const githubRegister = async (req: Request, res: Response) => {
   res.set("Content-Type", "application/json");
 
   // Try for cached data, Query API if not present
-  const [success, _] = await getCacheData(cacheKey);
+  const [success, _] = await getRegistrationCache(cacheKey);
   if (success) {
     res.status(208).json({
       message: "User already registered",
@@ -106,7 +107,7 @@ export const githubStreakRegister = async (req: Request, res: Response) => {
   res.set("Content-Type", "application/json");
 
   // Try for cached data, Query API if not present
-  const [success, _] = await getCacheData(cacheKey);
+  const [success, _] = await getRegistrationCache(cacheKey);
   if (success) {
     res.status(208).json({
       message: "User already registered",
@@ -124,7 +125,7 @@ export const githubStreakRegister = async (req: Request, res: Response) => {
     updateGithUserStreak(req);
   }, DATA_UDPDATE_INTERVAL);
 
-  await setRegistrationCache(cacheKey, intervalId );
+  await setRegistrationCache(cacheKey+'reg', intervalId );
 
   res.status(201).json({
     message: "User Registered",
@@ -166,14 +167,15 @@ export const githubUnregister = async (req: Request, res: Response) => {
   res.set("Content-Type", "application/json");
 
   // Try for cached data, Query API if not present
-  const [profSuccess, profCache] = await getCacheData(cacheKey);
+  const [profSuccess, profCache] = await getRegistrationCache(cacheKey);
   if (!profSuccess) {
     console.error("User's profile data not found.");
   } else {
-    const intervalID = profCache as NodeJS.Timer;
-    if (intervalID) {
-      clearInterval(intervalID);
-    }
+    const intervalID = profCache!;
+    
+    console.log( `Clearing ${intervalID}`)
+    clearInterval(intervalID);
+
     const deleted = await deleteCacheData(cacheKey);
     if (!deleted) {
       console.error("Cached profile data didn't get deleted.");
@@ -184,7 +186,7 @@ export const githubUnregister = async (req: Request, res: Response) => {
     .split("/")
     .map((sec, idx) => {
       if (idx == 2) {
-        return "streak";
+        return "streakreg";
       } else {
         return sec;
       }
@@ -192,14 +194,15 @@ export const githubUnregister = async (req: Request, res: Response) => {
     .join("/");
   cacheKey = getCacheKey(streakPath, req.params.username!);
   // Try for cached data, Query API if not present
-  const [streakSuccess, streakCache] = await getCacheData(cacheKey);
+  const [streakSuccess, streakCache] = await getRegistrationCache(cacheKey);
   if (!streakSuccess) {
     console.error("User's streak data not found.");
   } else {
-    const intervalID = streakCache as NodeJS.Timer;
-    if (intervalID) {
-      clearInterval(intervalID);
-    }
+    const intervalID = streakCache!;
+
+    console.log( `Clearing ${intervalID}`)
+    clearInterval(intervalID);
+
     const deleted = await deleteCacheData(cacheKey);
     if (!deleted) {
       console.error("Cached Streak data didn't get deleted.");

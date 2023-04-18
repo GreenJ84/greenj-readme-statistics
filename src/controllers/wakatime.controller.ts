@@ -8,6 +8,7 @@ import {
   getCacheData,
   setRegistrationCache,
   deleteCacheData,
+  getRegistrationCache,
 } from "../utils/cache";
 import { DATA_UDPDATE_INTERVAL } from "../utils/constants";
 
@@ -30,7 +31,7 @@ export const wakatimeRegister = async (
   res.set("Content-Type", "application/json");
 
   // Try for cached data, Query API if not present
-  const [success, _] = await getCacheData(cacheKey);
+  const [success, _] = await getRegistrationCache(cacheKey);
   if (success) {
     res.status(208).json({
       message: "User already registered",
@@ -72,7 +73,7 @@ export const wakatimeUnregister = async (
   res.set("Content-Type", "application/json");
 
   // Try for cached data, Query API if not present
-  const [success, cacheData] = await getCacheData(cacheKey);
+  const [success, cacheData] = await getRegistrationCache(cacheKey);
   if (!success) {
     res.status(400).json({
       message: "User not found.",
@@ -81,7 +82,7 @@ export const wakatimeUnregister = async (
     return;
   }
 
-  const intervalID = cacheData! as NodeJS.Timer;
+  const intervalID = cacheData;
   if (intervalID) {
     clearInterval(intervalID);
   }
@@ -111,7 +112,7 @@ export const wakatimeProfile = async (
   if (!preFlight(req, res)) {
     return;
   }
-  const cacheKey = getCacheKey(req.path, );
+  const cacheKey = getCacheKey(req.path, req.params.username!);
   
   sleepMod = (sleepMod + 2) % 10;
   await sleep(sleepMod);
