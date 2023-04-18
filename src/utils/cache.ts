@@ -62,7 +62,7 @@ export const teardownRedis = async () => {
 
 export const getRegistrationCache = async (
   key: string
-): Promise<[boolean, number | null]> => {
+): Promise<[boolean, string | number | null]> => {
   try {
     const data = await redisClient.get(key);
     if (data == undefined) {
@@ -97,10 +97,10 @@ export const getCacheData = async (
 
 export const setRegistrationCache = async (
   key: string,
-  data: NodeJS.Timer
+  data: string | number
 ): Promise<void> => {
   try {
-      await redisClient.set(key, data[Symbol.toPrimitive]());
+      await redisClient.set(key, data);
     }
   catch (error) {
     !PRODUCTION && console.error(`Error setting cache for ${key}: ${error}`);
