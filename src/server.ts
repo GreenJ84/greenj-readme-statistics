@@ -9,7 +9,7 @@ import cacheControl from "express-cache-controller";
 import { LeetCodeRoutes } from "./routes/leetcode.routes";
 import { GithubRoutes } from "./routes/github.routes";
 import { WakaTimeRoutes } from "./routes/wakatime.routes";
-import { displayModals } from "./routes/display";
+import { serverUtilities } from "./routes/utility.routes";
 
 import { PRODUCTION, ResponseError } from "./utils/constants";
 import { buildRedis, teardownRedis } from "./utils/cache";
@@ -72,7 +72,7 @@ PRODUCTION && app.use(
 LeetCodeRoutes(app);
 GithubRoutes(app);
 WakaTimeRoutes(app);
-displayModals(app);
+serverUtilities(app);
 
 // error handling middleware
 app.use((err: Error, _: Request, res: Response, __: NextFunction) => {
