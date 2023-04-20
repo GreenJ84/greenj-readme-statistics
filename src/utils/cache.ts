@@ -9,6 +9,7 @@ import {
 } from "../leetcode/leetcodeTypes";
 import { GithUserData } from "../github/githubTypes";
 import {
+  DATA_UDPDATE_INTERVAL,
   PRODUCTION,
   PROD_HOST,
   PROD_PORT,
@@ -113,8 +114,17 @@ export const setCacheData = async (
   key: string,
   data: RedisCache
 ): Promise<void> => {
+  const ExpirationBuffer = PRODUCTION
+  ? 2
+  : 1.5;
   try {
-      await redisClient.set(key, flatted.stringify(data));
+    await redisClient.set(key, flatted.stringify(data), {
+      // 3 min development cache lifetime
+      // 16hr production cache lifetime
+      PX: DATA_UDPDATE_INTERVAL * ExpirationBuffer,
+      // Refresh expiration with data refresh
+      XX: true,
+    });
     }
   catch (error) {
     !PRODUCTION && console.error(`Error setting cache for ${key}: ${error}`);
