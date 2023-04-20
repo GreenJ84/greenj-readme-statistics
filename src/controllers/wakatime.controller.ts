@@ -39,6 +39,7 @@ export const wakatimeRegister = async (
   // Start the refresh cycle
   const intervalId = setInterval(() => {
     updateWakaProfile(username);
+    console.log(`Updating Wakatime profile for ${username} at ${new Date().toLocaleString()}`);
   }, DATA_UDPDATE_INTERVAL);
 
   // Cache the users refresh key

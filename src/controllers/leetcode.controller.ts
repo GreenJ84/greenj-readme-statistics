@@ -47,6 +47,7 @@ export const leetcodeRegister = async (req: Request, res: Response) => {
 
   const intervalId = setInterval(() => {
     updateLeetUserProfile(username);
+    console.log(`Updating Leetcode profile for ${username} at ${new Date().toLocaleString()}`);
   }, DATA_UDPDATE_INTERVAL);
 
   await setRegistrationCache(cacheKey, intervalId[Symbol.toPrimitive]())
@@ -111,8 +112,8 @@ export const leetcodeStreakRegister = async (req: Request, res: Response) => {
   });
 
   const intervalId = setInterval(() => {
-    // console.log(intervalId);
     updateLeetUserStreak(req);
+    console.log(`Updating Leetcode streak for ${req.params.username!} at ${new Date().toLocaleString()}`);
   }, DATA_UDPDATE_INTERVAL);
 
   await setRegistrationCache(cacheKey+'reg', intervalId[Symbol.toPrimitive]());

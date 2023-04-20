@@ -46,6 +46,7 @@ export const githubRegister = async (req: Request, res: Response) => {
 
   const intervalId = setInterval(() => {
     updateGithUserProfile(username);
+    console.log(`Updating Github profile for ${username} at ${new Date().toLocaleString()}`);
   }, DATA_UDPDATE_INTERVAL);
 
   await setRegistrationCache(cacheKey, intervalId[Symbol.toPrimitive]());
@@ -112,6 +113,7 @@ export const githubStreakRegister = async (req: Request, res: Response) => {
 
   const intervalId = setInterval(() => {
     updateGithUserStreak(req);
+    console.log(`Updating Github streak profile for ${req.params.username!} at ${new Date().toLocaleString()}`);
   }, DATA_UDPDATE_INTERVAL);
 
   await setRegistrationCache(cacheKey+'reg', intervalId[Symbol.toPrimitive]() );
