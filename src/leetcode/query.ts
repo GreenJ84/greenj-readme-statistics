@@ -131,9 +131,8 @@ export const updateLeetUserProfile = async (
   username: string
 ): Promise<void> => {
   try {
-    await setLeetUserProfile(username).catch((err) => {
-      throw err;
-    });
+    await setLeetUserProfile(username);
+
   } catch (err) {
     if (err instanceof ResponseError) {
       console.error(
@@ -236,10 +235,8 @@ export const updateLeetUserStreak = async (
   req: Request
 ): Promise<void> => {
   try {
-      await setLeetUserStreak(req)
-          .catch((err) => {
-            throw err;
-          });
+    await setLeetUserStreak(req);
+
   } catch (err) {
     if (err instanceof ResponseError) {
       console.error(

@@ -139,16 +139,14 @@ export const updateGithUserProfile = async (
 ) => {
   try {
     await setGithUserProfile(username)
-      .catch((err) => {
-        throw err;
-      });
+
   } catch (err) {
     if (err instanceof ResponseError) {
       console.error(
-        `Error (${err.error}) updating user data for ${username}: ${err.message}`
+        `Error (${err.error}) updating Github profile data for ${username}: ${err.message}`
       );
     } else {
-      console.error(`Error updating user data for ${username}: ${err}`);
+      console.error(`Error updating Github profile data for ${username}: ${err}`);
     }
   }
   return;
@@ -253,19 +251,16 @@ export const updateGithUserStreak = async (
   req: Request
 ) => {
   try {
-    await setGithUserStreak(req)
-      .catch((err) => {
-        throw err;
-      });
-    
+    await setGithUserStreak(req);
+
   } catch (err) {
     if (err instanceof ResponseError) {
       console.error(
-        `Error (${err.error}) updating user data for ${req.params.username}: ${err.message}`
+        `Error (${err.error}) updating Github streak data for ${req.params.username}: ${err.message}`
       );
     } else {
       console.error(
-        `Error updating user data for ${req.params.username}: ${err}`
+        `Error updating Github streak data for ${req.params.username}: ${err}`
       );
     }
   }
