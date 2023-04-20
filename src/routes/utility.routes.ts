@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { renderModalDisplay, serverHealthSuccess } from '../controllers/utility.controller';
 
-export const displayModals = (app: express.Application) => {
+export const serverUtilities = (app: express.Application) => {
     app.get('/', (req: Request, res: Response) => {
         renderModalDisplay(req, res);
     });
