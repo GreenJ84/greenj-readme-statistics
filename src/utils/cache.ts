@@ -122,8 +122,6 @@ export const setCacheData = async (
       // 3 min development cache lifetime
       // 16hr production cache lifetime
       PX: DATA_UDPDATE_INTERVAL * ExpirationBuffer,
-      // Refresh expiration with data refresh
-      XX: true,
     });
     }
   catch (error) {
