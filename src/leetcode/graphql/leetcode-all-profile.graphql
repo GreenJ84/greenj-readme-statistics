@@ -1,17 +1,21 @@
 query ($username: String!) {
+    # All leetCode questions
     allQuestionsCount {
         difficulty
         count
     }
+    # Matched user's data
     matchedUser(username: $username) {
         contributions {
             points
         }
+        # User's profile statistics
         profile {
             starRating
             reputation
             ranking
         }
+        # User submitted questions data
         submitStats {
             acSubmissionNum {
                 difficulty
@@ -19,6 +23,7 @@ query ($username: String!) {
                 submissions
             }
         }
+        # User badge data
         badges {
             id
             displayName
@@ -26,6 +31,7 @@ query ($username: String!) {
             creationDate
         }
     }
+    # User's most recent questions answered
     recentSubmissionList(username: $username, limit: 60) {
         title
         titleSlug

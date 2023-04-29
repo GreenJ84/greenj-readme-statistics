@@ -1,7 +1,11 @@
+
 query {
+    # Daily active questions data
     activeDailyCodingChallengeQuestion {
         date
         link
+        # The question data itself
+        
         question {
             questionId
             boundTopicId
