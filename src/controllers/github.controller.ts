@@ -71,16 +71,15 @@ export const getProfileStats = async (req: Request, res: Response) => {
     return;
   }
 
-  const cacheKey = getCacheKey(req.path, req.params.username!);
+  const username = req.params.username!;
+  const cacheKey = getCacheKey(req.path, username);
 
   const [success, cacheData] = await getCacheData(cacheKey);
   if (!success) {
-    res.set("Content-Type", "application/json");
-    res.status(401).json({
-      message: "User unauthorized. Registration required for API data.",
-      code: "401",
-    });
-    return;
+    await setGithUserProfile(username)
+      .catch((err) => {
+        throw err;
+      });
   }
 
   const data = cacheData as GithUserProfile;
@@ -141,12 +140,10 @@ export const getCommitStreak = async (req: Request, res: Response) => {
 
   const [success, cacheData] = await getCacheData(cacheKey);
   if (!success) {
-    res.set("Content-Type", "application/json");
-    res.status(401).json({
-      message: "User unauthorized. Registration required for API data.",
-      code: "401",
-    });
-    return;
+    await setGithUserStreak(req)
+      .catch((err) => {
+        throw err;
+      });
   }
   const data = cacheData as GithUserStreak;
 
