@@ -98,33 +98,44 @@ export const leetProfilePreQuery = async (username: string): Promise<LeetRawProf
   return data;
 };
 
+let profileQueryInProcess = false;
 export const setLeetUserProfile = async (username: string): Promise<void> => {
-  const queryResponse = await leetProfilePreQuery(username)
-    .catch((err) => {
-      throw err;
-    });
-  
-  const [stats, badges, completion, submission] = leetRawProfileParse(queryResponse);
+  if (profileQueryInProcess[username]) { 
+    // Wait for initial query to have chached data
+    throw new ResponseError("This call occured while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+  }
+  else{
+    profileQueryInProcess[username] = true;
+    const queryResponse = await leetProfilePreQuery(username)
+      .catch((err) => {
+        profileQueryInProcess[username] = false;
+        throw err;
+      });
+    
+    const [stats, badges, completion, submission] = leetRawProfileParse(queryResponse);
 
-  await setCacheData(
-    getCacheKey("url/leetcode/stats", username),
-    stats!
-  )
+    await setCacheData(
+      getCacheKey("url/leetcode/stats", username),
+      stats!
+    )
 
-  await setCacheData(
-    getCacheKey("url/leetcode/badges", username),
-    badges!
-  )
+    await setCacheData(
+      getCacheKey("url/leetcode/badges", username),
+      badges!
+    )
 
-  await setCacheData(
-    getCacheKey("url/leetcode/completion", username),
-    completion!
-  )
+    await setCacheData(
+      getCacheKey("url/leetcode/completion", username),
+      completion!
+    )
 
-  await setCacheData(
-    getCacheKey("url/leetcode/submission", username),
-    submission!
-  )
+    await setCacheData(
+      getCacheKey("url/leetcode/submission", username),
+      submission!
+    )
+  }
+  profileQueryInProcess[username] = false;
+  return;
 }
 
 export const updateLeetUserProfile = async (
@@ -179,55 +190,67 @@ export const leetPreProbe = async (req: Request): Promise<[number[], string]> =>
   return [data.matchedUser.userCalendar.activeYears, csrf_credential];
 };
 
+let streakQueryInProgress = {};
 export const setLeetUserStreak = async (req: Request): Promise<void> => {
-  const parseStreak = leetParseDirect(req);
-
-  const preSet = await leetPreProbe(req).catch((err) => {
-    throw new ResponseError(
-      "Error build probe query for user membership length",
-      err,
-      502
-    );
-  });
-  const [membershipYears, csrf_credential] = preSet;
-  const graphql = gql(
-    fs.readFileSync("src/leetcode/graphql/leetcode-streak.graphql", "utf8")
-  );
-
-  const streakData: LeetUserStreak = {
-    streak: [0, 0],
-    totalActive: 0,
-    mostActiveYear: 0,
-    completion: "0.00",
-    completionActuals: [0, 0],
-  };
-  // Call the universal leetCode querier for each year
-  for (let year of membershipYears) {
-    const data = await leetcodeQuery(
-      {
-        query: graphql,
-        variables: { username: req.params.username!, year: year },
-      },
-      LEET_GRAPHQL_URL,
-      csrf_credential
-    )
-      .then((res) => {
-        return res as LeetRawStreakData;
-      })
+  const username = req.params.username!;
+  if (streakQueryInProgress[username]) {
+    // Wait for initial query to have chached data
+    throw new ResponseError("This call occured while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+  }
+  else {
+    streakQueryInProgress[username] = true;
+    const preSet = await leetPreProbe(req)
       .catch((err) => {
+        streakQueryInProgress[username] = false;
         throw new ResponseError(
-          "Error building LeetCode streak GraphQL query",
+          "Error build probe query for user membership length",
           err,
-          500
+          502
         );
       });
+    const [membershipYears, csrf_credential] = preSet;
+    const graphql = gql(
+      fs.readFileSync("src/leetcode/graphql/leetcode-streak.graphql", "utf8")
+    );
 
-    parseStreak(streakData, data, year);
+    const streakData: LeetUserStreak = {
+      streak: [0, 0],
+      totalActive: 0,
+      mostActiveYear: 0,
+      completion: "0.00",
+      completionActuals: [0, 0],
+    };
+    const parseStreak = leetParseDirect(req);
+    // Call the universal leetCode querier for each year
+    for (let year of membershipYears) {
+      const data = await leetcodeQuery(
+        {
+          query: graphql,
+          variables: { username: req.params.username!, year: year },
+        },
+        LEET_GRAPHQL_URL,
+        csrf_credential
+      )
+        .then((res) => {
+          return res as LeetRawStreakData;
+        })
+        .catch((err) => {
+          streakQueryInProgress[username] = false;
+          throw new ResponseError(
+            "Error building LeetCode streak GraphQL query",
+            err,
+            500
+          );
+        });
+
+      parseStreak(streakData, data, year);
+    }
+    setCacheData(
+      getCacheKey(req.path, req.params.username!),
+      streakData
+    );
   }
-  setCacheData(
-    getCacheKey(req.path, req.params.username!),
-    streakData
-  )
+  streakQueryInProgress[username] = false;
   return;
 };
 
