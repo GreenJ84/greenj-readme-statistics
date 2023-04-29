@@ -110,17 +110,16 @@ export const wakatimeProfile = async (
   if (!preFlight(req, res)) {
     return;
   }
-  const cacheKey = getCacheKey(req.path, req.params.username!);
+  const username = req.params.username!;
+  const cacheKey = getCacheKey(req.path, username);
   
   // Try for cached data, Query API if not present
   const [success, cacheData] = await getCacheData(cacheKey);
   if (!success) {
-    res.set("Content-Type", "application/json");
-    res.status(401).json({
-      message: "User unauthorized. Registration required for API data.",
-      code: "401",
+    await setWakaProfile(username)
+    .catch((err) => {
+      throw err;
     });
-    return;
   }
   const data = cacheData as WakaProfileData;
   
