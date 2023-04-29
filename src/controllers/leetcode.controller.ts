@@ -66,7 +66,8 @@ export const leetcodeRegister = async (req: Request, res: Response) => {
   }
   return;
 };
-// Main Controller for GitHub
+
+// Main Controller for LeetCode
 export const leetcodeStats = async (
   req: Request,
   res: Response
@@ -75,16 +76,15 @@ export const leetcodeStats = async (
   if (!preFlight(req, res)) {
     return;
   }
-  const cacheKey = getCacheKey(req.path, req.params.username!);
+  const username = req.params.username!;
+  const cacheKey = getCacheKey(req.path, username);
 
   const [success, cacheData] = await getCacheData(cacheKey);
   if (!success) {
-    res.set("Content-Type", "application/json");
-    res.status(401).json({
-      message: "User unauthorized. Registration required for API data.",
-      code: "401",
-    });
-    return;
+    await setLeetUserProfile(username)
+      .catch((err) => {
+        throw err;
+      });
   }
   // console.log(success, cacheData);
   const data = cacheData as LeetUserProfile;
@@ -145,12 +145,10 @@ export const leetcodeStreak = async (
 
   const [success, cacheData] = await getCacheData(cacheKey);
   if (!success) {
-    res.set("Content-Type", "application/json");
-    res.status(401).json({
-      message: "User unauthorized. Registration required for API data.",
-      code: "401",
-    });
-    return;
+    await setLeetUserStreak(req)
+      .catch((err) => {
+        throw err;
+      });
   }
   const data = cacheData as LeetUserStreak;
 
