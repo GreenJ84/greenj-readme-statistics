@@ -46,28 +46,38 @@ export const queryWakatime = async (
   return response;
 };
 
+let queryInProcess = {};
 export const setWakaProfile = async (username: string): Promise<void> => {
+  if (queryInProcess[username]) { 
+    // Wait for initial query to have chached data
+    throw new ResponseError("This call occured while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+  }
+  queryInProcess[username] = true;
   // Query WakaTime api
-  const queryRepsonse = await queryWakatime(username)
-    .catch(err => {
-      throw err;
-    });
-  
-  const [insights, languages, stats] = wakaRawParse(queryRepsonse);
-  await setCacheData(
-    getCacheKey('url/wakatime/insights', username),
-    insights
-  );
-
-  await setCacheData(
-    getCacheKey('url/wakatime/languages', username),
-    languages
-  );
-
-  await setCacheData(
-    getCacheKey('url/wakatime/stats', username),
-    stats
-  );
+  if (!queryInProcess[username]){
+    const queryRepsonse = await queryWakatime(username)
+      .catch(err => {
+        queryInProcess[username] = false;
+        throw err;
+      });
+    
+    const [insights, languages, stats] = wakaRawParse(queryRepsonse);
+    await setCacheData(
+      getCacheKey('url/wakatime/insights', username),
+      insights
+    );
+      
+    await setCacheData(
+      getCacheKey('url/wakatime/languages', username),
+      languages
+    );
+      
+    await setCacheData(
+      getCacheKey('url/wakatime/stats', username),
+      stats
+    );
+    queryInProcess[username] = false;
+  }
   return;
 }
 
