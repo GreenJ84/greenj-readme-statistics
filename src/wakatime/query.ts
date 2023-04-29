@@ -52,9 +52,9 @@ export const setWakaProfile = async (username: string): Promise<void> => {
     // Wait for initial query to have chached data
     throw new ResponseError("This call occured while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
   }
-  queryInProcess[username] = true;
   // Query WakaTime api
-  if (!queryInProcess[username]){
+  else {
+    queryInProcess[username] = true;
     const queryRepsonse = await queryWakatime(username)
       .catch(err => {
         queryInProcess[username] = false;
