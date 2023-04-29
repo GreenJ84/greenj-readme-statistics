@@ -106,31 +106,41 @@ export const preQery = async (
   return data;
 };
 
+let profileQueryInProgress: Record<string, Boolean> = {};
 export const setGithUserProfile = async (username: string): Promise<void> => {
-  let variables = { login: username };
-  const queryResponse = await preQery(variables)
-    .then((data) => {
-      return data as GithRawProfileData;
-    })
-    .catch((err) => {
-      throw err;
-    });
-  
-  const [stats, languages] = githRawParse(queryResponse);
-  await setCacheData(
-    getCacheKey('url/github/stats', username),
-    stats
-  );
+  if (profileQueryInProgress[username]) {
+    throw new ResponseError("This call occured while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+  } else {
+    profileQueryInProgress[username] = true;
 
-  await setCacheData(
-    getCacheKey('url/github/languages', username),
-    languages
-  );
+    let variables = { login: username };
+    const queryResponse = await preQery(variables)
+      .then((data) => {
+        return data as GithRawProfileData;
+      })
+      .catch((err) => {
+        profileQueryInProgress[username] = false;
+        throw err;
+      });
+    
+    const [stats, languages] = githRawParse(queryResponse);
+    await setCacheData(
+      getCacheKey('url/github/stats', username),
+      stats
+    );
 
-  await setCacheData(
-    getCacheKey('url/github/trophies', username),
-    stats
-  );
+    await setCacheData(
+      getCacheKey('url/github/languages', username),
+      languages
+    );
+
+    await setCacheData(
+      getCacheKey('url/github/trophies', username),
+      stats
+    );
+  }
+
+  profileQueryInProgress[username] = false;
   return;
 }
 
@@ -186,64 +196,74 @@ const streakProbe = async (
   ];
 };
 
+let streakQueryInProgress: Record<string, Boolean> = {};
 export const setGithUserStreak = async (req: Request): Promise<void> => {
-  // Query user data for Creation Date and Years of membership
-  const [created, years] = await streakProbe(req.params.username!).catch(
-    (err) => {
-      throw err;
-    }
-  );
-  // Start data with defaults sets
-  let streak: GithUserStreak = {
-    total: 0,
-    totalText: "Total Contributions",
-    totalRange: [
-      `${new Date(created as string).toISOString().slice(0, 10)}`,
-      `${new Date().toISOString().slice(0, 10)}`,
-    ],
-    curr: 0,
-    currText: "Current Streak",
-    currDate: ["", ""],
-    longest: 0,
-    longestText: "Longest Streak",
-    longestDate: ["", ""]
-  };
-  // starting template variables for query
-  const { username } = req.params;
-  let variables = { login: username, start: "", end: "" };
+  const username: string = req.params.username!;
 
-  // Call data for each year
-  for (let year of years) {
-    // If before year is created year, set start to create data else year start
-    if (year == new Date(created as string).getFullYear()) {
-      variables.start =
-        new Date(created as string).toISOString().slice(0, 19) + "Z";
-    } else {
-      variables.start = `${year}-01-01T00:00:00Z`;
-    }
-    // If year is this year, set end to current date else end of year
-    if (year == new Date().getFullYear()) {
-      variables.end = new Date().toISOString().slice(0, 19) + "Z";
-    } else {
-      variables.end = `${year}-12-31T00:00:00Z`;
-    }
-    // Query data for the specific yar
-    const data = await preQery(variables, "streak")
-      .then((data) => {
-        return data as GithRawStreakData;
-      })
-      .catch((err) => {
+  if (streakQueryInProgress[username]) {
+    throw new ResponseError("This call occured while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+  } else {
+    streakQueryInProgress[username] = true;
+    // Query user data for Creation Date and Years of membership
+    const [created, years] = await streakProbe(username).catch(
+      (err) => {
+        streakQueryInProgress[username] = false;
         throw err;
-      });
+      }
+    );
+    // Start data with defaults sets
+    let streak: GithUserStreak = {
+      total: 0,
+      totalText: "Total Contributions",
+      totalRange: [
+        `${new Date(created as string).toISOString().slice(0, 10)}`,
+        `${new Date().toISOString().slice(0, 10)}`,
+      ],
+      curr: 0,
+      currText: "Current Streak",
+      currDate: ["", ""],
+      longest: 0,
+      longestText: "Longest Streak",
+      longestDate: ["", ""]
+    };
+    // starting template variables for query
+    let variables = { login: username, start: "", end: "" };
 
-    // Parse that data with our current stats to update
-    streakParse(streak, data);
+    // Call data for each year
+    for (let year of years) {
+      // If before year is created year, set start to create data else year start
+      if (year == new Date(created as string).getFullYear()) {
+        variables.start =
+          new Date(created as string).toISOString().slice(0, 19) + "Z";
+      } else {
+        variables.start = `${year}-01-01T00:00:00Z`;
+      }
+      // If year is this year, set end to current date else end of year
+      if (year == new Date().getFullYear()) {
+        variables.end = new Date().toISOString().slice(0, 19) + "Z";
+      } else {
+        variables.end = `${year}-12-31T00:00:00Z`;
+      }
+      // Query data for the specific yar
+      const data = await preQery(variables, "streak")
+        .then((data) => {
+          return data as GithRawStreakData;
+        })
+        .catch((err) => {
+          streakQueryInProgress[username] = false;
+          throw err;
+        });
+
+      // Parse that data with our current stats to update
+      streakParse(streak, data);
+    }
+
+    await setCacheData(
+      getCacheKey(req.path, username),
+      streak
+    )
   }
-
-  await setCacheData(
-    getCacheKey(req.path, req.params.username!),
-    streak
-  )
+  streakQueryInProgress[username] = false;
   return;
 };
 
