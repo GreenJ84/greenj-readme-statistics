@@ -226,7 +226,7 @@ export const setLeetUserStreak = async (req: Request): Promise<void> => {
       const data = await leetcodeQuery(
         {
           query: graphql,
-          variables: { username: req.params.username!, year: year },
+          variables: { username: username, year: year },
         },
         LEET_GRAPHQL_URL,
         csrf_credential
@@ -246,7 +246,7 @@ export const setLeetUserStreak = async (req: Request): Promise<void> => {
       parseStreak(streakData, data, year);
     }
     setCacheData(
-      getCacheKey(req.path, req.params.username!),
+      getCacheKey(req.path, username),
       streakData
     );
   }
