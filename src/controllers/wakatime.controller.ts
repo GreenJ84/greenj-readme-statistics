@@ -117,9 +117,9 @@ export const wakatimeProfile = async (
   const [success, cacheData] = await getCacheData(cacheKey);
   if (!success) {
     await setWakaProfile(username)
-    .catch((err) => {
-      throw err;
-    });
+      .catch((err) => {
+        throw err;
+      });
   }
   const data = cacheData as WakaProfileData;
   
