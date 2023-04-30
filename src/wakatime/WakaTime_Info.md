@@ -1,5 +1,5 @@
 <h1 align="center"> Wakatime Development Statistics </h1>
-<blockquote align="center">WakaTime is committed to making time tracking fully automatic for every programmer. By creating open source plugins for IDEs and text editors, we give powerful insights about how you code, and let you get back to what matters most: creating amazing software.</blockquote>
+<blockquote align="center">WakaTime is a productivity tracking tool designed specifically for developers, committed to making time tracking fully automatic for every programmer. It integrates with a variety of development tools, such as editors and IDEs, to track the time that developers spend on various coding tasks and provide detailed insights into developers' coding habits. The insights include the languages and frameworks they use most frequently, how much time they spend on specific tasks, and how productive they are overall to helps developers identify areas where they can improve their productivity and get back to what matters most: creating amazing software.</blockquote>
 </br>
 
 ## Quick implementations
