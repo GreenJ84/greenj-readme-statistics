@@ -65,7 +65,7 @@ const leetCompletionParse = (data: LeetRawProfileData): LeetUserCompletion => {
     const totalMedium = data.allQuestionsCount[2]!.count;
     const easy = data.matchedUser.submitStats.acSubmissionNum[1]!.count;
     const totalEasy = data.allQuestionsCount[1]!.count;
-    const acceptance = (all / data.matchedUser.submitStats.acSubmissionNum[0]!.submissions * 100).toFixed(2);
+    const acceptance = (data.matchedUser.submitStats.acSubmissionNum[0]!.submissions / data.matchedUser.submitStats.totalSubmissionNum[0]!.submissions * 100).toFixed(2);
 
 
 
