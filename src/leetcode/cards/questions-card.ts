@@ -10,7 +10,6 @@ export const leetCompletionCard = (req: Request, data: LeetUserCompletion): stri
         ring,
         score,
         stats,
-        sideStat,
         textMain,
         textSub,
         // Card variables
@@ -19,9 +18,6 @@ export const leetCompletionCard = (req: Request, data: LeetUserCompletion): stri
         
     if (ring !== undefined) {
         theme.detailMain = ring as string;
-    }
-    if (sideStat !== undefined) {
-        theme.detailSub = sideStat as string;
     }
     if (score !== undefined) {
         theme.statsMain = score as string;
