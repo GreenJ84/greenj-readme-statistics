@@ -11,7 +11,6 @@ export const leetSubmissionsCard = (req: Request, data: LeetUserSubmissions) => 
         sideStat,
         textMain,
         textSub,
-        line,
         // Card variables
         title,
     } = req.query;
@@ -27,9 +26,6 @@ export const leetSubmissionsCard = (req: Request, data: LeetUserSubmissions) => 
     }
     if (textSub !== undefined) {
         theme.textSub = textSub as string;
-    }
-    if (line !== undefined) {
-        theme.stroke = line as string;
     }
 
 
