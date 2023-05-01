@@ -57,6 +57,11 @@ export interface LeetRawProfileData {
         count: number;
         submissions: number;
       }[];
+      totalSubmissionNum: {
+        difficulty: string;
+        count: number;
+        submissions: number;
+      }[];
     };
     badges: {
       id: string;
