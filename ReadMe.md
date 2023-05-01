@@ -1,21 +1,25 @@
-# GreenJ ReadMe Statistics
+# 🌟 GreenJ ReadMe Statistics 🌟
+
+This is an Express server application built to query the personal profile data of a User's from [GitHub](https://www.github.com), [LeetCode](https://www.leetcode.com), and [WakaTime](https://www.wakatime.com) platforms. The server stores queried data in a Redis cloud database for 16 hrs and provides the ability to receive these statistics in an aesthetic SVG modal. This server also has an option for a User to register on each route to have the statistics refreshed on an 8hr interval.
 
 This project is utilizes: TypeScript, JSON and GraphQL languages along with Node.js, Express.js, Apollo Client, Format.js, and Helmet.js libraries.
 
 This project has a cloud Redis database and is deployed as a Docker container on [Render](https://render.com/) cloud hosting
 
-## Quick implementations
+## 🔍 Quick Image implementations
+
+```
+[Image Description](https://greenj-readme-stats.onrender.com/<platform>/<route>/<username>)
+```
+
 platform - Platforms supported are Github, Leetcode, and Wakatime
 
 route - Each platform has specific statistics that it can show with a route for each stat type
 
 username - The username requested is based on the Username for the platform you are trying to reach. If you have diffeent usernames per platform you will need the corresponding username with the correct platform you are requesting. 
 
-```
-[Image Description](https://greenj-readme-stats.onrender.com/<platform>/<route>/<username>)
-```
 
-## Advanced Image Implimentations:
+## 🔬 Advanced Image Implimentations:
 ```
 <picture>
     <source 
@@ -33,7 +37,7 @@ username - The username requested is based on the Username for the platform you 
 </picture>
 ```
 
-## Descriptions
+## 📖 Descriptions
 <p>
     ⚡ GitHub </br>
     - GitHub is a web-based platform that provides a powerful set of tools for software developers to collaborate on projects. It is primarily used for version control, which means that it helps developers keep track of changes made to code over time. With GitHub, developers can easily contribute to open-source projects, create and manage repositories - public or private depending on the developer's preference, and collaborate with other developers around the world.
@@ -50,11 +54,15 @@ username - The username requested is based on the Username for the platform you 
     - Find out more about the details of the WakaTime and the routes for it on this API <a href="./src/wakatime/WakaTime_Info.md">here</a>
 </p>
 
-## Usage
+## 🔨 Usage
 
-This API is meant to be a simple development statistics display for User's looking to attatch to personal profiles
+This API is meant to be a simple development statistics display for User's looking to attatch their own development statistics to their personal profiles.
 
-## License
+Each individual platform has an informational markdown sheet providing further details for utilizations and optimizations for its own specific routes and modals. Use the links following to find the Informational Markdown pages for each platform: [GitHub](./src/github/Github_Info.md), [LeetCode](./src/leetcode/LeetCode_Info.md), [WakaTime](./src/wakatime/WakaTime_Info.md)
+
+Global theme options, color options, and parameter options common to all routes and modals can be found [here](./src//Server_Details.md)
+
+## 🪪 License
 This project is licensed under the MIT License - see the [LICENSE.md](/License.md) file for details.
 
 The MIT License is a permissive license that allows users to use, copy, modify, merge, publish, distribute, and sublicense the software, provided that they include the original copyright notice and disclaimer. It also provides an implied warranty of fitness for a particular purpose and limits the liability of the software's authors and contributors.
@@ -63,7 +71,9 @@ By using or contributing to this project, you agree to be bound by the terms and
 
 If you have any questions about the license or would like to use this software under a different license, please contact the project maintainers.
 
-## Local Development
+## 💻 Local Development
+
+*** A [.env file]() and a [local Redis connection](https://redis.io/docs/getting-started/) ( or it's replacement/removal) will be required to functionally run the application ***
 
 To run the server locally, you need to download the code from this repository to your local maching and then enter the project folder: 
 ```
@@ -80,7 +90,43 @@ npm run dev
 
 This will start the server using ts-node and you will be able to access it at http://localhost:8000 (Note: If you intend to contribute to this project, plese first view the [Contribution Guide](https://github.com/GreenJ84/GreenJ84/blob/main/profile_contributions.md.md#profile-contributions-guidline))
 
-## Deployment
+## 🌍 Deployment
+
+*** A [.env file]() and a [cloud Redis connection](https://app.redislabs.com/) (or it's replacement/removal) will be required to functionally deploy the application ***
+
+If you can, it is preferable to host the files on your own server.
+
+Doing this can lead to better uptime and more control over customization (you can modify the code for your usage).
+
+There is two options for deploying these TypeScript server files:
+
+Node.js Server:
+- These files can be deployed on their own with Node itself. You can find defferent hosting platforms to accomodate an Express Node server deployemen such as [Heroku](www.heroku.com), [A2 Hosting](www.A2Hosting.com), or [HostGator](www.HostGator.com) and more. With some minor modification, this server can also be planted into the /api directory of a Next.js application and deployed to [Vercel](www.vercel.com).
+
+Node runtime commands are:
+
+- Build the JavaScript files
+```
+npm run build
+```
+- Run the JavaSript Server
+```
+npm run start
+```
+
+Docker container (my current deployment): 
+- These files can be deployed as a Docker container using the provided Dockerfile in the repository that runs on the latest Node.js Image. Great hosting sites for docker containers include: [Render](https://render.com/)(My current deployment platform), [AWS](https://aws.amazon.com/getting-started/hands-on/deploy-docker-containers/), [Heroku](www.heroku.com), [Sloppy.io](Sloppy.io) and much more.
+
+Container runtime commands are the following:
+- Build the docker container
+```
+docker build -t image-name .
+```
+
+- Run the docker container
+```
+docker run -p 8000:8000 -d image-name
+```
 
 
 ## 🤗 Contributing
@@ -105,7 +151,7 @@ Make sure your request is meaningful, thought out and you have tested the app lo
   </a>
 </p>
 
-[☕ Buy me a coffee]()
+<!-- [☕ Buy me a coffee]() -->
 
 ---
 
