@@ -17,6 +17,11 @@ query ($username: String!) {
                 count
                 submissions
             }
+            totalSubmissionNum {
+                difficulty
+                count
+                submissions
+            }
         }
         badges {
             id
