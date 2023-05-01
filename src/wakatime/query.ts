@@ -46,7 +46,7 @@ export const queryWakatime = async (
   return response;
 };
 
-let queryInProcess = {};
+let queryInProcess: Record<string, boolean> = {};
 export const setWakaProfile = async (username: string): Promise<void> => {
   if (queryInProcess[username]) { 
     // Wait for initial query to have chached data

@@ -98,7 +98,7 @@ export const leetProfilePreQuery = async (username: string): Promise<LeetRawProf
   return data;
 };
 
-let profileQueryInProcess = false;
+let profileQueryInProcess: Record<string, boolean> = {};
 export const setLeetUserProfile = async (username: string): Promise<void> => {
   if (profileQueryInProcess[username]) { 
     // Wait for initial query to have chached data
@@ -190,7 +190,7 @@ export const leetPreProbe = async (req: Request): Promise<[number[], string]> =>
   return [data.matchedUser.userCalendar.activeYears, csrf_credential];
 };
 
-let streakQueryInProgress = {};
+let streakQueryInProgress: Record<string, boolean> = {};
 export const setLeetUserStreak = async (req: Request): Promise<void> => {
   const username = req.params.username!;
   if (streakQueryInProgress[username]) {
