@@ -8,7 +8,7 @@ import { Themes, ThemeType } from "./themes";
 import { Colors } from "./colors";
 import xss from "xss";
 import { PRODUCTION } from "./constants";
-import { checkAllowlistRequest } from "./allowlist";
+// import { checkAllowlistRequest } from "./allowlist";
 
 export function sanitizeText(value: string): string {
   // Match letters, digits, underscores, and spaces
@@ -165,15 +165,16 @@ export const preFlight = (req: Request, res: Response): boolean => {
     return false;
   }
 
-  if (!checkAllowlistRequest(req.params.username!)){
-    res.status(403).send({
-      message:
-        "Username found on API Call is not Authorized. Submit username for approval.",
-      error: "Access not granted",
-      error_code: 403,
-    });
-    return false;
-  }
+  //! Allowlist implementation defined if necessary
+  // if (!checkAllowlistRequest(req.params.username!)){
+  //   res.status(403).send({
+  //     message:
+  //       "Username found on API Call is not Authorized. Submit username for approval.",
+  //     error: "Access not granted",
+  //     error_code: 403,
+  //   });
+  //   return false;
+  // }
   sanitizeQuery(req);
   return true;
 };
