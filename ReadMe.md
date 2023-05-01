@@ -73,7 +73,7 @@ If you have any questions about the license or would like to use this software u
 
 ## 💻 Local Development
 
-*** A [.env file]() and a [local Redis connection](https://redis.io/docs/getting-started/) ( or it's replacement/removal) will be required to functionally run the application ***
+*** A [.env file](https://github.com/GreenJ84/github-readme-streak-typescript/blob/main/src/Server_Details.md#environmental-variables-configuration) and a [local Redis connection](https://redis.io/docs/getting-started/) ( or it's replacement/removal) will be required to functionally run the application ***
 
 To run the server locally, you need to download the code from this repository to your local maching and then enter the project folder: 
 ```
@@ -92,7 +92,7 @@ This will start the server using ts-node and you will be able to access it at ht
 
 ## 🌍 Deployment
 
-*** A [.env file]() and a [cloud Redis connection](https://app.redislabs.com/) (or it's replacement/removal) will be required to functionally deploy the application ***
+*** A [.env file](https://github.com/GreenJ84/github-readme-streak-typescript/blob/main/src/Server_Details.md#environmental-variables-configuration) and a [cloud Redis connection](https://app.redislabs.com/) (or it's replacement/removal) will be required to functionally deploy the application ***
 
 If you can, it is preferable to host the files on your own server.
 
