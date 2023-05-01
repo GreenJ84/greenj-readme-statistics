@@ -1,6 +1,5 @@
 <h1 align="center"> Github Development Statistics </h1>
-<blockquote align="center"> GitHub is a web-based platform that provides a powerful set of tools for software developers to collaborate on projects. It is primarily used for version control, which means that it helps developers keep track of changes made to code over time. With GitHub, developers can easily contribute to open-source projects, create and manage repositories - public or private depending on the developer's preference, and collaborate with other developers around the world.
-</blockquote>
+<blockquote align="center"> GitHub is a web-based platform that provides a powerful set of tools for software developers to collaborate on projects. It is primarily used for version control, which means that it helps developers keep track of changes made to code over time. With GitHub, developers can easily contribute to open-source projects, create and manage repositories - public or private depending on the developer's preference, and collaborate with other developers around the world.</blockquote>
 </br>
 
 ## Quick implementations
