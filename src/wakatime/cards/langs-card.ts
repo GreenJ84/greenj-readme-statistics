@@ -178,7 +178,7 @@ export const wakaLanguagesCard = (req: Request, data: WakaLang): string => {
                     transform="translate(380, 75)"
                 >
                     <!-- Percentage Chart -->
-                    <circle r="81" cx="0" cy="0" fill="${theme.stroke}"/>
+                    <circle r="84" cx="0" cy="0" fill="${theme.stroke}"/>
                         ${data.languages.slice(0, 6).map((lang) => {
                           let off = pieOffset;
                           pieOffset += lang.percent;
