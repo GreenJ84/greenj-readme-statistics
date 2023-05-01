@@ -7,7 +7,7 @@
     "dev": "ts-node src/server.ts",
     "test": "jest",
     "build": "tsc",
-    "start": "node dist/server.js 2>&1 | tee -a app.log"
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
