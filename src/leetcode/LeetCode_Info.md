@@ -34,10 +34,11 @@ Here are basic Markdown implementations of the LeetCode routes image rendering
 </picture>
 ```
 
+<br/><br/><br/>
 
 ## Route Details
 
-<br/><br/><br/>
+<br/><br/>
 
 <h3 align="center">⚡ Leetcode Profile Stats ⚡</h3>
 <p align="center">
@@ -71,34 +72,38 @@ Here are basic Markdown implementations of the LeetCode routes image rendering
             <br/>
             &emsp;- This optional parameter allows for User's to provide a custom title to the SVG. Please provide the title in Snake_case with your prefered capitilzations. (Ex. GreenJ84's_WakaTime_Insights -> GreenJ84's WakaTime Insights) 
         </li>
+        <br/>
+        &emsp;&emsp;&emsp;*** Please provide the color value for the following parameters as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
+        <br/><br/>
         <li>
-            ring:
-            &emsp;-
+            textMain:
+            <br/>
+            &emsp;- This optional parameter allows for the User to provide a color for the main title of the modal.
         </li>
         <li>
-            icons:
+            ring:
             <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the ring detail wrapping the overall letter grade score provided.
         </li>
         <li>
             score:
             <br/>
-            &emsp;-
-        </li>
-        <li>
-            stats:
-            <br/>
-            &emsp;-
-        </li>
-        <li>
-            textMain:
-            <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the value of the overall letter grade score provided.
         </li>
         <li>
             textSub:
             <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for all of the titles of each profile statistics category.
+        </li>
+        <li>
+            icons:
+            <br/>
+            &emsp;- This optional parameter allows for the User to provide a color for all the profile statistics category icons.
+        </li>
+        <li>
+            stats:
+            <br/>
+            &emsp;- This optional parameter allows for the User to provide a color for all of the values of each profile statistics category.
         </li>
     </ul>
 </p>
@@ -137,6 +142,9 @@ Here are basic Markdown implementations of the LeetCode routes image rendering
             <br/>
             &emsp;- This optional parameter allows for User's to provide a custom title to the SVG. Please provide the title in Snake_case with your prefered capitilzations. (Ex. GreenJ84's_WakaTime_Insights -> GreenJ84's WakaTime Insights) 
         </li>
+        <br/>
+        &emsp;&emsp;&emsp;*** Please provide the color value for the following parameters as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
+        <br/><br/>
     </ul>
 </p> -->
 
@@ -174,35 +182,33 @@ Here are basic Markdown implementations of the LeetCode routes image rendering
             <br/>
             &emsp;- This optional parameter allows for User's to provide a custom title to the SVG. Please provide the title in Snake_case with your prefered capitilzations. (Ex. GreenJ84's_WakaTime_Insights -> GreenJ84's WakaTime Insights) 
         </li>
+        <br/>
+        &emsp;&emsp;&emsp;*** Please provide the color value for the following parameters as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
+        <br/><br/>
+        <li>
+            textMain:
+            <br/>
+            &emsp;- This optional parameter allows for the User to provide a color for the main title of the modal and the title of the modal's main statitstic, the acceptance percentage.
+        </li>
         <li>
             ring:
             <br/>
-            &emsp;- 
+            &emsp;- This optional parameter allows for the User to provide a color for the ring detail wrapping the modal's main statitstic, the acceptance percentage.
         </li>
         <li>
             score:
             <br/>
-            &emsp;- 
-        </li>
-        <li>
-            stats:
-            <br/>
-            &emsp;- 
-        </li>
-        <li>
-            sideStat:
-            <br/>
-            &emsp;- 
-        </li>
-        <li>
-            textMain:
-            <br/>
-            &emsp;- 
+            &emsp;- This optional parameter allows for the User to provide a color for the value of the the modal's main statitstic, the acceptance percentage.
         </li>
         <li>
             textSub:
             <br/>
-            &emsp;- 
+            &emsp;- This optional parameter allows for the User to provide a color for all of the titles of each questions level grouping and the total questions available for the group.
+        </li>
+        <li>
+            stats:
+            <br/>
+            &emsp;- This optional parameter allows for the User to provide a color for all of the User's completed question totals for each questions level grouping.
         </li>
     </ul>
 </p>
@@ -241,30 +247,27 @@ Here are basic Markdown implementations of the LeetCode routes image rendering
             <br/>
             &emsp;- This optional parameter allows for User's to provide a custom title to the SVG. Please provide the title in Snake_case with your prefered capitilzations. (Ex. GreenJ84's_WakaTime_Insights -> GreenJ84's WakaTime Insights) 
         </li>
+        <br/>
+        &emsp;&emsp;&emsp;*** Please provide the color value for the following parameters as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
+        <br/><br/>
+        <li>
+            textMain:
+            <br/>
+            &emsp;- This optional parameter allows for the User to provide a color for the main title of the modal.
+        </li>
         <li>
             question:
             <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the title of each of the recent questions listed.
         </li>
         <li>
             sideStat:
             <br/>
-            &emsp;-
-        </li>
-        <li>
-            textMain:
-            <br/>
-            &emsp;-
-        </li>
+            &emsp;- This optional parameter allows for the User to provide a color for all of the names of the languages used to complete the corresponding questions.
         <li>
             textSub:
             <br/>
-            &emsp;-
-        </li>
-        <li>
-            line:
-            <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the sub-text within the modal (" - Completed in: ").
         </li>
     </ul>
 </p>
@@ -303,40 +306,43 @@ Here are basic Markdown implementations of the LeetCode routes image rendering
             <br/>
             &emsp;- This optional parameter allows for User's to provide a custom title to the SVG. Please provide the title in Snake_case with your prefered capitilzations. (Ex. GreenJ84's_WakaTime_Insights -> GreenJ84's WakaTime Insights) 
         </li>
-        <li>
-            ring:
-            <br/>
-            &emsp;-
-        </li>
-        <li>
-            fire:
-            <br/>
-            &emsp;-
-        </li>
-        <li>
-            currStreak:
-            <br/>
-            &emsp;-
-        </li>
-        <li>
-            sideStat:
-            <br/>
-            &emsp;-
-        </li>
+        <br/>
+        &emsp;&emsp;&emsp;*** Please provide the color value for the following parameters as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
+        <br/><br/>
         <li>
             textMain:
             <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the main title of the modal and the title of the modal's main, Longest Activity streak, statistic.
         </li>
         <li>
-            textSub:
+            ring
             <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the ring detail wrapping the main, Longest Activity streak, statistic.
         </li>
         <li>
-            dates:
+            fire
             <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the fire detail that rests above the main, Longest Activity streak, statistic.
+        </li>
+        <li>
+            currStreak
+            <br/>
+            &emsp;- This optional parameter allows for the User to provide a color for the value of modal's main, Longest Activity streak, statistic.
+        </li>
+        <li>
+            sideStat
+            <br/>
+            &emsp;- This optional parameter allows for the User to provide a color for the title of the two side statistics, total development time and best development day statisctics.
+        </li>
+        <li>
+            textSub
+            <br/>
+            &emsp;- This optional parameter allows for the User to provide a color for the title of the two side statistics, total active days and total platform completion statistics.
+        </li>
+        <li>
+            dates
+            <br/>
+            &emsp;- This optional parameter allows for the User to provide a color for the sub-title of all the platform activity statistics (the dates, years, and question totals provided).
         </li>
     </ul>
 </p>
