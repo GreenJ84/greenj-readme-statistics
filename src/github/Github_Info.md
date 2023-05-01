@@ -70,35 +70,37 @@ Here are basic Markdown implementations of the github routes image rendering
             <br/>
             &emsp;- This optional parameter allows for User's to provide a custom title to the SVG. Please provide the title in Snake_case with your prefered capitilzations. (Ex. GreenJ84's_WakaTime_Insights -> GreenJ84's WakaTime Insights) 
         </li>
+        <br/>
+        *** Please provide the color value for parameters as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
+        <li>
+            textMain:
+            <br/>
+            &emsp;- This optional parameter allows for the User to provide a color for the main title of the modal.
+        </li>
         <li>
             ring:
             <br/>
-            &emsp;-
-        </li>
-        <li>
-            icons:
-            <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the ring detail wrapping the overall letter grade score provided.
         </li>
         <li>
             score:
             <br/>
-            &emsp;-
-        </li>
-        <li>
-            stats:
-            <br/>
-            &emsp;-
-        </li>
-        <li>
-            textMain:
-            <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the value of the overall letter grade score provided.
         </li>
         <li>
             textSub:
             <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for all of the titles of each statistics catergory.
+        </li>
+        <li>
+            icons:
+            <br/>
+            &emsp;- This optional parameter allows for the User to provide a color for all the statistics category icons.
+        </li>
+        <li>
+            stats:
+            <br/>
+            &emsp;- This optional parameter allows for the User to provide a color for all of the values of each statistics catergory.
         </li>
     </ul>
 </p>
@@ -137,6 +139,8 @@ Here are basic Markdown implementations of the github routes image rendering
             <br/>
             &emsp;- This optional parameter allows for User's to provide a custom title to the SVG. Please provide the title in Snake_case with your prefered capitilzations. (Ex. GreenJ84's_WakaTime_Insights -> GreenJ84's WakaTime Insights) 
         </li>
+        <br/>
+        *** Please provide the color value as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
     </ul>
 </p> -->
 
@@ -175,20 +179,23 @@ Here are basic Markdown implementations of the github routes image rendering
             <br/>
             &emsp;- This optional parameter allows for User's to provide a custom title to the SVG. Please provide the title in Snake_case with your prefered capitilzations. (Ex. GreenJ84's_WakaTime_Insights -> GreenJ84's WakaTime Insights) 
         </li>
-        <li>
-            stats:
-            <br/>
-            &emsp;-
-        </li>
+        <br/>
+         *** All Development language markers and pie section colors are based off of GitHub's language color pairings ***
+        *** Please provide the color value for parameters as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
         <li>
             textMain:
             <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the main title of the modal.
         </li>
         <li>
             textSub:
             <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the title of each development language.
+        </li>
+        <li>
+            stats:
+            <br/>
+            &emsp;- This optional parameter allows for the User to provide a color for the percentage statistic of each development language.
         </li>
     </ul>
 </p>
@@ -228,40 +235,42 @@ Here are basic Markdown implementations of the github routes image rendering
             <br/>
             &emsp;- This optional parameter allows for User's to provide a custom title to the SVG. Please provide the title in Snake_case with your prefered capitilzations. (Ex. GreenJ84's_WakaTime_Insights -> GreenJ84's WakaTime Insights) 
         </li>
+        <br/>
+        *** Please provide the color value for parameters as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
+        <li>
+            textMain:
+            <br/>
+            &emsp;- This optional parameter allows for the User to provide a color for the main title of the modal and the title of the modal's main current development streak statistic.
+        </li>
         <li>
             ring
             <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the ring detail wrapping the main current development streak statistic.
         </li>
         <li>
             fire
             <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the fire detail that rests above the main current development streak statistic.
         </li>
         <li>
             currStreak
             <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the value of modal's main statistic title, current development streak.
         </li>
         <li>
             sideStat
             <br/>
-            &emsp;-
-        </li>
-        <li>
-            textMain
-            <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the title of the two side statistics, total development time and best development day statisctics.
         </li>
         <li>
             textSub
             <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the title of the two side statistics, total commit contributions and longest commit streak statisctics.
         </li>
         <li>
             dates
             <br/>
-            &emsp;-
+            &emsp;- This optional parameter allows for the User to provide a color for the sub-title of all the development statistics (the dates provided).
         </li>
     </ul>
 </p>
