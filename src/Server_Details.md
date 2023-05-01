@@ -15,9 +15,35 @@ borderRadius: This parameter can be passed as a valid border radius integer valu
 *** Locale is a parameter not yet utilized inside of this server. It is intended to provide translations to the default phrases on the modals in the future. If you are multilingual and would love to help create translations for the different default modal phrases please reach out to leat me know. Either through my socials or by creating an issue here ***
 locale: This parameter can be passed as a locale string, with language, script, and regions parts separated by hyphens. The default locale value is en-US. (Ex. zh_Hans_CN for the zh-Hans-CN, en_US for the en-US locale)
 
+## Environmental variables configuration
+
+Example .env configuration:
+``` .env
+# API Tokens
+    GITHUB_TOKEN="<GitHub API Token>"
+    WAKATIME_TOKEN="<WakaTime API Token>"
+
+
+# Redis
+    REDIS_USER="<Redis Cloud Username>"
+    REDIS_PASS="<Redis cloud password>"
+    PROD_HOST="<Redis cloud connection string>"
+    PROD_PORT="<Redis cloud port (Redis labs is at: 15872)>"
+```
 ## Register for Statistics Refreshing
 
+Each platform has routes dedicated to registration to refresh User's data on a 8hr interval. There routes follow the following patterns:
 
+Profile Data:
+```
+    https://greenj-readme-stats.onrender.com/<platform>/register/<username>
+```
+
+Profile Streak Data:
+*** Streak data is only applicable for LeetCode and GitHub platforms ***
+```
+    https://greenj-readme-stats.onrender.com/<platform>/streak/register/<username>
+```
 
 ## Available Pre-set Themes
 
