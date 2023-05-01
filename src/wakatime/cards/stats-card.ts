@@ -11,7 +11,6 @@ export const wakaStatsCard = (req: Request, data: WakaStat): string => {
   const {
     ring,
     fire,
-    stroke,
     dayAvg,
     sideStat,
     textMain,
@@ -25,9 +24,6 @@ export const wakaStatsCard = (req: Request, data: WakaStat): string => {
   }
   if (fire !== undefined) {
     theme.detailMain = fire as string;
-  }
-  if (stroke !== undefined) {
-    theme.stroke = stroke as string;
   }
   if (dayAvg !== undefined) {
     theme.statsMain = dayAvg as string;
