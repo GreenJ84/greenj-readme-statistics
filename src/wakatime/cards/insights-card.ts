@@ -14,7 +14,6 @@ export const wakaInsightCard = (req: Request, data: WakaInsight): string => {
     stats,
     textMain,
     textSub,
-    stroke,
 
     title,
   } = req.query;
@@ -33,9 +32,6 @@ export const wakaInsightCard = (req: Request, data: WakaInsight): string => {
   }
   if (textSub !== undefined) {
     theme.textSub = textSub as string;
-  }
-  if (stroke !== undefined) {
-    theme.stroke = stroke as string;
   }
 
   if (title != undefined) {
