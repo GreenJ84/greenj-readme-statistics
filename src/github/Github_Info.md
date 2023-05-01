@@ -32,11 +32,12 @@ Here are basic Markdown implementations of the github routes image rendering
 </picture>
 ```
 
+<br/><br/><br/>
 
 ## Route Details
 
 
-<br/><br/><br/>
+<br/><br/>
 
 <h3 align="center">⚡ Github Profile Stats ⚡</h3>
 <p align="center">
@@ -71,7 +72,8 @@ Here are basic Markdown implementations of the github routes image rendering
             &emsp;- This optional parameter allows for User's to provide a custom title to the SVG. Please provide the title in Snake_case with your prefered capitilzations. (Ex. GreenJ84's_WakaTime_Insights -> GreenJ84's WakaTime Insights) 
         </li>
         <br/>
-        *** Please provide the color value for parameters as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
+        &emsp;&emsp;&emsp;*** Please provide the color value for the following parameters as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
+        <br/><br/>
         <li>
             textMain:
             <br/>
@@ -140,7 +142,8 @@ Here are basic Markdown implementations of the github routes image rendering
             &emsp;- This optional parameter allows for User's to provide a custom title to the SVG. Please provide the title in Snake_case with your prefered capitilzations. (Ex. GreenJ84's_WakaTime_Insights -> GreenJ84's WakaTime Insights) 
         </li>
         <br/>
-        *** Please provide the color value as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
+        &emsp;&emsp;&emsp;*** Please provide the color value for the following parameters as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
+        <br/><br/>
     </ul>
 </p> -->
 
@@ -180,8 +183,10 @@ Here are basic Markdown implementations of the github routes image rendering
             &emsp;- This optional parameter allows for User's to provide a custom title to the SVG. Please provide the title in Snake_case with your prefered capitilzations. (Ex. GreenJ84's_WakaTime_Insights -> GreenJ84's WakaTime Insights) 
         </li>
         <br/>
-         *** All Development language markers and pie section colors are based off of GitHub's language color pairings ***
-        *** Please provide the color value for parameters as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
+        &emsp;&emsp;&emsp;*** All Development language markers and pie section colors are based off of GitHub's language color pairings ***
+        <br/>
+        &emsp;&emsp;&emsp;*** Please provide the color value for the following parameters as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
+        <br/><br/>
         <li>
             textMain:
             <br/>
@@ -236,7 +241,8 @@ Here are basic Markdown implementations of the github routes image rendering
             &emsp;- This optional parameter allows for User's to provide a custom title to the SVG. Please provide the title in Snake_case with your prefered capitilzations. (Ex. GreenJ84's_WakaTime_Insights -> GreenJ84's WakaTime Insights) 
         </li>
         <br/>
-        *** Please provide the color value for parameters as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
+        &emsp;&emsp;&emsp;*** Please provide the color value for the following parameters as either a <a href="../Server_Details.md">valid </a> color name or HEX code. ***
+        <br/><br/>
         <li>
             textMain:
             <br/>
