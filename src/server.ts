@@ -17,6 +17,7 @@ import { buildRedis, teardownRedis } from "./utils/cache";
 const PORT = 8000;
 const app = express();
 
+app.use(express.static("public"));
 // Open cross origin access
 app.use(
   cors({
@@ -51,23 +52,26 @@ app.use(
 
 // Rate limiting the api
 const limiter = rateLimit({
-  windowMs: 60 * 60 * 1000,
+  windowMs: 30 * 60 * 1000,
   max: 100,
   handler: async (req, res) => {
     res.status(400).send({
-      message: `${req.params.username ?? "This caller"} has made to many calls. You have been limited.`
-    })
+      message: `${
+        req.params.username ?? "This caller"
+      } has made to many calls. You have been limited.`,
+    });
     return;
   },
 });
-app.use(limiter);
+PRODUCTION && app.use(limiter);
 
 // Cache api calls
-PRODUCTION && app.use(
-  cacheControl({
-    maxAge: 60 * 60 * 4, // Dev Cache for 20 min
-  })
-);
+PRODUCTION &&
+  app.use(
+    cacheControl({
+      maxAge: 60 * 20, // Dev Cache for 20 min
+    })
+  );
 
 LeetCodeRoutes(app);
 GithubRoutes(app);
