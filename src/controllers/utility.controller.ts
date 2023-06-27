@@ -1,5 +1,4 @@
 import { Request, Response } from "express"
-import path from "path";
 
 import { Themes } from "../utils/themes";
 
