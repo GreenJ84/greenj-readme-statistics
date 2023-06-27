@@ -4,12 +4,12 @@
     <li>
         theme:
         <br/>
-        &emsp;- A valid preset theme name from the list provided below. Themes contain preset color patterns to provide color styling attributes for all modals.
+        &emsp;- A valid preset theme name from the list provided <a href="https://github.com/GreenJ84/github-readme-streak-typescript/edit/main/src/Server_Details.md#available-pre-set-themes">below</a>. Themes contain preset color patterns to provide color styling attributes for all modals.
     </li>
     <li>
         background:
         <br/>
-        &emsp;- The backround parameter can be passed as a valid color name from the list provided below or a valid Hex color string without the first # character. This detemines the color for the background of the modal.
+        &emsp;- The backround parameter can be passed as a valid color name from the list provided <a href="https://github.com/GreenJ84/github-readme-streak-typescript/edit/main/src/Server_Details.md#available-colors">below</a> or a valid Hex color string without the first # character. This detemines the color for the background of the modal.
     </li>
     <li>
         border:
@@ -31,11 +31,15 @@
         <br/>
         &emsp;- This parameter can be passed as a valid border radius integer value. The default value for the parameter is 10.
     </li>
+    <br/>
+    *** Locale is a parameter not yet utilized inside of this server. It is intended to provide translations to the default phrases on the modals in the future. If you are multilingual and would love to help create translations for the different default modal phrases please reach out to leat me know. Either through my socials or by creating an issue here ***
+    <br/><br/>
+    <li>
+        locale:
+        <br/>
+        &emsp;- This parameter can be passed as a locale string, with language, script, and regions parts separated by hyphens. The default locale value is en-US. (Ex. zh_Hans_CN for the zh-Hans-CN, en_US for the en-US locale)
+    </li>
 </ul>
-
-*** Locale is a parameter not yet utilized inside of this server. It is intended to provide translations to the default phrases on the modals in the future. If you are multilingual and would love to help create translations for the different default modal phrases please reach out to leat me know. Either through my socials or by creating an issue here ***
-<br/>
-locale: This parameter can be passed as a locale string, with language, script, and regions parts separated by hyphens. The default locale value is en-US. (Ex. zh_Hans_CN for the zh-Hans-CN, en_US for the en-US locale)
 
 ## Environmental variables configuration
 
