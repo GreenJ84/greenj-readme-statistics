@@ -15,5 +15,5 @@ export const themeRetrieval = (_: Request, res: Response) => {
 
 export const renderModalDisplay = (_: Request, res: Response) => {
     res.set('Content-Type', 'text/html');
-    res.sendFile(path.join('/Users/jessegreenough/Documents/Personal_Coding_2022_2023/projects/github-readme-streak/src', '/index.html'));
+    res.sendFile('/index.html');
 }
