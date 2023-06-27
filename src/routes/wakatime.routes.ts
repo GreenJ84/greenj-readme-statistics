@@ -9,7 +9,7 @@ import {
 } from "../controllers/wakatime.controller";
 
 export const WakaTimeRoutes = (app: express.Application) => {
-//* WakaTime Profile Stats Data
+  //* WakaTime Profile Stats Data
   // Register wakatime user in server
   app.get(
     "/wakatime/register/:username",
@@ -24,6 +24,10 @@ export const WakaTimeRoutes = (app: express.Application) => {
   app.get(
     "/wakatime/insights/:username",
     (req: Request, res: Response, next: NextFunction) => {
+      // Allow Theme updates on Server Landing page
+      if (req.query.docsDisplay == "true") {
+        res.cacheControl = { noCache: true };
+      }
       wakatimeProfile(req, res).catch((err) => {
         next(err);
       });
@@ -33,6 +37,10 @@ export const WakaTimeRoutes = (app: express.Application) => {
   app.get(
     "/wakatime/languages/:username",
     (req: Request, res: Response, next: NextFunction) => {
+      // Allow Theme updates on Server Landing page
+      if (req.query.docsDisplay == "true") {
+        res.cacheControl = { noCache: true };
+      }
       wakatimeProfile(req, res).catch((err) => {
         next(err);
       });
@@ -42,6 +50,10 @@ export const WakaTimeRoutes = (app: express.Application) => {
   app.get(
     "/wakatime/stats/:username",
     (req: Request, res: Response, next: NextFunction) => {
+      // Allow Theme updates on Server Landing page
+      if (req.query.docsDisplay == "true") {
+        res.cacheControl = { noCache: true };
+      }
       wakatimeProfile(req, res).catch((err) => {
         next(err);
       });
