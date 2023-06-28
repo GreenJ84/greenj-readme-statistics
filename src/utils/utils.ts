@@ -216,7 +216,7 @@ export const baseCardThemeParse = (req: Request) => {
     locale,
   } = req.query;
 
-  let _theme: ThemeType = Themes["default"]!;
+  let _theme: ThemeType = {...Themes["default"]!};
   // Set all properties base to theme first
   if (theme != undefined) {
     !PRODUCTION && console.log(theme);
