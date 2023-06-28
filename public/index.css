@@ -1,0 +1,161 @@
+/** @format */
+
+body {
+  padding: 0 6vw;
+  font-size: clamp(18px, 1.25vw, 24px);
+  text-align: center;
+  overflow-x: hidden;
+}
+
+/* Main Title */
+h1 {
+  font-size: clamp(40px, 5vw, 60px);
+  margin: 50px 0 50px;
+}
+
+/* Customiations Form */
+#customizations {
+  position: relative;
+  margin: 0 auto 50px;
+  width: min(80vw, 1000px);
+  padding: 1% 3% calc(2% + 60px);
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 2px solid black;
+  border-radius: 10px;
+}
+
+#customizations > h3 {
+  text-align: center;
+  margin-bottom: 4%;
+  font-size: clamp(22px, 2vw, 30px);
+  letter-spacing: 1.5px;
+}
+
+#customizations > section {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#customizations option{
+  all: unset !important;
+  min-height: 0;
+  margin: 0;
+}
+
+select,
+input {
+  display: block;
+  box-sizing: content-box;
+  margin: 10px auto max(6vw, 25px);
+  height: clamp(18px, 3vw, 40px);
+  padding: 1%;
+  text-indent: 2px;
+  letter-spacing: 1.2px;
+  color: black;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+input:hover,
+select:hover {
+  cursor: pointer;
+  border: 2px solid black;
+  padding: 0;
+}
+
+#customizations > section div {
+  width: 50%;
+}
+#customizations > section select,
+#customizations > section input {
+  width: max(50%, 100px);
+  font-size: clamp(16px, 0.9vw, 24px);
+}
+#customizations > details p {
+  margin-top: min(5vw, 20px);
+  width: 80%;
+}
+#customizations > details p + p {
+  color: red;
+  font-size: 16px
+}
+
+#customizations > details div {
+  display: inline-block;
+  width: 30%;
+  margin: 0 auto;
+}
+#customizations > details select,
+#customizations > details input {
+  width: max(70%, 100px);
+  font-size: clamp(16px, 0.9vw, 24px);
+}
+
+form > button {
+  position: absolute;
+  bottom: 3%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1% 2%;
+  border-radius: 5px;
+}
+form > button:hover {
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Platform titles */
+h2 {
+  width: max(40vw, 240px);
+  margin: 0 auto 50px;
+  font-size: clamp(30px, 3vw, 50px);
+  border-bottom: 1px solid grey;
+}
+
+/* Route Titles */
+h4 {
+  margin-bottom: 0px;
+  font-size: clamp(24px, 1.5vw, 32px);
+}
+h4 + p {
+  color: rgb(5, 29, 212);
+  margin-bottom: 20px;
+}
+p {
+  margin: 0 auto;
+  width: 80vw;
+  margin-bottom: max(6vw, 40px);
+}
+
+.svgModal {
+  display: block;
+  margin: 0 auto max(10vw, 60px);
+  width: min(600px, 90vw);
+}
+
+.svgModal:not(.special) {
+  aspect-ratio: 5/2;
+}
+
+hr {
+  margin: 0 auto max(10vw, 60px);
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 0 2vw;
+  }
+
+  #customizations > details div {
+    display: inline-block;
+    width: 40%;
+  }
+  #customizations > details select,
+  #customizations > details input {
+    width: max(70%, 100px);
+    font-size: clamp(16px, 0.9vw, 24px);
+  }
+
+  p > span {
+    display: block;
+  }
+}
