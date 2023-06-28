@@ -59,7 +59,7 @@ input:hover,
 select:hover {
   cursor: pointer;
   border: 2px solid black;
-  padding: 0;
+  padding: calc(1% - 1px);
 }
 
 #customizations > section div {
