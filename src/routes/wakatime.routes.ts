@@ -7,6 +7,8 @@ import {
   wakatimeRegister,
   wakatimeUnregister,
 } from "../controllers/wakatime.controller";
+import { limiter } from "../server";
+import { PRODUCTION } from "../utils/constants";
 
 export const WakaTimeRoutes = (app: express.Application) => {
   //* WakaTime Profile Stats Data
@@ -27,6 +29,8 @@ export const WakaTimeRoutes = (app: express.Application) => {
       // Allow Theme updates on Server Landing page
       if (req.query.docsDisplay == "true") {
         res.cacheControl = { noCache: true };
+      } else {
+        PRODUCTION && app.use(limiter);
       }
       wakatimeProfile(req, res).catch((err) => {
         next(err);
@@ -40,6 +44,8 @@ export const WakaTimeRoutes = (app: express.Application) => {
       // Allow Theme updates on Server Landing page
       if (req.query.docsDisplay == "true") {
         res.cacheControl = { noCache: true };
+      } else {
+        PRODUCTION && app.use(limiter);
       }
       wakatimeProfile(req, res).catch((err) => {
         next(err);
@@ -53,6 +59,8 @@ export const WakaTimeRoutes = (app: express.Application) => {
       // Allow Theme updates on Server Landing page
       if (req.query.docsDisplay == "true") {
         res.cacheControl = { noCache: true };
+      } else {
+        PRODUCTION && app.use(limiter);
       }
       wakatimeProfile(req, res).catch((err) => {
         next(err);

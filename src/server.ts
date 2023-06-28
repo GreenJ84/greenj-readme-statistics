@@ -51,7 +51,7 @@ app.use(
 );
 
 // Rate limiting the api
-const limiter = rateLimit({
+export const limiter = rateLimit({
   windowMs: 30 * 60 * 1000,
   max: 100,
   handler: async (req, res) => {
@@ -63,7 +63,6 @@ const limiter = rateLimit({
     return;
   },
 });
-PRODUCTION && app.use(limiter);
 
 // Cache api calls
 PRODUCTION &&

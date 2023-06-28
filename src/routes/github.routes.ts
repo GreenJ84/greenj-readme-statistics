@@ -9,6 +9,8 @@ import {
   githubStreakRegister,
   githubUnregister,
 } from "../controllers/github.controller";
+import { PRODUCTION } from "../utils/constants";
+import { limiter } from "../server";
 
 export const GithubRoutes = (app: express.Application) => {
   // Register github user in server
@@ -27,6 +29,8 @@ export const GithubRoutes = (app: express.Application) => {
       // Allow Theme updates on Server Landing page
       if (req.query.docsDisplay == "true") {
         res.cacheControl = { noCache: true };
+      } else {
+        PRODUCTION && app.use(limiter);
       }
       getProfileStats(req, res).catch((err) => {
         next(err);
@@ -40,6 +44,8 @@ export const GithubRoutes = (app: express.Application) => {
       // Allow Theme updates on Server Landing page
       if (req.query.docsDisplay == "true") {
         res.cacheControl = { noCache: true };
+      } else {
+        PRODUCTION && app.use(limiter);
       }
       getProfileStats(req, res).catch((err) => {
         next(err);
@@ -53,6 +59,8 @@ export const GithubRoutes = (app: express.Application) => {
       // Allow Theme updates on Server Landing page
       if (req.query.docsDisplay == "true") {
         res.cacheControl = { noCache: true };
+      } else {
+        PRODUCTION && app.use(limiter);
       }
       getProfileStats(req, res).catch((err) => {
         next(err);
@@ -76,6 +84,8 @@ export const GithubRoutes = (app: express.Application) => {
       // Allow Theme updates on Server Landing page
       if (req.query.docsDisplay == "true") {
         res.cacheControl = { noCache: true };
+      } else {
+        PRODUCTION && app.use(limiter);
       }
       getCommitStreak(req, res).catch((err) => {
         next(err);

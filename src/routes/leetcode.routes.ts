@@ -10,6 +10,8 @@ import {
   leetcodeStreakRegister,
   leetcodeUnregister,
 } from "../controllers/leetcode.controller";
+import { PRODUCTION } from "../utils/constants";
+import { limiter } from "../server";
 
 export const LeetCodeRoutes = (app: express.Application) => {
   // Register leetcode user in server
@@ -28,6 +30,8 @@ export const LeetCodeRoutes = (app: express.Application) => {
       // Allow Theme updates on Server Landing page
       if (req.query.docsDisplay == "true") {
         res.cacheControl = { noCache: true };
+      } else {
+        PRODUCTION && app.use(limiter);
       }
       leetcodeStats(req, res).catch((err) => {
         next(err);
@@ -41,6 +45,8 @@ export const LeetCodeRoutes = (app: express.Application) => {
       // Allow Theme updates on Server Landing page
       if (req.query.docsDisplay == "true") {
         res.cacheControl = { noCache: true };
+      } else {
+        PRODUCTION && app.use(limiter);
       }
       leetcodeStats(req, res).catch((err) => {
         next(err);
@@ -54,6 +60,8 @@ export const LeetCodeRoutes = (app: express.Application) => {
       // Allow Theme updates on Server Landing page
       if (req.query.docsDisplay == "true") {
         res.cacheControl = { noCache: true };
+      } else {
+        PRODUCTION && app.use(limiter);
       }
       leetcodeStats(req, res).catch((err) => {
         next(err);
@@ -68,6 +76,8 @@ export const LeetCodeRoutes = (app: express.Application) => {
       // Allow Theme updates on Server Landing page
       if (req.query.docsDisplay == "true") {
         res.cacheControl = { noCache: true };
+      } else {
+        PRODUCTION && app.use(limiter);
       }
       leetcodeStats(req, res).catch((err) => {
         next(err);
@@ -91,6 +101,8 @@ export const LeetCodeRoutes = (app: express.Application) => {
       // Allow Theme updates on Server Landing page
       if (req.query.docsDisplay == "true") {
         res.cacheControl = { noCache: true };
+      } else {
+        PRODUCTION && app.use(limiter);
       }
       leetcodeStreak(req, res).catch((err) => {
         next(err);
@@ -115,6 +127,8 @@ export const LeetCodeRoutes = (app: express.Application) => {
       // Allow Theme updates on Server Landing page
       if (req.query.docsDisplay == "true") {
         res.cacheControl = { noCache: true };
+      } else {
+        PRODUCTION && app.use(limiter);
       }
       leetcodeDaily(req, res).catch((err) => {
         next(err);
