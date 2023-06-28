@@ -18,93 +18,10 @@
     />
     <title>GreenJ ReadMe Stats</title>
 
-    <style>
-      body {
-        padding: 0 6vw;
-        font-size: clamp(18px, 1.25vw, 24px);
-        text-align: center;
-      }
-      h1 {
-        font-size: clamp(40px, 5vw, 60px);
-        margin: 50px 0 150px;
-      }
-      h2 {
-        width: 40vw;
-        margin: 0 auto 50px;
-        font-size: clamp(36px, 3vw, 50px);
-        border-bottom: 1px solid grey;
-      }
-      form {
-        position: relative;
-        display: flex;
-        flex-wrap: wrap;
-        margin: 0 auto;
-        width: 80vw;
-        padding: 1% 3% 2%;
-        background-color: rgba(0, 0, 0, 0.3);
-        border: 2px solid black;
-      }
-      form > h3 {
-        width: 100%;
-        text-align: center;
-        margin-bottom: 3%;
-        font-size: clamp(22px, 2vw, 30px);
-        letter-spacing: 1.5px;
-      }
-      form > div {
-        width: 50%;
-      }
-      select,
-      input {
-        display: block;
-        margin: 10px auto max(6vw, 40px);
-        width: 50%;
-        padding: 2px;
-        font-size: clamp(16px, 0.9vw, 24px);
-        letter-spacing: 1.2px;
-        border: 1px solid black;
-        border-radius: 5px;
-      }
-      input:hover,
-      select:hover {
-        cursor: pointer;
-        padding: 1px;
-        border: 2px solid black;
-      }
-      form > button {
-        position: absolute;
-        bottom: 3%;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 1% 2%;
-        border-radius: 5px;
-      }
-      form > button:hover {
-        color: white;
-        background-color: rgba(0, 0, 0, 0.5);
-      }
-      h4 {
-        margin-left: 40px;
-        margin-bottom: 0px;
-        font-size: clamp(24px, 1.5vw, 32px);
-      }
-      h4 + p {
-        color: rgb(5, 29, 212);
-        margin-bottom: 20px;
-      }
-      p {
-        margin: 0 auto;
-        width: 80vw;
-        margin-bottom: max(6vw, 40px);
-      }
-      img {
-        display: block;
-        margin: 0 auto max(10vw, 60px);
-      }
-      hr {
-        margin: 0 auto max(10vw, 60px);
-      }
-    </style>
+    <link
+      rel="stylesheet"
+      href="/index.css"
+    />
     <script
       type="module"
       src="/index.js"
@@ -113,55 +30,102 @@
   <body>
     <h1>GreenJ's TypeScript Readme Stats</h1>
 
-    <!-- GitHub Modals -->
-    <h2>GitHub Routes</h2>
-    <form action="">
+    <form id="customizations">
       <h3>Try Customizing the modals!</h3>
-      <div>
-        <label for="username">Try Your Username:</label>
-        <input
-          name="username"
-          id="username"
-          value="GreenJ84"
-          type="text"
-        />
-      </div>
 
-      <div>
-        <label for="themes">Currently Available Modal Themes: </label>
-        <select
-          name="themes"
-          id="themeSelect"
-        ></select>
-      </div>
+      <section>
+        <div>
+          <label for="username">Username:</label>
+          <input
+            name="username"
+            id="username"
+            placeholder="GreenJ84"
+            type="text"
+          />
+        </div>
 
-      <div>
-        <label for="borderRadius">Border-Radius:</label>
-        <input
-          name="borderRadius"
-          id="borderRadius"
-          type="number"
-          value="10"
-          min="0"
-          max="20"
-        />
-      </div>
+        <div>
+          <label for="themes">Available Themes: </label>
+          <select
+            name="themes"
+            id="themeSelect"
+          ></select>
+        </div>
 
-      <div>
-        <label for="hideBorder">Hide Border: </label>
-        <select
-          name="hideBorder"
-          id="hideBorder"
-        >
-          <option
-            defaultSelected
-            value="false"
+        <div>
+          <label for="borderRadius">Border-Radius:</label>
+          <input
+            name="borderRadius"
+            id="borderRadius"
+            type="number"
+            value="10"
+            min="0"
+            max="20"
+          />
+        </div>
+
+        <div>
+          <label for="hideBorder">Hide Border: </label>
+          <select
+            name="hideBorder"
+            id="hideBorder"
           >
-            False
-          </option>
-          <option value="true">True</option>
-        </select>
-      </div>
+            <option
+              defaultSelected
+              value="false"
+            >
+              False
+            </option>
+            <option value="true">True</option>
+          </select>
+        </div>
+      </section>
+
+      <details>
+        <summary>Further Customizations</summary>
+
+        <p>
+          These will override the theme colors for the each option. Further
+          color customizations are available on each route if you read the
+          documentations (<a
+            href="https://github.com/GreenJ84/github-readme-stats-typescript"
+            >here</a
+          >)
+        </p>
+
+        <p>
+          Please use HEX Colors (w/o the #) or CSS color names (not all
+          supported)
+        </p>
+
+        <div>
+          <label for="backgroundColor">Background</label>
+          <input
+            name="backgroundColor"
+            id="backgroundColor"
+            placeholder="e44b23"
+            type="text"
+          />
+        </div>
+        <div>
+          <label for="borderColor">Border</label>
+          <input
+            name="borderColor"
+            id="borderColor"
+            placeholder="slateblue"
+            type="text"
+          />
+        </div>
+        <div>
+          <label for="strokeColor">Stroke</label>
+          <input
+            name="strokeColor"
+            id="strokeColor"
+            placeholder="cc0088"
+            type="text"
+          />
+        </div>
+      </details>
 
       <button
         type="submit"
@@ -170,11 +134,14 @@
         Apply Updates
       </button>
     </form>
-    <hr />
 
-    <h4>Green84 Github Profile Stats</h4>
+    <!-- GitHub Modals -->
+    <h2>GitHub Routes</h2>
+
+    <h4>Github Profile Stats</h4>
     <p>
-      https://greenj-readme-stats.onrender.com/github/stats/&lt;username&gt;
+      https://greenj-readme-stats.onrender.com<span
+      ></span>/github/stats/&lt;username&gt;
     </p>
     <p>
       - This route provides the all the commits, pull requests, issues, and
@@ -189,9 +156,10 @@
     />
     <hr />
 
-    <h4>Green84 Github Commit Streak</h4>
+    <h4>Github Commit Streak</h4>
     <p>
-      https://greenj-readme-stats.onrender.com/github/streak/&lt;username&gt;
+      https://greenj-readme-stats.onrender.com<span
+      ></span>/github/streak/&lt;username&gt;
     </p>
     <p>
       - This route provides details for the user's current github commit streak,
@@ -205,9 +173,10 @@
     />
     <hr />
 
-    <h4>Green84 Github Languages Used</h4>
+    <h4>Github Languages Used</h4>
     <p>
-      https://greenj-readme-stats.onrender.com/github/languages/&lt;username&gt;
+      https://greenj-readme-stats.onrender.com<span
+      ></span>/github/languages/&lt;username&gt;
     </p>
     <p>
       - This route provides the user's top 8 most used languages within all of
@@ -223,9 +192,10 @@
     <!-- LeetCode Modals -->
     <h2>LeetCode Routes</h2>
 
-    <h4>Green84 LeetCode Profile Stats</h4>
+    <h4>LeetCode Profile Stats</h4>
     <p>
-      https://greenj-readme-stats.onrender.com/leetcode/stats/&lt;username&gt;
+      https://greenj-readme-stats.onrender.com<span
+      ></span>/leetcode/stats/&lt;username&gt;
     </p>
     <p>
       - This route provides the completion percentage, reputaion and
@@ -240,9 +210,10 @@
     />
     <hr />
 
-    <h4>Green84 LeetCode Questions Solved</h4>
+    <h4>LeetCode Questions Solved</h4>
     <p>
-      https://greenj-readme-stats.onrender.com/leetcode/completion/&lt;username&gt;
+      https://greenj-readme-stats.onrender.com<span
+      ></span>/leetcode/completion/&lt;username&gt;
     </p>
     <p>
       - This route provieds the user's overall leetcode completion and breaks it
@@ -256,24 +227,26 @@
     />
     <hr />
 
-    <h4>Green84 LeetCode Recent Questions Answered</h4>
+    <h4>LeetCode Recent Questions Answered</h4>
     <p>
-      https://greenj-readme-stats.onrender.com/leetcode/submission/&lt;username&gt;
+      https://greenj-readme-stats.onrender.com<span
+      ></span>/leetcode/submission/&lt;username&gt;
     </p>
     <p>
       -This route provides a list of latest 6 questions answered by the user on
       the leetcode platform.
     </p>
     <img
-      class="svgModal"
+      class="svgModal special"
       src="https://greenj-readme-stats.onrender.com/leetcode/submission/GreenJ84?docsDisplay=true&theme=default"
       alt="Green84 LeetCode Recent Questions Answered"
     />
     <hr />
 
-    <h4>Green84 LeetCode Activity Steak</h4>
+    <h4>LeetCode Activity Steak</h4>
     <p>
-      https://greenj-readme-stats.onrender.com/leetcode/streak/&lt;username&gt;
+      https://greenj-readme-stats.onrender.com<span
+      ></span>/leetcode/streak/&lt;username&gt;
     </p>
     <p>
       - This route provides details for the user's leetcode total activity. It
@@ -290,9 +263,10 @@
     <!-- WakaTime Modals -->
     <h2>WakaTime Routes</h2>
 
-    <h4>Green84 Wakatime Profile Insights</h4>
+    <h4>Wakatime Profile Insights</h4>
     <p>
-      https://greenj-readme-stats.onrender.com/wakatime/insights/&lt;username&gt;
+      https://greenj-readme-stats.onrender.com<span
+      ></span>/wakatime/insights/&lt;username&gt;
     </p>
     <p>
       - This route provides details for the user's overall profile insights.
@@ -306,9 +280,10 @@
       alt="Green84 Wakatime Profile Insights"
     />
 
-    <h4>Green84 Wakatime Languages Used</h4>
+    <h4>Wakatime Languages Used</h4>
     <p>
-      https://greenj-readme-stats.onrender.com/wakatime/languages/&lt;username&gt;
+      https://greenj-readme-stats.onrender.com<span
+      ></span>/wakatime/languages/&lt;username&gt;
     </p>
     <p>
       This route provides a detailed view of the user's top 6 languages used in
@@ -320,9 +295,10 @@
       alt="Green84 Wakatime Languages Used"
     />
 
-    <h4>Green84 Wakatime Stats</h4>
+    <h4>Wakatime Stats</h4>
     <p>
-      https://greenj-readme-stats.onrender.com/wakatime/stats/&lt;username&gt;
+      https://greenj-readme-stats.onrender.com<span
+      ></span>/wakatime/stats/&lt;username&gt;
     </p>
     <p>
       - This route provides a concise detailed view of average daily development
