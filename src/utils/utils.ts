@@ -108,7 +108,7 @@ export function sanitizeQuery(req: Request): boolean {
       req.query = {};
       return false;
     }
-    !PRODUCTION && console.log(param)
+    !PRODUCTION && console.log(param);
     switch (true) {
       case color.includes(param):
         try {
@@ -149,7 +149,7 @@ export function sanitizeQuery(req: Request): boolean {
         break;
     }
   }
-  !PRODUCTION && console.log(sanitizedParams)
+  !PRODUCTION && console.log(sanitizedParams);
   req.query = sanitizedParams;
   return true;
 }
@@ -216,12 +216,12 @@ export const baseCardThemeParse = (req: Request) => {
     locale,
   } = req.query;
 
-  let _theme: ThemeType = {...Themes["default"]!};
+  let _theme: ThemeType = { ...Themes["default"]! };
   // Set all properties base to theme first
   if (theme != undefined) {
     !PRODUCTION && console.log(theme);
-    if (theme as string in Themes) {
-      _theme = Themes[theme as string]!;
+    if ((theme as string) in Themes) {
+      _theme = { ...Themes[theme as string]! };
     }
     !PRODUCTION && console.log(_theme);
   }
@@ -255,6 +255,7 @@ export const baseCardThemeParse = (req: Request) => {
   } else {
     _theme.locale = "en-US";
   }
+
   return _theme;
 };
 
