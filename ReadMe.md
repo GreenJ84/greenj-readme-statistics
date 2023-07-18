@@ -2,11 +2,19 @@
 
 This is an Express server application built to query the personal profile data of a User's from [GitHub](https://www.github.com), [LeetCode](https://www.leetcode.com), and [WakaTime](https://www.wakatime.com) platforms. The server stores queried data in a Redis cloud database for 16 hrs and provides the ability to receive these statistics in an aesthetic SVG modal. This server also has an option for a User to register on each route to have the statistics refreshed on an 8hr interval.
 
-This project is utilizes: TypeScript, JSON and GraphQL languages along with Node.js, Express.js, Apollo Client, Format.js, and Helmet.js libraries.
+This project is utilizes:
+- A ExpressJS server architecture written in TypeScript with NodeJS and HelmetJs.
+- A simple front-end display that utilizes CSS and vanilla JavaScript. 
+- Personal development data retrieved via REST API and GraphQL quieries to 3rd party API services and cached in a Redis cloud database.
+- The Jest testing framework and Postman services for functional and API testing.
+- A GitHub CI/CD pipeline with Render to test code and deployment success for all main branch changes against production.
+- Docker containerization for functional testing of production environments and production deployment. 
 
 This project has a cloud Redis database and is deployed as a Docker container on [Render](https://render.com/) cloud hosting
 
-<img style="margin-left: 100px" width="500" height="300" src="https://github.com/GreenJ84/github-readme-stats-typescript/raw/main/public/assets/projectDisplay.png" alt="API Modal Previews" />
+<p align="center">
+    <img width="700" height="500" src="https://github.com/GreenJ84/github-readme-stats-typescript/raw/main/public/assets/projectDisplay.png" alt="API Modal Previews" />
+</p>
 
 ## 🔍 Quick Image implementations
 
