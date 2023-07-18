@@ -6,6 +6,8 @@ This project is utilizes: TypeScript, JSON and GraphQL languages along with Node
 
 This project has a cloud Redis database and is deployed as a Docker container on [Render](https://render.com/) cloud hosting
 
+<img style="margin-left: 100px" width="500" height="300" src="https://github.com/GreenJ84/github-readme-stats-typescript/raw/main/public/assets/projectDisplay.png" alt="API Modal Previews" />
+
 ## 🔍 Quick Image implementations
 
 ```
