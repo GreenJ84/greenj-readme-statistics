@@ -1,5 +1,7 @@
 # 🌟 GreenJ ReadMe Statistics 🌟
 
+#### Video Demo: [Check out GreenJ ReadMe Statistics!!](https://youtu.be/f2O_bFgOouw)
+
 This is an Express server application built to query the personal profile data of a User's from [GitHub](https://www.github.com), [LeetCode](https://www.leetcode.com), and [WakaTime](https://www.wakatime.com) platforms. The server stores queried data in a Redis cloud database for 16 hrs and provides the ability to receive these statistics in an aesthetic SVG modal. This server also has an option for a User to register on each route to have the statistics refreshed on an 8hr interval.
 
 This project is utilizes:
