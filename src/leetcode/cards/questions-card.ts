@@ -60,13 +60,13 @@ export const leetCompletionCard = (req: Request, data: LeetUserCompletion): stri
         .acceptance-text {
             font: 800 24px 'Segoe UI', Ubuntu, Sans-Serif;
             fill: ${theme.statsMain};
-            animation: scaleInAnimation 0.3s ease-in-out forwards;
+            animation: scaleInAnimation 0.3s ease-in-out forwards, fadeInAnimation 0.3s ease-in-out forwards;
         }
         
         .acceptance-title {
             font: 600 14px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif;
             fill: ${theme.textMain};
-            animation: scaleInAnimation 0.3s ease-in-out forwards;
+            animation: scaleInAnimation 0.3s ease-in-out forwards, fadeInAnimation 0.3s ease-in-out forwards;
         }
 
         .bold {

@@ -8,14 +8,12 @@ ENV ENV_FILE ./.env
 ENV NODE_ENV production
 RUN env $(cat $ENV_FILE | xargs)
 
-# Copy package.json and package-lock.json to /app
-COPY package*.json ./
+# Copy the application code to /app
+COPY . .
 
 # Install app dependencies
 RUN npm install
 
-# Copy the rest of the application code to /app
-COPY . .
 
 # Build the TypeScript code to JavaScript
 RUN npm run build
