@@ -51,7 +51,7 @@ describe("Testing the resources provided by the cache", () => {
         expect(
             await deleteCacheData(getCacheKey("url/wakatime/register", username))).toEqual(false);
     })
-    
+
     it('Should set and recieve a cache validly', async () => {
         const streakKey = getCacheKey("url/leetcode/streak", username);
 

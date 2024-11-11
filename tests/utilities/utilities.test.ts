@@ -275,7 +275,8 @@ describe('basicCardThemeParse', () => {
         expect(card).toEqual({
             ...Themes["black-ice"]!,
             borderRadius: 14,
-            hideBorder: true
+            hideBorder: true,
+            locale: 'en-US'
         });
     });
 });
