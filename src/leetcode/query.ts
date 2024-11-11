@@ -10,8 +10,8 @@ import {
   GraphQuery,
   LEET_GRAPHQL_URL,
   ResponseError,
+  LEET_CRED_URL,
 } from "../utils/constants";
-import { get_csrf } from "../utils/credentials";
 import { getCacheKey, setCacheData } from "../utils/cache";
 
 import {
@@ -22,29 +22,25 @@ import {
   LeetUserStreak,
   LeetRawStreakData,
 } from "./leetcodeTypes";
-import * as leetcode from "../leetcode/query";
 import { leetParseDirect, leetRawProfileParse } from "./apiParser";
 
 
-// Universal query for GitHub
-export async function leetcodeQuery(
+// Universal query for LeetCode, throws ResponseError
+export async function leetPlatformQuerier(
   query: GraphQuery,
-  url: string,
-  csrf: string
+  uri: string,
+  username: string
 ): Promise<LeetRawGraphResponse> {
   const client = new ApolloClient({
-    uri: url,
+    uri,
     cache: new InMemoryCache(),
   });
   const headers = {
     "Content-Type": "application/json",
-    origin: url,
-    referer: url,
-    cookie: `csrftoken=${csrf}; LEETCODE_SESSION=;`,
-    "x-csrftoken": `${csrf}`,
+    origin: uri,
+    referer: LEET_CRED_URL+`/${username}/`,
     "user-agent": LEET_USER_AGENT,
   };
-
   const result = await client
     .query({
       ...query,
@@ -66,76 +62,54 @@ export async function leetcodeQuery(
   return result;
 }
 
-// Set up up query, credential retrieval, Server level error handling
-export const leetProfilePreQuery = async (username: string): Promise<LeetRawProfileData> => {
-  // Retrieve Cross-site forgery credentials
-  const csrf_credential = await get_csrf()
-    .then((result) => result.toString())
-    .catch((err) => {
-      throw err;
-    });
-
+// Set up profile query, throws ResponseError
+export const leetProfileQuery = async (username: string): Promise<LeetRawProfileData> => {
   // Get correct query based on api called
   const graphql = gql(
     fs.readFileSync('src/leetcode/graphql/leetcode-all-profile.graphql', "utf8")
   );
-
-  // Call the universal leeetCode querier
-  const data = await leetcode
-    .leetcodeQuery(
+  const data = await leetPlatformQuerier(
       {
         query: graphql,
         variables: { username: username },
       },
       LEET_GRAPHQL_URL,
-      csrf_credential as string
+      username
     )
-    .then((res) => res as LeetRawProfileData)
-    // Catch sever problems conducting the call
-    .catch((err) => {
-      throw err;
-    });
-  return data;
+    .then((res) => res)
+  return data as LeetRawProfileData;
 };
 
 let profileQueryInProcess: Record<string, boolean> = {};
 export const setLeetUserProfile = async (username: string): Promise<void> => {
-  if (profileQueryInProcess[username]) { 
-    // Wait for initial query to have chached data
-    throw new ResponseError("This call occured while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+  if (profileQueryInProcess[username]) {
+    throw new ResponseError("This call occurred while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
   }
-  else{
-    profileQueryInProcess[username] = true;
-    const queryResponse = await leetProfilePreQuery(username)
-      .catch((err) => {
-        profileQueryInProcess[username] = false;
-        throw err;
-      });
-    
-    const [stats, badges, completion, submission] = leetRawProfileParse(queryResponse);
+  profileQueryInProcess[username] = true;
+  const queryResponse = await leetProfileQuery(username)
+    .catch((err) => {
+      profileQueryInProcess[username] = false;
+      throw err;
+    });
 
-    await setCacheData(
-      getCacheKey("url/leetcode/stats", username),
-      stats!
-    )
-
-    await setCacheData(
-      getCacheKey("url/leetcode/badges", username),
-      badges!
-    )
-
-    await setCacheData(
-      getCacheKey("url/leetcode/completion", username),
-      completion!
-    )
-
-    await setCacheData(
-      getCacheKey("url/leetcode/submission", username),
-      submission!
-    )
-  }
+  const [stats, badges, completion, submission] = leetRawProfileParse(queryResponse);
+  await setCacheData(
+    getCacheKey("url/leetcode/stats", username),
+    stats!
+  )
+  await setCacheData(
+    getCacheKey("url/leetcode/badges", username),
+    badges!
+  )
+  await setCacheData(
+    getCacheKey("url/leetcode/completion", username),
+    completion!
+  )
+  await setCacheData(
+    getCacheKey("url/leetcode/submission", username),
+    submission!
+  )
   profileQueryInProcess[username] = false;
-  return;
 }
 
 export const updateLeetUserProfile = async (
@@ -143,7 +117,6 @@ export const updateLeetUserProfile = async (
 ): Promise<void> => {
   try {
     await setLeetUserProfile(username);
-
   } catch (err) {
     if (err instanceof ResponseError) {
       console.error(
@@ -156,22 +129,13 @@ export const updateLeetUserProfile = async (
 };
 
 // Set up for profile years probe query
-export const leetPreProbe = async (req: Request): Promise<[number[], string]> => {
-  // Cross-site forgery credentials
-  const csrf_credential: string = await get_csrf()
-    .then((result) => result.toString())
-    .catch((err) => {
-      throw err;
-    });
+export const leetStreakPreProbe = async (req: Request): Promise<number[]> => {
   const graphql = gql(
     fs.readFileSync("src/leetcode/graphql/profile-years-probe.graphql", "utf8")
   );
-  // Username which has to be there if preflight passed
-  const { username } = req.params;
-
-  // Call the universal leetCode querier
-  const data = await leetcode
-    .leetcodeQuery(
+  // Username has to be there if preflight passed
+  const username = req.params.username!;
+  const data = await leetPlatformQuerier(
       {
         query: graphql,
         variables: {
@@ -180,78 +144,69 @@ export const leetPreProbe = async (req: Request): Promise<[number[], string]> =>
         },
       },
       LEET_GRAPHQL_URL,
-      csrf_credential
+      username
     )
     .then((res) => res as LeetRawUserProbe)
-    .catch((err) => {
-      throw err;
-    });
-
-  return [data.matchedUser.userCalendar.activeYears, csrf_credential];
+  return data.matchedUser.userCalendar.activeYears;
 };
 
 let streakQueryInProgress: Record<string, boolean> = {};
 export const setLeetUserStreak = async (req: Request): Promise<void> => {
   const username = req.params.username!;
   if (streakQueryInProgress[username]) {
-    // Wait for initial query to have chached data
-    throw new ResponseError("This call occured while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+    throw new ResponseError("This call occurred while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
   }
-  else {
-    streakQueryInProgress[username] = true;
-    const preSet = await leetPreProbe(req)
+
+  streakQueryInProgress[username] = true;
+  const preSet = await leetStreakPreProbe(req)
+    .catch((err) => {
+      streakQueryInProgress[username] = false;
+      throw new ResponseError(
+        "Error querying probe for user membership length",
+        err,
+        502
+      );
+    });
+  const membershipYears = preSet;
+  const graphql = gql(
+    fs.readFileSync("src/leetcode/graphql/leetcode-streak.graphql", "utf8")
+  );
+
+  const streakData: LeetUserStreak = {
+    streak: [0, 0],
+    totalActive: 0,
+    mostActiveYear: 0,
+    completion: "0.00",
+    completionActuals: [0, 0],
+  };
+  const parseStreak = leetParseDirect(req);
+  for (let year of membershipYears) {
+    const data = await leetPlatformQuerier(
+      {
+        query: graphql,
+        variables: { username: username, year: year },
+      },
+      LEET_GRAPHQL_URL,
+      username
+    )
+      .then((res) => {
+        return res as LeetRawStreakData;
+      })
       .catch((err) => {
         streakQueryInProgress[username] = false;
         throw new ResponseError(
-          "Error build probe query for user membership length",
+          "Error querying LeetCode streak data",
           err,
-          502
+          500
         );
       });
-    const [membershipYears, csrf_credential] = preSet;
-    const graphql = gql(
-      fs.readFileSync("src/leetcode/graphql/leetcode-streak.graphql", "utf8")
-    );
-
-    const streakData: LeetUserStreak = {
-      streak: [0, 0],
-      totalActive: 0,
-      mostActiveYear: 0,
-      completion: "0.00",
-      completionActuals: [0, 0],
-    };
-    const parseStreak = leetParseDirect(req);
-    // Call the universal leetCode querier for each year
-    for (let year of membershipYears) {
-      const data = await leetcodeQuery(
-        {
-          query: graphql,
-          variables: { username: username, year: year },
-        },
-        LEET_GRAPHQL_URL,
-        csrf_credential
-      )
-        .then((res) => {
-          return res as LeetRawStreakData;
-        })
-        .catch((err) => {
-          streakQueryInProgress[username] = false;
-          throw new ResponseError(
-            "Error building LeetCode streak GraphQL query",
-            err,
-            500
-          );
-        });
-
-      parseStreak(streakData, data, year);
-    }
-    setCacheData(
-      getCacheKey(req.path, username),
-      streakData
-    );
+    parseStreak(streakData, data, year);
   }
+  setCacheData(
+    getCacheKey(req.path, username),
+    streakData
+  );
   streakQueryInProgress[username] = false;
-  return;
 };
 
 export const updateLeetUserStreak = async (
@@ -259,7 +214,6 @@ export const updateLeetUserStreak = async (
 ): Promise<void> => {
   try {
     await setLeetUserStreak(req);
-
   } catch (err) {
     if (err instanceof ResponseError) {
       console.error(
@@ -271,19 +225,10 @@ export const updateLeetUserStreak = async (
       );
     }
   }
-  return;
 };
 
-export const startLeetcodeDaily = async () => {
+export const leetDailyQuestionQuery = async () => {
   const cacheKey = `leetcode:daily`;
-  // Retrieve Cross-site forgery credentials
-  const csrf_credential = await get_csrf()
-    .then((result) => result.toString())
-    .catch((err) => {
-      throw err;
-    });
-
-  // Get correct query based on api called
   const graphql = gql(
     fs.readFileSync(
       "src/leetcode/graphql/leetcode-daily-question.graphql",
@@ -292,15 +237,14 @@ export const startLeetcodeDaily = async () => {
   );
 
   // Call the universal leetCode querier
-  const data = await leetcodeQuery(
+  const data = await leetPlatformQuerier(
     {
       query: graphql,
     },
     LEET_GRAPHQL_URL,
-    csrf_credential as string
+    "GreenJ84"
   )
     .then((res) => res as LeetRawDaily)
-    // Catch sever problems conducting the call
     .catch((err) => {
       throw new ResponseError(
         "Error building LeetCode daily question GraphQL query",
@@ -308,9 +252,11 @@ export const startLeetcodeDaily = async () => {
         500
       );
     });
-
   setCacheData(cacheKey, data);
+}
 
+export const leetDailyQuestionInterval = async () => {
+  leetDailyQuestionQuery();
   const localNow = new Date(new Date().toLocaleString());
   const utcMidnight = new Date(
     Date.UTC(
@@ -324,24 +270,24 @@ export const startLeetcodeDaily = async () => {
     )
   );
   const millisecUntilMidnightUTC = utcMidnight.getTime() - localNow.getTime();
-
+  const cacheKey = `leetcode:daily`;
+  const graphql = gql(
+    fs.readFileSync(
+      "src/leetcode/graphql/leetcode-daily-question.graphql",
+      "utf8"
+    )
+  );
   // Wait until 10 min after UTC Midnight for new question
   setTimeout(() => {
     // Set interval to retrieve every 24 hrs
     setInterval(async () => {
-      const csrf_credential = await get_csrf()
-        .then((result) => result.toString())
-        .catch((err) => {
-          console.error(err);
-        });
-
       // Call the universal leetCode querier
-      const data = await leetcodeQuery(
+      const data = await leetPlatformQuerier(
         {
           query: graphql,
         },
         LEET_GRAPHQL_URL,
-        csrf_credential as string
+        "GreenJ84"
       )
         .then((res) => res as LeetRawDaily)
         // Catch sever problems conducting the call
@@ -352,7 +298,6 @@ export const startLeetcodeDaily = async () => {
             500
           );
         });
-
       setCacheData(cacheKey, data);
     }, 24 * 60 * 60 * 1000);
   }, 1000 * 60 * 10 + millisecUntilMidnightUTC);

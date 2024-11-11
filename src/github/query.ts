@@ -66,7 +66,7 @@ export async function githubGraphQL(
       ...query,
       context: {
         headers,
-        method: "GET",
+        method: "POST",
       },
     })
     .then((result) => {
