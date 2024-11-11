@@ -24,41 +24,39 @@ import {
   updateLeetUserProfile,
   setLeetUserStreak,
   updateLeetUserStreak,
-  startLeetcodeDaily,
+  leetDailyQuestionInterval,
   setLeetUserProfile,
 } from "../leetcode/query";
 import { leetCardDirect } from "../leetcode/leetcodeUtils";
 
 export const leetcodeRegister = async (req: Request, res: Response) => {
-  // PreFlight checks for user based routes
   if (!preFlight(req, res)) {
     return;
   }
-  res.set("Content-Type", "application/json");
   const username = req.params.username!;
-
   const cacheKey = getCacheKey(req.path, username);
-  // Try for cached data, Query API if not present
-  const [success, _] = await getRegistrationCache(cacheKey);
+  const [registered, _] = await getRegistrationCache(cacheKey);
 
   await setLeetUserProfile(username).catch((err) => {
     throw err;
   });
 
-  const intervalId = setInterval(() => {
-    updateLeetUserProfile(username);
-    console.log(`Updating Leetcode profile for ${username} at ${new Date().toLocaleString()}`);
-  }, DATA_UDPDATE_INTERVAL);
-
-  await setRegistrationCache(cacheKey, intervalId[Symbol.toPrimitive]())
-    .catch(err => { throw err; })
-
-  if (success) {
+  res.set("Content-Type", "application/json");
+  if (registered) {
     res.status(208).json({
       message: "User was already registered. Stats refreshed.",
       code: "208",
     });
   } else {
+    const intervalId = setInterval(() => {
+        updateLeetUserProfile(username);
+        console.log(`Updating Leetcode profile for ${username} at ${new Date().toLocaleString()}`);
+      },
+      DATA_UDPDATE_INTERVAL
+    );
+
+    await setRegistrationCache(cacheKey, intervalId[Symbol.toPrimitive]())
+      .catch(err => { throw err; })
     res.status(201).json({
       message: "User Registered",
       code: "201",
@@ -72,64 +70,52 @@ export const leetcodeStats = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  // PreFlight checks for user based routes
   if (!preFlight(req, res)) {
     return;
   }
   const username = req.params.username!;
   const cacheKey = getCacheKey(req.path, username);
-
   const [success, cacheData] = await getCacheData(cacheKey);
   if (!success) {
-    await setLeetUserProfile(username)
-      .catch((err) => {
-        throw err;
-      });
+    await setLeetUserProfile(username);
   }
-  // console.log(success, cacheData);
   const data = cacheData as LeetUserProfile;
-
   const createCard = leetCardDirect(req);
   const card = createCard(req, data);
-
   res.setHeader("Content-Type", "image/svg+xml");
   res.status(200).send(card);
-  return;
 };
 
 export const leetcodeStreakRegister = async (req: Request, res: Response) => {
-  // PreFlight checks for user based routes
   if (!preFlight(req, res)) {
     return;
   }
-  res.set("Content-Type", "application/json");
   const cacheKey = getCacheKey(req.path, req.params.username!);
-  // Try for cached data, Query API if not present
-  const [success, _] = await getRegistrationCache(cacheKey);
+  const [registered, _] = await getRegistrationCache(cacheKey);
 
   await setLeetUserStreak(req).catch((err) => {
     throw err;
   });
 
-  const intervalId = setInterval(() => {
-    updateLeetUserStreak(req);
-    console.log(`Updating Leetcode streak for ${req.params.username!} at ${new Date().toLocaleString()}`);
-  }, DATA_UDPDATE_INTERVAL);
-
-  await setRegistrationCache(cacheKey+'reg', intervalId[Symbol.toPrimitive]());
-
-  if (success) {
+  res.set("Content-Type", "application/json");
+  if (registered) {
     res.status(208).json({
       message: "User was already registered. Stats refreshed.",
       code: "208",
     });
   } else {
+  const intervalId = setInterval(() => {
+      updateLeetUserStreak(req);
+      console.log(`Updating Leetcode streak for ${req.params.username!} at ${new Date().toLocaleString()}`);
+    },
+    DATA_UDPDATE_INTERVAL
+  );
+  await setRegistrationCache(cacheKey+'reg', intervalId[Symbol.toPrimitive]());
     res.status(201).json({
       message: "User Registered",
       code: "201",
     });
   }
-  return;
 };
 
 // User Streak specific controller
@@ -137,31 +123,23 @@ export const leetcodeStreak = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  // PreFlight checks for user based routes
   if (!preFlight(req, res)) {
     return;
   }
   const cacheKey = getCacheKey(req.path, req.params.username!);
-
-  const [success, cacheData] = await getCacheData(cacheKey);
+  let [success, cacheData] = await getCacheData(cacheKey);
   if (!success) {
     await setLeetUserStreak(req)
-      .catch((err) => {
-        throw err;
-      });
+    cacheData = (await getCacheData(cacheKey))[1];
   }
   const data = cacheData as LeetUserStreak;
-
   const streakCard = leetCardDirect(req);
   const card = streakCard(req, data);
-
   res.setHeader("Content-Type", "image/svg+xml");
   res.status(200).send(card);
-  return;
 };
 
 export const leetcodeUnregister = async (req: Request, res: Response) => {
-  // Ensure caller is viable
   if (!preFlight(req, res)) {
     return;
   }
@@ -170,11 +148,11 @@ export const leetcodeUnregister = async (req: Request, res: Response) => {
   res.set("Content-Type", "application/json");
 
   // Try for cached data, Query API if not present
-  const [profSuccess, profCache] = await getRegistrationCache(cacheKey);
-  if (!profSuccess) {
+  const [registered, cache] = await getRegistrationCache(cacheKey);
+  if (!registered) {
     console.error("User's profile data not found.");
   } else {
-    const intervalID = profCache;
+    const intervalID = cache;
     if (intervalID) {
       clearInterval(intervalID);
     }
@@ -210,13 +188,13 @@ export const leetcodeUnregister = async (req: Request, res: Response) => {
     }
   }
 
-  if (!profSuccess && !streakSuccess) {
+  if (!registered && !streakSuccess) {
     res.status(400).json({
       message: "Unregistration process failed.",
       code: "400",
     });
     return;
-  } else if (!profSuccess || !streakSuccess) {
+  } else if (!registered || !streakSuccess) {
     res.status(400).json({
       message:
         "Unregistration partial success. May be partially registered still.",
@@ -233,15 +211,13 @@ export const leetcodeUnregister = async (req: Request, res: Response) => {
 };
 
 export const leetcodeDaily = async (
-  req: Request,
+  _req: Request,
   res: Response
 ): Promise<void> => {
-  req;
   const cacheKey = `leetcode:daily`;
-
   const [success, cacheData] = await getCacheData(cacheKey);
   if (!success) {
-    startLeetcodeDaily();
+    leetDailyQuestionInterval();
     res.status(500).json({
       message: "Updating Daily Question. Try again in a minute.",
       code: "500",
@@ -249,8 +225,6 @@ export const leetcodeDaily = async (
     return;
   }
   const data = cacheData as LeetRawDaily;
-
-  console.log(data);
   // const card = createCard(req, parsedData);
   res.set("Content-Type", "application/json");
   res.status(200).send(data);
