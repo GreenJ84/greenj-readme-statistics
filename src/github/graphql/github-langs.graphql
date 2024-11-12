@@ -1,7 +1,6 @@
 query userInfo($login: String!) {
         user(login: $login) {
             name
-        # fetch only owner repos & not forks
             repositories(ownerAffiliations: OWNER, isFork: false, first: 100) {
                 nodes {
                     name
