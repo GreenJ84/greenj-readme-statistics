@@ -10,14 +10,14 @@ Here are basic Markdown implementations of the github routes image rendering
     [Github Profile Trophies](https://greenj-readme-stats.onrender.com/github/trophies/<username>)
 
     [Github Profile Languages](https://greenj-readme-stats.onrender.com/github/languages/<username>)
-    
+
     [Github Profile Streak](https://greenj-readme-stats.onrender.com/github/streak/<username>)
 ```
 
 ## Advanced Image Implimentations:
 ```
 <picture>
-    <source 
+    <source
         srcset="<api route, light themed>"
         media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)"
     />
@@ -25,8 +25,8 @@ Here are basic Markdown implementations of the github routes image rendering
         srcset="<api route, dark themed>"
         media="(prefers-color-scheme: dark)"
     />
-    <img 
-        src="<base api route>" 
+    <img
+        src="<base api route>"
         alt="Github Profile"
     />
 </picture>
@@ -42,7 +42,7 @@ Here are basic Markdown implementations of the github routes image rendering
 <h3 align="center">⚡ Github Profile Stats ⚡</h3>
 <p align="center">
     <picture>
-        <source 
+        <source
             srcset="https://greenj-readme-stats.onrender.com/github/stats/GreenJ84?theme=greenj_light"
             media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)"
         />
@@ -112,7 +112,7 @@ Here are basic Markdown implementations of the github routes image rendering
 <h3 align="center">⚡ Github Profile Trophies ⚡</h3>
 <p align="center">
     <picture>
-        <source 
+        <source
             srcset="https://greenj-readme-stats.onrender.com/github/trophies/GreenJ84?theme=greenj_light"
             media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)"
         />
@@ -153,7 +153,7 @@ Here are basic Markdown implementations of the github routes image rendering
 <h3 align="center">⚡ Github Profile Languages ⚡</h3>
 <p align="center">
     <picture>
-        <source 
+        <source
             srcset="https://greenj-readme-stats.onrender.com/github/languages/GreenJ84?theme=greenj_light"
             media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)"
         />
@@ -211,7 +211,7 @@ Here are basic Markdown implementations of the github routes image rendering
 <h3 align="center">⚡ Github Profile Streak ⚡</h3>
 <p align="center">
     <picture>
-        <source 
+        <source
             srcset="https://greenj-readme-stats.onrender.com/github/streak/GreenJ84?theme=greenj_light"
             media="(prefers-color-scheme: light), (prefers-color-scheme: no-preference)"
         />
