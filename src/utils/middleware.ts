@@ -1,7 +1,6 @@
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import cacheControl from "express-cache-controller";
 import { NextFunction, Request, Response } from "express";
 
 import { sanitizeQuery } from "./sanitization";
@@ -77,9 +76,4 @@ export const rateLimitHandler = rateLimit({
     });
     return;
   },
-});
-
-// Cache api calls
-export const cacheController = cacheControl({
-  maxAge: 60 * 20, // Dev Cache for 20 min
 });
