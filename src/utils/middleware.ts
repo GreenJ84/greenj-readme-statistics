@@ -3,39 +3,11 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import { NextFunction, Request, Response } from "express";
 
+import { app } from "../server";
 import { sanitizeQuery } from "./sanitization";
 import { ResponseError } from "./utils";
+import { PRODUCTION } from "../environment";
 
-
-// API Security
-export const preFlight = (req: Request, res: Response): boolean => {
-  if (req.params.username == undefined) {
-    res.status(400).send({
-      message: "No username found on API Call that requires username",
-      error: "Missing username parameter.",
-      error_code: 400,
-    });
-    return false;
-  }
-
-  sanitizeQuery(req);
-  return true;
-};
-
-export const errorHandler = (err: Error, _: Request, res: Response, __: NextFunction) => {
-  res.set("Content-Type", "application/json");
-  if (err && err instanceof ResponseError) {
-    res.status(err.error_code).json({
-      message: err.message,
-      error: err.error,
-    });
-  } else if (err) {
-    res.status(500).json({
-      message: "Internal server error",
-      error: err,
-    });
-  }
-}
 
 export const corsHandler = cors({
   origin: "*",
@@ -65,7 +37,7 @@ export const securityHandler = helmet({
   });
 
 // Rate limiting the api
-export const rateLimitHandler = rateLimit({
+const rateLimitHandler = rateLimit({
   windowMs: 30 * 60 * 1000,
   max: 100,
   handler: async (req, res) => {
@@ -77,3 +49,44 @@ export const rateLimitHandler = rateLimit({
     return;
   },
 });
+
+export const preFlight = (req: Request, res: Response, next: NextFunction) => {
+  if (req.params.username == undefined) {
+    res.status(400).send({
+      message: "No username found on API Call that requires username",
+      error: "Missing username parameter.",
+      error_code: 400,
+    });
+  }
+  sanitizeQuery(req);
+  next();
+};
+
+export const limiterAndCacheControl = (req: Request, res: Response, next: NextFunction) => {
+  if (req.query.docsDisplay == "true") {
+    res.cacheControl = { noCache: true };
+  } else if (PRODUCTION) {
+    app.use(rateLimitHandler);
+  }
+  next();
+}
+
+export const errorHandler = (err: unknown, _: Request, res: Response, __: NextFunction) => {
+  res.set("Content-Type", "application/json");
+  if (err instanceof ResponseError) {
+    res.status(err.error_code).json({
+      message: err.message,
+      error: err.error,
+    });
+  } else if (err instanceof Error) {
+    res.status(500).json({
+      message: "Internal server error",
+      error: err.message,
+    });
+  } else {
+    res.status(500).json({
+      message: "An unknown error occurred",
+      error: err,
+    });
+  }
+}
