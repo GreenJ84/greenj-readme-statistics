@@ -70,7 +70,22 @@ export class GithubQuerier {
 
   private statsQueryInProgress: Record<string, Boolean> = {};
   private async getUserStats(username: string): Promise<UserStats>{
+    if (this.profileQueryInProgress[username] || this.statsQueryInProgress[username]) {
+      throw new ResponseError("This call occurred while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+    }
+    this.statsQueryInProgress[username] = true;
 
+    let variables = { login: username };
+    const queryResponse = await this.querySetup(variables, "stats")
+      .then((data: RawUserData) => {
+        return data as RawUserStats;
+      })
+      .catch((err) => {
+        this.statsQueryInProgress[username] = false;
+        throw err;
+      });
+
+    return statsParse(queryResponse);
   }
 
   private langsQueryInProgress: Record<string, Boolean> = {};
