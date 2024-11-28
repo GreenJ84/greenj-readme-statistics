@@ -108,6 +108,39 @@ export class GithubQuerier {
     return langsParse(queryResponse);
   }
 
+  private async streakProbe(
+    username: string
+  ): Promise<[string, number[]]> {
+    const now = new Date().toISOString();
+    const today = now.slice(0, 19);
+    const year = now.slice(0, 4);
+    const graphql = gql(
+      fs.readFileSync("src/github/graphql/streak-probe.graphql", "utf8")
+    );
+    const variables = {
+      login: username,
+      start: `${year}-01-01T00:00:00Z`,
+      end: today,
+    };
+    const data = await this.basePlatformQuery({
+      query: graphql,
+      variables: variables,
+    })
+      .then((res) => res as RawUserProbe)
+      .catch((err) => {
+        throw new ResponseError(
+          "Error building GraphQL query for the GitHub API",
+          err,
+          500
+        );
+      });
+  
+    return [
+      data.user.createdAt,
+      [...data.user.contributionsCollection.contributionYears].sort(),
+    ];
+  };
+
   private streakQueryInProgress: Record<string, Boolean> = {};
   private async getUserStreak(username: string): Promise<UserStreak> {
 
