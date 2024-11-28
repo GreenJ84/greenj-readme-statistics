@@ -6,20 +6,41 @@ import { match } from "ts-pattern";
 import { UserStats } from "./types";
 import { langsCardSetup } from "./modals/langs-card";
 import { statsCardSetup } from "./modals/stats-card";
+import { streakCardSetup } from "./modals/streak-card";
 
-// Returns the card creation function depending on path
-export const getGithubParserFunction = (req: Request): Function => {
-  const type = req.path.split("/")[2]!;
-  const parseFunc = match(type)
+export const getGraphQuery = (type: string): string => {
+  const graph = match(type)
+    .with("stats", () => {
+      return "src/github/graphql/github-stats.graphql";
+    })
+    .with("languages", () => {
+      return "src/github/graphql/github-langs.graphql";
+    })
+    .with("streak", () => {
+      return "src/github/graphql/github-streak.graphql";
+    })
+    .with("all", () => {
+      return "src/github/graphql/github-all-profile.graphql";
+    })
+    .run();
+  return graph;
+};
+
+export const getGithubParserFunction = (type: string): Function => {
+  return match(type)
     .with("stats", () => {
       return statsCardSetup;
     })
-    // .with("trophies", () => {return trophCardSetup})
     .with("languages", () => {
       return langsCardSetup;
     })
+    .with("streak", () => {
+      return streakCardSetup;
+    })
+    // .with("trophies", () => {
+    //     return trophyCardSetup;
+    // })
     .run();
-  return parseFunc;
 };
 
 // Maths......
