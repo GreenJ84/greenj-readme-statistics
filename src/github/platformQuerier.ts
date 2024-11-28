@@ -75,7 +75,22 @@ export class GithubQuerier {
 
   private langsQueryInProgress: Record<string, Boolean> = {};
   private async getUserLangs(username: string): Promise<UserLanguages>{
+    if (this.profileQueryInProgress[username] || this.langsQueryInProgress[username]) {
+      throw new ResponseError("This call occurred while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+    }
+    this.langsQueryInProgress[username] = true;
 
+    let variables = { login: username };
+    const queryResponse = await this.querySetup(variables, "langs")
+      .then((data: RawUserData) => {
+        return data as RawUserLanguages;
+      })
+      .catch((err) => {
+        this.langsQueryInProgress[username] = false;
+        throw err;
+      });
+
+    return langsParse(queryResponse);
   }
 
   private streakQueryInProgress: Record<string, Boolean> = {};
