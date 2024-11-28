@@ -2,17 +2,18 @@
 
 import express from "express";
 import { Cache } from "./redis";
-import { corsHandler, errorHandler, rateLimitHandler, securityHandler } from "./utils/middleware";
+import { corsHandler, errorHandler, securityHandler } from "./utils/middleware";
+import cacheControl from "express-cache-controller";
 
 const PORT = 8000;
-const app = express();
-const cache = new Cache()
+export const app = express();
+export const cache = new Cache()
 
 app.use(express.static("public"));
-app.use(errorHandler);
 app.use(corsHandler);
 app.use(securityHandler);
-app.use(rateLimitHandler);
+app.use(cacheControl);
+app.use(errorHandler);
 
 const server = app.listen(PORT, async () => {
   console.log(`Express server running on port ${PORT}`);
