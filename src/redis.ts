@@ -37,21 +37,6 @@ export class Cache {
       .then(() => console.log("Redis server disconnected"));
   }
 
-  createKey(
-    requestPath: string,
-    username: string | null = null
-  ) {
-    const pathParts = requestPath.split("/");
-
-    const platform = pathParts[1];
-    const user = username ? `:${username}` : "";
-    const platformData = pathParts[2] === "register" || pathParts[2] === "unregister" ?
-      "profile" :
-      pathParts[2];
-
-    return `${platform}${user}:${platformData}`;
-  }
-
   async setItem(
     key: string,
     data: RedisCache,
@@ -90,7 +75,7 @@ export class Cache {
       return null;
     }
     developmentLogger(console.log, `Successfully retrieved`);
-    return flatted.parse(data);
+    return flatted.parse(data) as RedisCache;
   }
 
   async deleteItem(
