@@ -3,7 +3,7 @@
 import { Request } from "express";
 import { match } from "ts-pattern";
 
-import { UserStats } from "./types";
+import { UserData, UserStats } from "./types";
 import { langsCardSetup } from "./modals/langs-card";
 import { statsCardSetup } from "./modals/stats-card";
 import { streakCardSetup } from "./modals/streak-card";
@@ -26,7 +26,7 @@ export const getGraphQuery = (type: string): string => {
   return graph;
 };
 
-export const getGithubParserFunction = (type: string): Function => {
+export const getRouteSVGModal = (type: string): (req: Request, data: UserData) => string => {
   return match(type)
     .with("stats", () => {
       return statsCardSetup;
