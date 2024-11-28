@@ -4,59 +4,54 @@ import express, { Request, Response, NextFunction } from "express";
 
 import { limiterAndCacheControl, preFlight } from "../utils/middleware";
 import {
-  getProfileStats,
-  getCommitStreak,
+  getProfileData,
   register,
   unregister,
 } from "./controllers";
+import { setupRegistrationDatabase } from "./users_database";
 
 export const GithubRoutes = (app: express.Application) => {
+  setupRegistrationDatabase();
 
-  // Display github stats in trophies
   app.get(
     "/github/trophies/:username",
     preFlight,
     limiterAndCacheControl,
     (req: Request, res: Response, next: NextFunction) => {
-      // Allow Theme updates on Server Landing page
-      getProfileStats(req, res).catch((err: unknown) => {
+      getProfileData(req, res, "trophies").catch((err: unknown) => {
         next(err);
       });
     }
   );
 
-  // Display github stats in Modal
   app.get(
     "/github/stats/:username",
     preFlight,
     limiterAndCacheControl,
     (req: Request, res: Response, next: NextFunction) => {
-      // Allow Theme updates on Server Landing page
-      getProfileStats(req, res).catch((err: unknown) => {
+      getProfileData(req, res, "stats").catch((err: unknown) => {
         next(err);
       });
     }
   );
 
-  // Display most used github languages
   app.get(
     "/github/languages/:username",
     preFlight,
     limiterAndCacheControl,
     (req: Request, res: Response, next: NextFunction) => {
-      getProfileStats(req, res).catch((err: unknown) => {
+      getProfileData(req, res, "languages").catch((err: unknown) => {
         next(err);
       });
     }
   );
 
-  // Display github contributions streak
   app.get(
     "/github/streak/:username",
     preFlight,
     limiterAndCacheControl,
     (req: Request, res: Response, next: NextFunction) => {
-      getCommitStreak(req, res).catch((err: unknown) => {
+      getProfileData(req, res, "streak").catch((err: unknown) => {
         next(err);
       });
     }
