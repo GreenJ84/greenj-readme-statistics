@@ -8,9 +8,11 @@ import {
   REDIS_PASS,
   REDIS_USER
 } from "./environment";
+import { UserData as GithubUserData } from "./github/types";
+
 import { developmentLogger } from "./utils/utils";
 
-export type RedisCache = unknown;
+export type RedisCache = GithubUserData;
 
 export class Cache {
   private client: RedisClientType;
