@@ -1,11 +1,12 @@
 import fs from "fs";
+import { match } from "ts-pattern";
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 
 import { GraphQuery, ResponseError } from "../utils/utils";
-import { RawGraphResponse, RawProfileData, RawStreakData, RawUserData, RawUserLanguages, RawUserProbe, RawUserStats, UserData, UserLanguages, UserProfile, UserStats, UserStreak } from "./types";
+import { RawGraphResponse, RawStreakData, RawUserData, RawUserLanguages, RawUserProbe, RawUserStats, UserData, UserLanguages, UserProfile, UserStats, UserStreak } from "./types";
+
 import { GITHUB_TOKEN } from "./github_environment";
 import { getGraphQuery } from "./utils";
-import { match } from "ts-pattern";
 import { langsParse, statsParse, streakParse } from "./dataParsers";
 
 export class GithubQuerier {
@@ -65,7 +66,8 @@ export class GithubQuerier {
 
   private profileQueryInProgress: Record<string, Boolean> = {};
   private async getUserProfile(username: string): Promise<UserProfile>{
-
+    let profile = {} as UserProfile;
+    return profile;
   }
 
   private statsQueryInProgress: Record<string, Boolean> = {};
