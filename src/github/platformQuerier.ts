@@ -101,14 +101,14 @@ export class GithubQuerier {
         return data as RawUserLanguages;
       })
       .catch((err) => {
-        this.langsQueryInProgress[username] = false;
+        this.statsQueryInProgress[username] = false;
         throw err;
       });
 
     return langsParse(queryResponse);
   }
 
-  private async streakProbe(
+  async streakProbe(
     username: string
   ): Promise<[string, number[]]> {
     const now = new Date().toISOString();
@@ -143,7 +143,63 @@ export class GithubQuerier {
 
   private streakQueryInProgress: Record<string, Boolean> = {};
   private async getUserStreak(username: string): Promise<UserStreak> {
+    if (this.profileQueryInProgress[username] || this.streakQueryInProgress[username]) {
+      throw new ResponseError("This call occurred while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+    }
+    this.streakQueryInProgress[username] = true;
 
+    const [created, years] = await this.streakProbe(username).catch(
+      (err) => {
+        this.streakQueryInProgress[username] = false;
+        throw err;
+      }
+    );
+
+    let streak: UserStreak = {
+      total: 0,
+      totalText: "Total Contributions",
+      totalRange: [
+        `${new Date(created as string).toISOString().slice(0, 10)}`,
+        `${new Date().toISOString().slice(0, 10)}`,
+      ],
+      curr: 0,
+      currText: "Current Streak",
+      currDate: ["", ""],
+      longest: 0,
+      longestText: "Longest Streak",
+      longestDate: ["", ""]
+    };
+
+    let variables = { login: username, start: "", end: "" };
+    for (let year of years) {
+      // If before year is created year, set start to create data else year start
+      if (year == new Date(created as string).getFullYear()) {
+        variables.start =
+          new Date(created as string).toISOString().slice(0, 19) + "Z";
+      } else {
+        variables.start = `${year}-01-01T00:00:00Z`;
+      }
+      // If year is this year, set end to current date else end of year
+      if (year == new Date().getFullYear()) {
+        variables.end = new Date().toISOString().slice(0, 19) + "Z";
+      } else {
+        variables.end = `${year}-12-31T00:00:00Z`;
+      }
+      // Query data for the specific yar
+      const queryResponse = await this.querySetup(variables, "langs")
+      .then((data: RawUserData) => {
+        return data as RawStreakData;
+      })
+      .catch((err) => {
+        this.streakQueryInProgress[username] = false;
+        throw err;
+      });
+
+      // Parse that data with our current stats to update
+      streak = streakParse(queryResponse, streak);
+    }
+
+    return streak;
   }
 
   getUserData(route: string): (username: string)  => Promise<UserData>
