@@ -71,7 +71,7 @@ export function sanitizeUsername(value: string): string {
 }
 
 // Loop through all query parameters and sanitize them accordingly
-export function sanitizeQuery(req: Request): boolean {
+export function sanitizeQuery(req: Request): void {
   const color: string[] = [
     "background",
     "border",
@@ -100,50 +100,31 @@ export function sanitizeQuery(req: Request): boolean {
     const value = req.query[param];
     if (value !== xss(value as string)) {
       req.query = {};
-      return false;
+      "Malicious xss found in parameter: background, value: <script></script>"
+      let error_message = `Malicious xss found in parameter: ${param}, value: ${value}`;
+      developmentLogger(console.error, error_message);
+      throw new Error(error_message);
     }
     developmentLogger(console.log, param);
     switch (true) {
       case color.includes(param):
-        try {
           sanitizedParams[param] = sanitizeColor(value as string);
-        } catch (error) {
-          console.error(error);
-        }
         break;
       case number.includes(param):
-        try {
           sanitizedParams[param] = sanitizeNumber(value as string);
-        } catch (error) {
-          console.error(error);
-        }
         break;
       case params.includes(param):
-        try {
           sanitizedParams[param] = sanitizeParam(value as string);
-        } catch (error) {
-          console.error(error);
-        }
         break;
       case boolean.includes(param):
-        try {
-          sanitizedParams[param] = sanitizeBoolean(value as string);
-        } catch (error) {
-          console.error(error);
-        }
+          sanitizedParams[param] = sanitizeBoolean(value as string)
         break;
-      case param == "title":
-        try {
+      case param === "title":
           sanitizedParams[param] = sanitizeText(value as string);
-        } catch (error) {
-          console.error(error);
-        }
-      // Remove all unwarrented parameters
       default:
         break;
     }
   }
   developmentLogger(console.log, sanitizedParams.toString());
   req.query = sanitizedParams;
-  return true;
 }
