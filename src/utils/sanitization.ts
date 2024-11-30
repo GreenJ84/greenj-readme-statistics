@@ -95,36 +95,34 @@ export function sanitizeQuery(req: Request): void {
   const params: string[] = ["theme", "locale"];
   const boolean: string[] = ["hideBorder"];
 
-  const sanitizedParams: Record<string, any> = {};
   for (const param in req.query) {
     const value = req.query[param];
     if (value !== xss(value as string)) {
-      req.query = {};
       "Malicious xss found in parameter: background, value: <script></script>"
       let error_message = `Malicious xss found in parameter: ${param}, value: ${value}`;
       developmentLogger(console.error, error_message);
       throw new Error(error_message);
     }
-    developmentLogger(console.log, param);
+    developmentLogger(console.log, param, value);
     switch (true) {
       case color.includes(param):
-          sanitizedParams[param] = sanitizeColor(value as string);
+          req.query[param] = sanitizeColor(value as string);
         break;
       case number.includes(param):
-          sanitizedParams[param] = sanitizeNumber(value as string);
+          req.query[param] = sanitizeNumber(value as string);
         break;
       case params.includes(param):
-          sanitizedParams[param] = sanitizeParam(value as string);
+          req.query[param] = sanitizeParam(value as string);
         break;
       case boolean.includes(param):
-          sanitizedParams[param] = sanitizeBoolean(value as string)
+          req.query[param] = sanitizeBoolean(value as string)
         break;
       case param === "title":
-          sanitizedParams[param] = sanitizeText(value as string);
+          req.query[param] = sanitizeText(value as string);
       default:
         break;
     }
   }
-  developmentLogger(console.log, sanitizedParams.toString());
-  req.query = sanitizedParams;
+  developmentLogger(console.log, ...Object.keys(req.query));
+  req.query = req.query;
 }
