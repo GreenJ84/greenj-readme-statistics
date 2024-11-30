@@ -4,9 +4,10 @@ import { Request, Response } from "express";
 
 import { cache } from "../server";
 import { Cache } from "../utils/cache";
-import { UserData } from "./types";
+import { UserData, UserLanguages, UserProfile, UserStats, UserStreak } from "./types";
 import { getRouteSVGModal } from "./utils";
 import { GithubQuerier } from "./platformQuerier";
+import { PlatformDb } from "../utils/database";
 
 const querier = new GithubQuerier();
 const keyGenerator = Cache.keyGenerator('github')
@@ -36,10 +37,52 @@ export const getProfileData = async (
   res.status(200).send(card);
 };
 
+const registrar = new PlatformDb("../github/users.sqlite");
 export const register = async (req: Request, res: Response) => {
+  const username = req.params.username!;
+  const newRegistration = registrar.registerUser(username);
 
+  let userProfile: UserProfile;
+  if (newRegistration || req.query.refresh === "true" ) {
+  userProfile = await querier.getUserData("profile")(username) as UserProfile;
+  (async () => {
+      await cache.setItem(keyGenerator(username, "streak"), userProfile.streak)
+        .catch((err) => {
+          console.error("Error setting cache:", err);
+        });
+      await cache.setItem(keyGenerator(username, "stats"), userProfile.stats)
+        .catch((err) => {
+          console.error("Error setting cache:", err);
+        });
+      await cache.setItem(keyGenerator(username, "languages"), userProfile.languages)
+        .catch((err) => {
+          console.error("Error setting cache:", err);
+        });
+    })();
+  } else {
+    const [streak, stats, languages] = await Promise.all([
+      cache.getItem(keyGenerator(username, "streak")),
+      cache.getItem(keyGenerator(username, "stats")),
+      cache.getItem(keyGenerator(username, "languages")),
+    ]);
+    userProfile = {
+      streak: streak as UserStreak,
+      stats: stats as UserStats,
+      languages: languages as UserLanguages
+    };
+  }
+
+  const streakCard: string = getRouteSVGModal("streak")(req, userProfile.streak);
+  const statsCard: string = getRouteSVGModal("stats")(req, userProfile.stats);
+  const langsCard: string = getRouteSVGModal("languages")(req, userProfile.languages);
+
+  res.setHeader("Content-Type", "image/svg+xml");
+  res.status(200).send(`<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;">
+      ${streakCard}
+      ${statsCard}
+      ${langsCard}
+    </div>`);
 };
-
 
 export const unregister = async (req: Request, res: Response) => {
 
