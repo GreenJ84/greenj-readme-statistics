@@ -124,7 +124,13 @@ export interface RawUserLanguages {
 }
 
 //=========== Parse Data Types ============
-export type UserData = UserStreak | UserStats | UserLanguages;
+export type UserData = UserProfile | UserStreak | UserStats | UserLanguages;
+
+export interface UserProfile {
+  streak: UserStreak;
+  stats: UserStats;
+  languages: UserLanguages;
+}
 
 export interface UserStreak {
   title?: string;
