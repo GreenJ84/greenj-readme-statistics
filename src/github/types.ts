@@ -14,10 +14,12 @@ export interface RawUserProbe {
 
 export type RawUserData = RawProfileData | RawStreakData | RawUserStats | RawUserLanguages;
 
-export interface RawProfileData {
+export interface RawProfileData extends RawUserProbe, RawUserLanguages, RawUserStats {
   user: {
     name: string;
+    createdAt: string;
     contributionsCollection: {
+      contributionYears: number[];
       totalCommitContributions: number;
       restrictedContributionsCount: number;
     };
