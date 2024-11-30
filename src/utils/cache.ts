@@ -10,7 +10,7 @@ import {
 } from "../environment";
 import { UserData as GithubUserData } from "../github/types";
 
-import { developmentLogger } from "./utils";
+import { developmentLogger, ResponseError } from "./utils";
 
 export type RedisCache = GithubUserData
   | { times: 1 };
@@ -91,10 +91,10 @@ export class Cache {
   ): Promise<boolean>{
     try {
       const response = await this.client.del(key);
-      if (response == 0) throw Error("No cache");
+      if (response == 0) return false;
     } catch (error) {
       developmentLogger(console.error, `Error deleting cache for ${key}: ${error}`);
-      return false;
+      throw new ResponseError("Failed to delete cached user data after unregistering. Data will expire and be removed within the next 24hrs.", new Error(), 500);
     }
     developmentLogger(console.log, `Cache for ${key} deleted.`);
     return true;
