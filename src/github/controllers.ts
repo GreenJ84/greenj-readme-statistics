@@ -7,8 +7,8 @@ import { UserData } from "./types";
 import { getRouteSVGModal } from "./utils";
 import { GithubQuerier } from "./platformQuerier";
 
-const PLATFORM = "github";
 const querier = new GithubQuerier();
+const keyGenerator = cache.keyGenerator('github')
 
 export const getProfileData = async (
   req: Request,
@@ -16,7 +16,7 @@ export const getProfileData = async (
   subRoute: string
 ) => {
   const username = req.params.username!;
-  const cacheKey = `${PLATFORM}:${username}:${subRoute}`;
+  const cacheKey = keyGenerator(username, subRoute);
 
   let cacheData = await cache.getItem(cacheKey);
   if (cacheData === null) {
