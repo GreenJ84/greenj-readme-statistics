@@ -8,11 +8,8 @@ import {
   register,
   unregister,
 } from "./controllers";
-import { setupRegistrationDatabase } from "./users_database";
 
 export const GithubRoutes = (app: express.Application) => {
-  setupRegistrationDatabase();
-
   app.get(
     "/github/trophies/:username",
     preFlight,
