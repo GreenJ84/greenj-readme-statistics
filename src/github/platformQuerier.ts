@@ -10,8 +10,7 @@ import { getGraphQuery } from "./utils";
 import { langsParse, statsParse, streakParse } from "./dataParsers";
 
 export class GithubQuerier {
-  GIT_URL = "https://api.github.com/graphql"
-
+  private GIT_URL = "https://api.github.com/graphql"
   private client = new ApolloClient({
     uri: this.GIT_URL,
     cache: new InMemoryCache(),
@@ -188,7 +187,7 @@ export class GithubQuerier {
         variables.end = `${year}-12-31T00:00:00Z`;
       }
       // Query data for the specific yar
-      const queryResponse = await this.querySetup(variables, "langs")
+      const queryResponse = await this.querySetup(variables, "streak")
       .then((data: RawUserData) => {
         return data as RawStreakData;
       })
@@ -208,16 +207,16 @@ export class GithubQuerier {
   {
     return match(route)
       .with("all", () =>
-        this.getUserProfile
+        this.getUserProfile.bind(this)
       )
       .with("stats", () =>
-        this.getUserStats
+        this.getUserStats.bind(this)
       )
-      .with("langs", () =>
-        this.getUserLangs
+      .with("languages", () =>
+        this.getUserLangs.bind(this)
       )
       .with("streak", () =>
-        this.getUserStreak
+        this.getUserStreak.bind(this)
       )
       .run();
   }
