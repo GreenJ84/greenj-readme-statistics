@@ -1,9 +1,8 @@
 /** @format */
 
-import { Request } from "express";
 import { match } from "ts-pattern";
 
-import { UserData, UserStats } from "./types";
+import { UserStats } from "./types";
 import { langsCardSetup } from "./modals/langs-card";
 import { statsCardSetup } from "./modals/stats-card";
 import { streakCardSetup } from "./modals/streak-card";
@@ -13,7 +12,7 @@ export const getGraphQuery = (type: string): string => {
     .with("stats", () => {
       return "src/github/graphql/github-stats.graphql";
     })
-    .with("languages", () => {
+    .with("langs", () => {
       return "src/github/graphql/github-langs.graphql";
     })
     .with("streak", () => {
@@ -26,7 +25,7 @@ export const getGraphQuery = (type: string): string => {
   return graph;
 };
 
-export const getRouteSVGModal = (type: string): (req: Request, data: UserData) => string => {
+export const getRouteSVGModal = (type: string): Function => {
   return match(type)
     .with("stats", () => {
       return statsCardSetup;
