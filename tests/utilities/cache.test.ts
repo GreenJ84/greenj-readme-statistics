@@ -14,7 +14,7 @@ afterAll(async () => {
 let keyGenerator: Function;
 describe("Testing the resources provided by the cache", () => {
     const username = 'GreenDud'
-    keyGenerator = cache.keyGenerator('github');
+    keyGenerator = Cache.keyGenerator('github');
     it("Should get the correct cache key for each Github Routes", () => {
         expect(keyGenerator(username, "trophies")).toEqual('github:GreenDud:trophies');
         expect(keyGenerator(username, "languages")).toEqual('github:GreenDud:languages');
@@ -23,7 +23,7 @@ describe("Testing the resources provided by the cache", () => {
     });
 
     it("Should get the correct cache key for each Leetcode Routes", () => {
-        keyGenerator = cache.keyGenerator('leetcode');
+        keyGenerator = Cache.keyGenerator('leetcode');
         expect(keyGenerator(username, "stats")).toEqual('leetcode:GreenDud:stats');
         expect(keyGenerator(username, "badges")).toEqual('leetcode:GreenDud:badges');
         expect(keyGenerator(username, "completion")).toEqual('leetcode:GreenDud:completion');
@@ -32,7 +32,7 @@ describe("Testing the resources provided by the cache", () => {
     });
 
     it ("Should get the correct cache key for each Wakatime Routes", () => {
-        keyGenerator = cache.keyGenerator('wakatime');
+        keyGenerator = Cache.keyGenerator('wakatime');
         expect(keyGenerator(username, "insights")).toEqual('wakatime:GreenDud:insights');
         expect(keyGenerator(username, "languages")).toEqual('wakatime:GreenDud:languages');
         expect(keyGenerator(username, "stats")).toEqual('wakatime:GreenDud:stats');
@@ -51,14 +51,14 @@ describe("Testing the resources provided by the cache", () => {
     })
 
     it('Should set and recieve a cache validly', async () => {
-        const streakKey = cache.keyGenerator("leetcode")(username, "streak");
+        const streakKey = Cache.keyGenerator("leetcode")(username, "streak");
 
         await cache.setItem(streakKey, { times: 1 });
         expect(await cache.getItem(streakKey)).toEqual({ times: 1 });
     })
 
     it('Should delete a key successfully not be able to access keys after deletion', async () => {
-        const trophyKey = cache.keyGenerator("github")(username, "trophies");
+        const trophyKey = Cache.keyGenerator("github")(username, "trophies");
 
         await cache.setItem(trophyKey, { times: 1 });
         expect(await cache.deleteItem(trophyKey)).toEqual(true);
