@@ -3,12 +3,13 @@
 import { Request, Response } from "express";
 
 import { cache } from "../server";
+import { Cache } from "../utils/cache";
 import { UserData } from "./types";
 import { getRouteSVGModal } from "./utils";
 import { GithubQuerier } from "./platformQuerier";
 
 const querier = new GithubQuerier();
-const keyGenerator = cache.keyGenerator('github')
+const keyGenerator = Cache.keyGenerator('github')
 
 export const getProfileData = async (
   req: Request,

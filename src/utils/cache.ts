@@ -40,7 +40,7 @@ export class Cache {
       .then(() => console.log("Redis server disconnected"));
   }
 
-  keyGenerator(platform: string): (username: string, subroute: string) => string {
+  static keyGenerator(platform: string): (username: string, subroute: string) => string {
     return (username: string, subroute: string) => {
       return `${platform}:${username}:${subroute}`;
     };
@@ -59,7 +59,6 @@ export class Cache {
           1000 * 60 * 60 * 24
           : 1000 * 60 * 10;
         await this.client.set(key, flatted.stringify(data), {
-          // 10min dev / 24hr prod cache lifetime
           PX: Expiration,
         });
       }
