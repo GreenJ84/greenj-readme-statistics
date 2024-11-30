@@ -1,23 +1,31 @@
 /** @format */
 
 import express from "express";
-import { Cache } from "./redis";
+
+import { Cache } from "./utils/cache";
 import { corsHandler, errorHandler, securityHandler } from "./utils/middleware";
 import cacheControl from "express-cache-controller";
+
+import { GithubRoutes } from "./github/routes";
 
 const PORT = 8000;
 export const app = express();
 export const cache = new Cache()
+cache.createConnection();
 
 app.use(express.static("public"));
 app.use(corsHandler);
 app.use(securityHandler);
-app.use(cacheControl);
+app.use(cacheControl({
+  noCache: false,
+  private: true,
+}));
 app.use(errorHandler);
+
+GithubRoutes(app);
 
 const server = app.listen(PORT, async () => {
   console.log(`Express server running on port ${PORT}`);
-  await cache.createConnection();
 });
 
 //========== SHUTDOWN PROCESSES =================================
@@ -31,7 +39,8 @@ const gracefulShutdown = async () => {
       cache.tearConnection().then(() => {
         console.log("Express server closed.");
         process.exit(0);
-      });
+      })
+      .catch(() => {process.exit(1);});
     });
   }
 };
