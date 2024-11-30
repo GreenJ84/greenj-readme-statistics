@@ -85,5 +85,17 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const unregister = async (req: Request, res: Response) => {
+  registrar.unregisterUser(req.params.username!);
 
+  try {
+    await Promise.all([
+      cache.deleteItem(keyGenerator(req.params.username!, "streak")),
+      cache.deleteItem(keyGenerator(req.params.username!, "stats")),
+      cache.deleteItem(keyGenerator(req.params.username!, "languages")),
+    ]);
+  } catch (err: any){
+    console.error("Error deleting cache:", err);
+    res.status(500).send("Failed to delete cached user data after unregistering. Data will expire and be removed within the next 24hrs.");
+  }
+  res.status(200).send("User unregistered successfully.");
 };
