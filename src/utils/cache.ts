@@ -7,12 +7,13 @@ import {
   PROD_PORT,
   REDIS_PASS,
   REDIS_USER
-} from "./environment";
-import { UserData as GithubUserData } from "./github/types";
+} from "../environment";
+import { UserData as GithubUserData } from "../github/types";
 
-import { developmentLogger } from "./utils/utils";
+import { developmentLogger } from "./utils";
 
-export type RedisCache = GithubUserData;
+export type RedisCache = GithubUserData
+  | { times: 1 };
 
 export class Cache {
   private client: RedisClientType;
@@ -37,6 +38,12 @@ export class Cache {
     await this.client
       .disconnect()
       .then(() => console.log("Redis server disconnected"));
+  }
+
+  keyGenerator(platform: string): (username: string, subroute: string) => string {
+    return (username: string, subroute: string) => {
+      return `${platform}:${username}:${subroute}`;
+    };
   }
 
   async setItem(
