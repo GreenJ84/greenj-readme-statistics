@@ -65,9 +65,11 @@ export const preFlight = (req: Request, res: Response, next: NextFunction) => {
 export const limiterAndCacheControl = (req: Request, res: Response, next: NextFunction) => {
   if (req.query.docsDisplay == "true") {
     res.cacheControl = { noCache: true };
-  } else if (PRODUCTION) {
+  }
+  if (PRODUCTION) {
     app.use(rateLimitHandler);
   }
+  developmentLogger(console.info, "limiter over");
   next();
 }
 
