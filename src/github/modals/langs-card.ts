@@ -5,9 +5,9 @@ import { Request } from "express";
 import { baseCardThemeParse } from "../../utils/utils";
 import { ThemeType } from "../../utils/themes";
 
-import { GithUserLanguages } from "../githubTypes";
+import { UserLanguages } from "../types";
 
-export const langsCardSetup = (req: Request, data: GithUserLanguages): string => {
+export const langsCardSetup = (req: Request, data: UserLanguages): string => {
     const theme: ThemeType = baseCardThemeParse(req);
     
     const {

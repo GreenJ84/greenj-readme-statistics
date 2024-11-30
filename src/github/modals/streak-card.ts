@@ -2,10 +2,10 @@
 
 import { Request } from "express";
 import { baseCardThemeParse, getFormatDate } from "../../utils/utils";
-import { GithUserStreak } from "../githubTypes";
+import { UserStreak } from "../types";
 import { ThemeType } from "../../utils/themes";
 
-export const streakCardSetup = (req: Request, data: GithUserStreak): string => {
+export const streakCardSetup = (req: Request, data: UserStreak): string => {
   const theme: ThemeType = baseCardThemeParse(req);
 
   const {
