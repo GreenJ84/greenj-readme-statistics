@@ -3,7 +3,7 @@ import { match } from "ts-pattern";
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 
 import { developmentLogger, GraphQuery, ResponseError } from "../utils/utils";
-import { RawGraphResponse, RawStreakData, RawUserBadges, RawUserCompletion, RawUserData, RawUserProbe, RawUserStats, RawUserSubmissions, UserBadges, UserCompletion, UserData, UserStats, UserStreak, UserSubmissions } from "./types";
+import { RawGraphResponse, RawProfileData, RawStreakData, RawUserBadges, RawUserCompletion, RawUserData, RawUserProbe, RawUserStats, RawUserSubmissions, UserBadges, UserCompletion, UserData, UserProfile, UserStats, UserStreak, UserSubmissions } from "./types";
 
 import { getGraphQuery } from "./utils";
 
@@ -65,6 +65,37 @@ export class LeetCodeQuerier {
   }
 
   private profileQueryInProgress: Record<string, Boolean> = {};
+  private async getUserProfile(username: string): Promise<UserProfile>{
+    if (this.profileQueryInProgress[username]) {
+      throw new ResponseError("This call occurred while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+    }
+    this.profileQueryInProgress[username] = true;
+    const variables = {
+      username: username!,
+      year: parseInt(new Date().toISOString().slice(0, 4)),
+    };
+    const response = await this.querySetup(variables, "profile")
+      .then((data: RawUserData) => {
+        return data as RawProfileData;
+      })
+      .catch((err) => {
+        this.statsQueryInProgress[username] = false;
+        throw err instanceof ResponseError ? err : new ResponseError(
+          "Error building Profile query for the LeetCode API",
+          err,
+          500
+        );
+      });
+
+    this.profileQueryInProgress[username] = false;
+    return {
+      stats: statsParse(response as RawUserStats),
+      badges: badgesParse(response as RawUserBadges),
+      completion: completionParse(response as RawUserCompletion),
+      submissions: submissionsParse(response as RawUserSubmissions),
+      streak: await this.captureStreakFromProbeData(response as RawUserProbe, username),
+    };
+  }
 
   private statsQueryInProgress: Record<string, Boolean> = {};
   private async getUserStats(username: string): Promise<UserStats>{
@@ -80,7 +111,11 @@ export class LeetCodeQuerier {
       })
       .catch((err) => {
         this.statsQueryInProgress[username] = false;
-        throw err;
+        throw err instanceof ResponseError ? err : new ResponseError(
+          "Error building Stats query for the LeetCode API",
+          err,
+          500
+        );
       });
 
       this.statsQueryInProgress[username] = false;
@@ -101,7 +136,11 @@ export class LeetCodeQuerier {
       })
       .catch((err) => {
         this.statsQueryInProgress[username] = false;
-        throw err;
+        throw err instanceof ResponseError ? err : new ResponseError(
+          "Error building Badges query for the LeetCode API",
+          err,
+          500
+        );
       });
 
       this.statsQueryInProgress[username] = false;
@@ -122,7 +161,11 @@ export class LeetCodeQuerier {
       })
       .catch((err) => {
         this.statsQueryInProgress[username] = false;
-        throw err;
+        throw err instanceof ResponseError ? err : new ResponseError(
+          "Error building Completion query for the LeetCode API",
+          err,
+          500
+        );
       });
 
       this.statsQueryInProgress[username] = false;
@@ -143,14 +186,18 @@ export class LeetCodeQuerier {
       })
       .catch((err) => {
         this.statsQueryInProgress[username] = false;
-        throw err;
+        throw err instanceof ResponseError ? err : new ResponseError(
+          "Error building Submissions query for the LeetCode API",
+          err,
+          500
+        );
       });
 
       this.statsQueryInProgress[username] = false;
       return submissionsParse(queryResponse);
   }
 
-  async streakProbe(
+  private async streakProbe(
     username: string
   ): Promise<RawUserProbe> {
     const variables = {
@@ -162,7 +209,11 @@ export class LeetCodeQuerier {
       return data as RawUserProbe;
     })
     .catch((err) => {
-      throw err;
+      throw err instanceof ResponseError ? err : new ResponseError(
+        "Error building Streak active years query for the LeetCode API",
+        err,
+        500
+      );
     });
 
     return data;
@@ -182,7 +233,7 @@ export class LeetCodeQuerier {
       }
     );
     try {
-      const streakPromise = this.captureStreakFromProbeData(probeData.matchedUser.userCalendar.activeYears, username);
+      const streakPromise = this.captureStreakFromProbeData(probeData, username);
       this.streakQueryInProgress[username] = false;
       return streakPromise;
     } catch (err) {
@@ -191,39 +242,40 @@ export class LeetCodeQuerier {
       throw err;
     }
   }
-private async captureStreakFromProbeData(
-  membershipYears: number[],
-  username: string
-): Promise<UserStreak> {
 
-  const streakData: UserStreak = {
-    streak: [0, 0],
-    totalActive: 0,
-    mostActiveYear: 0,
-    completion: "0.00",
-    completionActuals: [0, 0],
+  private async captureStreakFromProbeData(
+    response: RawUserProbe,
+    username: string
+  ): Promise<UserStreak> {
+
+    const streakData: UserStreak = {
+      streak: [0, 0],
+      totalActive: 0,
+      mostActiveYear: 0,
+      completion: "0.00",
+      completionActuals: [0, 0],
+    };
+    for (let year of response.matchedUser.userCalendar.activeYears) {
+      const data = await this.querySetup(
+        { username: username, year: year },
+        ""
+      )
+      .then((res) => {
+        return res as RawStreakData;
+      })
+      .catch((err) => {
+        this.streakQueryInProgress[username] = false;
+        throw new ResponseError(
+          "Error querying LeetCode streak data",
+          err,
+          500
+        );
+      });
+      parseStreak(streakData, data, year);
+    }
+    streakQueryInProgress[username] = false;
+    return streakData;
   };
-  for (let year of membershipYears) {
-    const data = await this.querySetup(
-      { username: username, year: year },
-      ""
-    )
-    .then((res) => {
-      return res as RawStreakData;
-    })
-    .catch((err) => {
-      this.streakQueryInProgress[username] = false;
-      throw new ResponseError(
-        "Error querying LeetCode streak data",
-        err,
-        500
-      );
-    });
-    parseStreak(streakData, data, year);
-  }
-  streakQueryInProgress[username] = false;
-  return streakData;
-};
 
   getUserData(route: string): (username: string)  => Promise<UserData>
   {
