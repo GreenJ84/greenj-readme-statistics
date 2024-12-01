@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation: isolate" viewBox="0 0 552 340" width="552px" height="340px" direction="ltr">
+    <style>
+    .header {
+        font: 700 22px 'Segoe UI', Ubuntu, Sans-Serif;
+        fill: #151515;
+        animation: fadeInAnimation 0.8s ease-in-out forwards;
+    }
+    
+    .question {
+        font: 600 16px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif;
+        fill: #151515;
+        letter-spacing: 1.1px;
+    }
+    .langs {
+        font: 400 16px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif;
+        fill: #151515;
+    }
+    
+    .stagger {
+        opacity: 0;
+        animation: fadeInAnimation 0.3s ease-in-out forwards;
+    }
+    
+    .acceptance-text {
+        font: 800 24px 'Segoe UI', Ubuntu, Sans-Serif;
+        fill: #11009F;
+        animation: scaleInAnimation 0.3s ease-in-out forwards;
+    }
+    
+    .acceptance-title {
+        font: 600 14px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif;
+        fill: #11009F;
+        animation: scaleInAnimation 0.3s ease-in-out forwards;
+    }
+
+    .bold {
+        font-weight: 700
+    }
+    
+    .acceptance-circle-rim {
+        stroke: #11009F;
+        fill: none;
+        stroke-width: 6;
+        opacity: 0.2;
+    }
+    
+    .acceptance-circle {
+        stroke: #11009F;
+        stroke-dasharray: 377;
+        fill: none;
+        stroke-width: 6;
+        stroke-linecap: round;
+        opacity: 0.8;
+        transform-origin: -10px 8px;
+        transform: rotate(-90deg);
+        animation: acceptanceAnimation 1s forwards ease-in-out;
+    }
+    
+    @keyframes acceptanceAnimation {
+        from {
+        stroke-dashoffset: 377;
+        }
+        to {
+        stroke-dashoffset: 129.16020000000003;
+        }
+    }
+    /* Animations */
+    
+    @keyframes scaleInAnimation {
+        from {
+        transform: translate(-5px, 5px) scale(0);
+        }
+        to {
+        transform: translate(-5px, 5px) scale(1);
+        }
+    }
+    
+    @keyframes fadeInAnimation {
+        from {
+        opacity: 0;
+        }
+        to {
+        opacity: 1;
+        }
+    }
+    </style>
+    <defs>
+        <clipPath id='outer_rectangle'>
+            <rect width='552' height='340' rx='10'/>
+        </clipPath>
+    </defs>
+    <g style='isolation: isolate'>
+            <rect stroke='#151515' fill='#FB8C00' rx='10' x='0.5' y='0.5' width='551' height='339'/>
+    </g>
+    <g transform="translate(25, 35)">
+        <g transform="translate(0, 0)">
+            <text x="0" y="0" class="header">
+                GreenJ84's Recent Submissions
+            </text>
+        </g>
+    </g>
+
+    <g transform="translate(0, 65)">
+        <g transform="translate(0, 0)">
+            <g class="stagger" style="animation-delay: 450ms" transform="translate(25, 0)" >
+            <text class="question bold" y="12.5">
+                3Sum:
+            </text>
+            <text class="langs" x="30" y="35">
+              - Python3: Accepted in 3 attempts
+            </text>
+            </g>
+        </g>
+        <g transform="translate(0, 50)">
+            <g class="stagger" style="animation-delay: 600ms" transform="translate(25, 0)">
+            <text class="question bold" y="12.5">
+                Remove Duplicates from Sorted List II:
+            </text>
+            <text class="langs" x="30" y="35">
+                - Python3: Accepted in 3 attempts
+            </text>
+            </g>
+        </g>
+
+        <g transform="translate(0, 100)">
+            <g class="stagger" style="animation-delay: 750ms" transform="translate(25, 0)">
+            <text class="question bold" y="12.5">
+                Easy Questions Solved:
+            </text>
+            <text class="langs" x="30" y="35">
+                - Python3: Accepted in 3 attempts
+            </text>
+            </g>
+        </g>
+
+        <g transform="translate(0, 150)">
+            <g class="stagger" style="animation-delay: 900ms" transform="translate(25, 0)">
+            <text class="question bold" y="12.5">
+                Find First and Last Position of Element in Sorted Array:
+            </text>
+            <text class="langs" x="30" y="35">
+                - Python3: Accepted in 3 attempts
+            </text>
+            </g>
+        </g>
+
+        <g transform="translate(0, 200)">
+            <g class="stagger" style="animation-delay: 1050ms" transform="translate(25, 0)">
+            <text class="question bold" y="12.5">
+                Remove Duplicates from Sorted List II:
+            </text>
+            <text class="langs" x="30" y="35">
+                - Python3: Accepted in 3 attempts
+            </text>
+            </g>
+        </g>
+    </g>
+</svg>
