@@ -3,7 +3,7 @@ import { match } from "ts-pattern";
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 
 import { developmentLogger, GraphQuery, ResponseError } from "../utils/utils";
-import { RawGraphResponse, RawUserBadges, RawUserData, RawUserStats, UserBadges, UserData, UserStats } from "./types";
+import { RawGraphResponse, RawUserBadges, RawUserCompletion, RawUserData, RawUserStats, UserBadges, UserCompletion, UserData, UserStats } from "./types";
 
 import { getGraphQuery } from "./utils";
 
@@ -108,6 +108,27 @@ export class LeetCodeQuerier {
       return badgesParse(queryResponse);
   }
 
+  private completionQueryInProgress: Record<string, Boolean> = {};
+  private async getUserCompletion(username: string): Promise<UserCompletion>{
+    if (this.profileQueryInProgress[username] || this.completionQueryInProgress[username]) {
+      throw new ResponseError("This call occurred while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+    }
+    this.completionQueryInProgress[username] = true;
+
+    let variables = { login: username };
+    const queryResponse = await this.querySetup(variables, "completion")
+      .then((data: RawUserData) => {
+        return data as RawUserCompletion;
+      })
+      .catch((err) => {
+        this.statsQueryInProgress[username] = false;
+        throw err;
+      });
+
+      this.statsQueryInProgress[username] = false;
+      return completionParse(queryResponse);
+  }
+
   getUserData(route: string): (username: string)  => Promise<UserData>
   {
     return match(route)
@@ -118,10 +139,10 @@ export class LeetCodeQuerier {
         this.getUserStats.bind(this)
       )
       .with("badges", () =>
-        this.getUserLangs.bind(this)
+        this.getUserBadges.bind(this)
       )
       .with("completion", () =>
-        this.getUserLangs.bind(this)
+        this.getUserCompletion.bind(this)
       )
       .with("submissions", () =>
         this.getUserLangs.bind(this)
