@@ -3,7 +3,7 @@ import { match } from "ts-pattern";
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 
 import { developmentLogger, GraphQuery, ResponseError } from "../utils/utils";
-import { RawGraphResponse, RawUserData, UserData } from "./types";
+import { RawGraphResponse, RawUserData, RawUserStats, UserData, UserStats } from "./types";
 
 import { getGraphQuery } from "./utils";
 
@@ -62,6 +62,29 @@ export class LeetCodeQuerier {
       developmentLogger(console.error, err);
       throw err;
     });
+  }
+
+  private profileQueryInProgress: Record<string, Boolean> = {};
+
+  private statsQueryInProgress: Record<string, Boolean> = {};
+  private async getUserStats(username: string): Promise<UserStats>{
+    if (this.profileQueryInProgress[username] || this.statsQueryInProgress[username]) {
+      throw new ResponseError("This call occurred while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+    }
+    this.statsQueryInProgress[username] = true;
+
+    let variables = { username: username! };
+    const queryResponse = await this.querySetup(variables, "stats")
+      .then((data: RawUserData) => {
+        return data as RawUserStats;
+      })
+      .catch((err) => {
+        this.statsQueryInProgress[username] = false;
+        throw err;
+      });
+
+      this.statsQueryInProgress[username] = false;
+      return statsParse(queryResponse);
   }
 
 
