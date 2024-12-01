@@ -129,6 +129,27 @@ export class LeetCodeQuerier {
       return completionParse(queryResponse);
   }
 
+  private submissionsQueryInProgress: Record<string, Boolean> = {};
+private async getUserSubmissions(username: string): Promise<UserSubmissions>{
+  if (this.profileQueryInProgress[username] || this.submissionsQueryInProgress[username]) {
+    throw new ResponseError("This call occurred while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+  }
+  this.submissionsQueryInProgress[username] = true;
+
+  let variables = { login: username };
+  const queryResponse = await this.querySetup(variables, "submissions")
+    .then((data: RawUserData) => {
+      return data as RawUserSubmissions;
+    })
+    .catch((err) => {
+      this.statsQueryInProgress[username] = false;
+      throw err;
+    });
+
+    this.statsQueryInProgress[username] = false;
+    return submissionsParse(queryResponse);
+}
+
   getUserData(route: string): (username: string)  => Promise<UserData>
   {
     return match(route)
@@ -145,7 +166,7 @@ export class LeetCodeQuerier {
         this.getUserCompletion.bind(this)
       )
       .with("submissions", () =>
-        this.getUserLangs.bind(this)
+        this.getUserSubmissions.bind(this)
       )
       .with("streak", () =>
         this.getUserStreak.bind(this)
