@@ -3,7 +3,7 @@ import { match } from "ts-pattern";
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 
 import { developmentLogger, GraphQuery, ResponseError } from "../utils/utils";
-import { RawGraphResponse, RawUserBadges, RawUserCompletion, RawUserData, RawUserStats, UserBadges, UserCompletion, UserData, UserStats } from "./types";
+import { RawGraphResponse, RawStreakData, RawUserBadges, RawUserCompletion, RawUserData, RawUserProbe, RawUserStats, RawUserSubmissions, UserBadges, UserCompletion, UserData, UserStats, UserStreak, UserSubmissions } from "./types";
 
 import { getGraphQuery } from "./utils";
 
@@ -94,7 +94,7 @@ export class LeetCodeQuerier {
     }
     this.badgesQueryInProgress[username] = true;
 
-    let variables = { login: username };
+    let variables = { username: username! };
     const queryResponse = await this.querySetup(variables, "badges")
       .then((data: RawUserData) => {
         return data as RawUserBadges;
@@ -115,7 +115,7 @@ export class LeetCodeQuerier {
     }
     this.completionQueryInProgress[username] = true;
 
-    let variables = { login: username };
+    let variables = { username: username! };
     const queryResponse = await this.querySetup(variables, "completion")
       .then((data: RawUserData) => {
         return data as RawUserCompletion;
@@ -130,25 +130,100 @@ export class LeetCodeQuerier {
   }
 
   private submissionsQueryInProgress: Record<string, Boolean> = {};
-private async getUserSubmissions(username: string): Promise<UserSubmissions>{
-  if (this.profileQueryInProgress[username] || this.submissionsQueryInProgress[username]) {
-    throw new ResponseError("This call occurred while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
-  }
-  this.submissionsQueryInProgress[username] = true;
+  private async getUserSubmissions(username: string): Promise<UserSubmissions>{
+    if (this.profileQueryInProgress[username] || this.submissionsQueryInProgress[username]) {
+      throw new ResponseError("This call occurred while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+    }
+    this.submissionsQueryInProgress[username] = true;
 
-  let variables = { login: username };
-  const queryResponse = await this.querySetup(variables, "submissions")
+    let variables = { username: username! };
+    const queryResponse = await this.querySetup(variables, "submissions")
+      .then((data: RawUserData) => {
+        return data as RawUserSubmissions;
+      })
+      .catch((err) => {
+        this.statsQueryInProgress[username] = false;
+        throw err;
+      });
+
+      this.statsQueryInProgress[username] = false;
+      return submissionsParse(queryResponse);
+  }
+
+  async streakProbe(
+    username: string
+  ): Promise<RawUserProbe> {
+    const variables = {
+      username: username!,
+      year: parseInt(new Date().toISOString().slice(0, 4)),
+    };
+    const data = await this.querySetup(variables, "probe")
     .then((data: RawUserData) => {
-      return data as RawUserSubmissions;
+      return data as RawUserProbe;
     })
     .catch((err) => {
-      this.statsQueryInProgress[username] = false;
       throw err;
     });
 
-    this.statsQueryInProgress[username] = false;
-    return submissionsParse(queryResponse);
-}
+    return data;
+  };
+
+  private streakQueryInProgress: Record<string, Boolean> = {};
+  private async getUserStreak(username: string): Promise<UserStreak> {
+    if (this.profileQueryInProgress[username] || this.streakQueryInProgress[username]) {
+      throw new ResponseError("This call occurred while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+    }
+    this.streakQueryInProgress[username] = true;
+
+    const probeData = await this.streakProbe(username).catch(
+      (err) => {
+        this.streakQueryInProgress[username] = false;
+        throw err;
+      }
+    );
+    try {
+      const streakPromise = this.captureStreakFromProbeData(probeData.matchedUser.userCalendar.activeYears, username);
+      this.streakQueryInProgress[username] = false;
+      return streakPromise;
+    } catch (err) {
+      console.error(`Error capturing streak for ${username}:`, err);
+      this.streakQueryInProgress[username] = false;
+      throw err;
+    }
+  }
+private async captureStreakFromProbeData(
+  membershipYears: number[],
+  username: string
+): Promise<UserStreak> {
+
+  const streakData: UserStreak = {
+    streak: [0, 0],
+    totalActive: 0,
+    mostActiveYear: 0,
+    completion: "0.00",
+    completionActuals: [0, 0],
+  };
+  for (let year of membershipYears) {
+    const data = await this.querySetup(
+      { username: username, year: year },
+      ""
+    )
+    .then((res) => {
+      return res as RawStreakData;
+    })
+    .catch((err) => {
+      this.streakQueryInProgress[username] = false;
+      throw new ResponseError(
+        "Error querying LeetCode streak data",
+        err,
+        500
+      );
+    });
+    parseStreak(streakData, data, year);
+  }
+  streakQueryInProgress[username] = false;
+  return streakData;
+};
 
   getUserData(route: string): (username: string)  => Promise<UserData>
   {
