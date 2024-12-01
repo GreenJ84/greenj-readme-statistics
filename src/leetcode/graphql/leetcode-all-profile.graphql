@@ -1,4 +1,4 @@
-query ($username: String!) {
+query ($username: String!, $year: Int!) {
     # All leetCode questions
     allQuestionsCount {
         difficulty
@@ -6,6 +6,9 @@ query ($username: String!) {
     }
     # Matched user's data
     matchedUser(username: $username) {
+        userCalendar(year: $year){
+            activeYears
+        }
         contributions {
             points
         }
