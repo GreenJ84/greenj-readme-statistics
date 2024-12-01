@@ -1,0 +1,12 @@
+query ($username: String!) {
+    # Matched user's data
+    matchedUser(username: $username) {
+        # User's badge data
+        badges {
+            id
+            displayName
+            icon
+            creationDate
+        }
+    }
+}

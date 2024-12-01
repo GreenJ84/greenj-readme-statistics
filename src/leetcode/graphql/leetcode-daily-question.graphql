@@ -1,0 +1,41 @@
+
+query {
+    # Daily active questions data
+    activeDailyCodingChallengeQuestion {
+        date
+        link
+        # The question data itself
+        
+        question {
+            questionId
+            boundTopicId
+            title
+            titleSlug
+            content
+            isPaidOnly
+            difficulty
+            likes
+            dislikes
+            topicTags {
+                name
+                slug
+            }
+            codeSnippets {
+                lang
+                langSlug
+                code
+            }
+            stats
+            hints
+            status
+            challengeQuestion {
+                id
+                date
+                incompleteChallengeCount
+                streakCount
+                type
+            }
+            note
+        }
+    }
+}

@@ -1,0 +1,19 @@
+query ($username: String!, $year: Int!) {
+    allQuestionsCount {
+        difficulty
+        count
+    }
+    matchedUser(username: $username) {
+        userCalendar(year: $year) {
+            streak
+            totalActiveDays
+        }
+        submitStats {
+            acSubmissionNum {
+                difficulty
+                count
+                submissions
+            }
+        }
+    }
+}
