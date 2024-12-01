@@ -3,7 +3,7 @@ import { match } from "ts-pattern";
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 
 import { developmentLogger, GraphQuery, ResponseError } from "../utils/utils";
-import { RawGraphResponse, RawUserData, RawUserStats, UserData, UserStats } from "./types";
+import { RawGraphResponse, RawUserBadges, RawUserData, RawUserStats, UserBadges, UserData, UserStats } from "./types";
 
 import { getGraphQuery } from "./utils";
 
@@ -87,7 +87,26 @@ export class LeetCodeQuerier {
       return statsParse(queryResponse);
   }
 
+  private badgesQueryInProgress: Record<string, Boolean> = {};
+  private async getUserBadges(username: string): Promise<UserBadges>{
+    if (this.profileQueryInProgress[username] || this.badgesQueryInProgress[username]) {
+      throw new ResponseError("This call occurred while query resources were already being used. Try again after a moment.", "Resource Conflicts", 409);
+    }
+    this.badgesQueryInProgress[username] = true;
 
+    let variables = { login: username };
+    const queryResponse = await this.querySetup(variables, "badges")
+      .then((data: RawUserData) => {
+        return data as RawUserBadges;
+      })
+      .catch((err) => {
+        this.statsQueryInProgress[username] = false;
+        throw err;
+      });
+
+      this.statsQueryInProgress[username] = false;
+      return badgesParse(queryResponse);
+  }
 
   getUserData(route: string): (username: string)  => Promise<UserData>
   {
