@@ -4,8 +4,7 @@ import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 
 import { developmentLogger, GraphQuery, ResponseError } from "../utils/utils";
 import { RawGraphResponse, RawProfileData, RawStreakData, RawUserBadges, RawUserCompletion, RawUserData, RawUserProbe, RawUserStats, RawUserSubmissions, UserBadges, UserCompletion, UserData, UserProfile, UserStats, UserStreak, UserSubmissions } from "./types";
-
-import { getGraphQuery } from "./utils";
+import { badgesParse, completionParse, statsParse, streakParse, submissionsParse } from "./dataParsers";
 
 export class LeetCodeQuerier {
   private LEET_BASE = "https://leetcode.com";
@@ -280,9 +279,10 @@ export class LeetCodeQuerier {
           500
         );
       });
-      parseStreak(streakData, data, year);
+      streakParse(streakData, data, year);
     }
-    streakQueryInProgress[username] = false;
+
+    this.streakQueryInProgress[username] = false;
     return streakData;
   };
 
