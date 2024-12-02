@@ -50,7 +50,16 @@ export class LeetCodeQuerier {
     variables: {},
     type: string
   ): Promise<RawUserData> {
-    const path = getGraphQuery(type);
+    const path = match(type)
+      .with("stats", () => {return "src/leetcode/graphql/leetcode-stats.graphql"})
+      .with("badges", () => {return "src/leetcode/graphql/leetcode-badges.graphql"})
+      .with("completion", () => {return "src/leetcode/graphql/leetcode-completion.graphql"})
+      .with("submissions", () => { return "src/leetcode/graphql/leetcode-submissions.graphql" })
+      .with("profile", () => { return "src/leetcode/graphql/leetcode-all-profile.graphql" })
+      .with ("probe", () => { return "src/leetcode/graphql/profile-years-probe.graphql" })
+      .with("streak", () => { return "src/leetcode/graphql/leetcode-streak.graphql" })
+      .with("daily", () => { return "src/leetcode/graphql/leetcode-daily-question.graphql" })
+      .run();
     const graphql = gql(fs.readFileSync(path, "utf8"));
 
     return await this.basePlatformQuery({
