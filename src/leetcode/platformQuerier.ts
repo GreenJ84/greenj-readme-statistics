@@ -266,7 +266,7 @@ export class LeetCodeQuerier {
     for (let year of response.matchedUser.userCalendar.activeYears) {
       const data = await this.querySetup(
         { username: username, year: year },
-        ""
+        "streak"
       )
       .then((res) => {
         return res as RawStreakData;
