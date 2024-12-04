@@ -1,5 +1,6 @@
 query userInfo($login: String!) {
         user(login: $login) {
+            id
             name
             repositories(ownerAffiliations: OWNER, isFork: false, first: 100) {
                 nodes {

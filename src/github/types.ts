@@ -16,6 +16,7 @@ export type RawUserData = RawProfileData | RawStreakData | RawUserStats | RawUse
 
 export interface RawProfileData extends RawUserProbe, RawUserLanguages, RawUserStats {
   user: {
+    id: string;
     name: string;
     createdAt: string;
     contributionsCollection: {
@@ -58,6 +59,7 @@ export interface RawProfileData extends RawUserProbe, RawUserLanguages, RawUserS
 
 export interface RawStreakData {
   user: {
+    id: string;
     createdAt: string;
     contributionsCollection: {
       contributionYears: number[];
@@ -75,6 +77,7 @@ export interface RawStreakData {
 
 export interface RawUserStats {
   user: {
+    id: string;
     name: string;
     contributionsCollection: {
       totalCommitContributions: number;
@@ -108,6 +111,7 @@ export interface RawUserStats {
 // Language related types
 export interface RawUserLanguages {
   user: {
+    id: string;
     repositories: {
       nodes: {
         name: string;
