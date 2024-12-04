@@ -43,7 +43,10 @@ export const leetSubmissionsCard = (req: Request, data: UserSubmissions) => {
     .question {
         font: 600 16px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif;
         fill: ${theme.statsMain};
-        letter-spacing: 1.1px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 200px !important;
     }
     .langText {
         font: 400 16px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif;
@@ -109,9 +112,15 @@ export const leetSubmissionsCard = (req: Request, data: UserSubmissions) => {
         return `<g transform="translate(0, ${47 * idx})">
             ${idx !== 0 && `<line x1='25' y1='-5' x2='415' y2='-5' stroke-width='1' stroke='${theme.stroke}' />`}
             <g class="stagger" style="animation-delay: 450ms" transform="translate(25, 0)" >
-                <text class="question bold" y="12.5">
-                    ${submission.title.length < 48 ? submission.title : submission.title.slice(0, 48)}:
-                </text>
+                ${submission.title.length < 48 ?
+                    `<text class="question bold" y="12.5" >
+                        ${submission.title}
+                    </text>`
+                :
+                    `<text class="question bold" y="12.5" textLength="420">
+                        ${submission.title.slice(0, 48) + "..."}:
+                    </text>`
+                }
                 <text class="langText" x="30" y="32">
                     - Completed in:
                 </text>
