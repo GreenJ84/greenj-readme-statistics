@@ -55,8 +55,8 @@ export class GithubQuerier {
     })
     .then(res => res as RawUserData)
     .catch(err => {
-      throw new ResponseError(
-        "Error building GraphQL query for the GitHub API",
+      throw err instanceof ResponseError ? err : new ResponseError(
+        "Error querying the GitHub API",
         err,
         500
       );
@@ -81,7 +81,11 @@ export class GithubQuerier {
       })
       .catch((err) => {
         this.statsQueryInProgress[username] = false;
-        throw err;
+        throw err instanceof ResponseError ? err : new ResponseError(
+          "Error building Profile query for the GitHub API",
+          err,
+          500
+        );
       });
 
     this.profileQueryInProgress[username] = false;
@@ -106,7 +110,11 @@ export class GithubQuerier {
       })
       .catch((err) => {
         this.statsQueryInProgress[username] = false;
-        throw err;
+        throw err instanceof ResponseError ? err : new ResponseError(
+          "Error building Stats query for the GitHub API",
+          err,
+          500
+        );
       });
 
       this.statsQueryInProgress[username] = false;
@@ -127,7 +135,11 @@ export class GithubQuerier {
       })
       .catch((err) => {
         this.statsQueryInProgress[username] = false;
-        throw err;
+        throw err instanceof ResponseError ? err : new ResponseError(
+          "Error building Languages query for the GitHub API",
+          err,
+          500
+        );
       });
 
       this.statsQueryInProgress[username] = false;
@@ -182,7 +194,6 @@ export class GithubQuerier {
       this.streakQueryInProgress[username] = false;
       return streakPromise;
     } catch (err) {
-      console.error(`Error capturing streak for ${username}:`, err);
       this.streakQueryInProgress[username] = false;
       throw err;
     }
