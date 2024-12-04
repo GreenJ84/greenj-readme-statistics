@@ -94,6 +94,11 @@ export interface RawUserCompletion {
         count: number;
         submissions: number;
       }[];
+      totalSubmissionNum: {
+        difficulty: string;
+        count: number;
+        submissions: number;
+      }[];
     };
   };
 }

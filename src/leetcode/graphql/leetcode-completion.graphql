@@ -10,6 +10,11 @@ query ($username: String!) {
                 count
                 submissions
             }
+            totalSubmissionNum {
+                difficulty
+                count
+                submissions
+            }
         }
         profile {
             ranking
