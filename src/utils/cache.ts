@@ -9,10 +9,12 @@ import {
   REDIS_USER
 } from "../environment";
 import { UserData as GithubUserData } from "../github/types";
+import { UserData as LeetCodeUserData } from "../leetcode/types";
 
 import { developmentLogger, ResponseError } from "./utils";
 
 export type RedisCache = GithubUserData
+  | LeetCodeUserData
   | { times: 1 };
 
 export class Cache {
