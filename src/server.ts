@@ -2,11 +2,12 @@
 
 import express from "express";
 
-import { Cache } from "./utils/cache";
 import { corsHandler, errorHandler, securityHandler } from "./utils/middleware";
 import cacheControl from "express-cache-controller";
 
+import { Cache } from "./utils/cache";
 import { GithubRoutes } from "./github/routes";
+import { LeetCodeRoutes } from "./leetcode/routes";
 
 const PORT = 8000;
 export const app = express();
@@ -20,9 +21,11 @@ app.use(cacheControl({
   noCache: false,
   private: true,
 }));
-app.use(errorHandler);
 
 GithubRoutes(app);
+LeetCodeRoutes(app);
+
+app.use(errorHandler);
 
 const server = app.listen(PORT, async () => {
   console.log(`Express server running on port ${PORT}`);
