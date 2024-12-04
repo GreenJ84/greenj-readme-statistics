@@ -8,6 +8,7 @@ import cacheControl from "express-cache-controller";
 import { Cache } from "./utils/cache";
 import { GithubRoutes } from "./github/routes";
 import { LeetCodeRoutes } from "./leetcode/routes";
+import { WakaTimeRoutes } from "./wakatime/routes";
 
 const PORT = 8000;
 export const app = express();
@@ -24,6 +25,7 @@ app.use(cacheControl({
 
 GithubRoutes(app);
 LeetCodeRoutes(app);
+WakaTimeRoutes(app);
 
 app.use(errorHandler);
 
