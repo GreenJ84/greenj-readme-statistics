@@ -69,8 +69,15 @@ export const limiterAndCacheControl = (req: Request, res: Response, next: NextFu
   if (PRODUCTION) {
     app.use(rateLimitHandler);
   }
-  developmentLogger(console.info, "limiter over");
   next();
+}
+
+export const notImplemented = (_req: Request, _res: Response, _next: NextFunction) => {
+  throw new ResponseError(
+    "Not implemented",
+    "This feature is not yet available.",
+    501,
+  );
 }
 
 export const errorHandler = (err: unknown, _: Request, res: Response, __: NextFunction) => {
