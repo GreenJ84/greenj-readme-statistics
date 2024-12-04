@@ -10,11 +10,13 @@ import {
 } from "../environment";
 import { UserData as GithubUserData } from "../github/types";
 import { UserData as LeetCodeUserData } from "../leetcode/types";
+import { UserData as WakaTimeUserData } from "../wakatime/types";
 
 import { developmentLogger, ResponseError } from "./utils";
 
 export type RedisCache = GithubUserData
   | LeetCodeUserData
+  | WakaTimeUserData
   | { times: 1 };
 
 export class Cache {
