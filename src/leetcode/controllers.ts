@@ -100,20 +100,21 @@ export const register = async (req: Request, res: Response) => {
     };
   }
 
-  const streakCard: string = getRouteSVGModal("streak")(req, userProfile.streak);
-  const statsCard: string = getRouteSVGModal("stats")(req, userProfile.stats);
-  const badgesCard: string = getRouteSVGModal("badges")(req, userProfile.badges);
-  const completionCard: string = getRouteSVGModal("completion")(req, userProfile.completion);
-  const submissionsCard: string = getRouteSVGModal("submissions")(req, userProfile.submissions);
-
-  res.setHeader("Content-Type", "image/svg+xml");
-  res.status(200).send(`<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;">
-      ${streakCard}
-      ${statsCard}
-      ${badgesCard}
-      ${completionCard}
-      ${submissionsCard}
-    </div>`);
+  try {
+    const streakCard: string = getRouteSVGModal("streak")(req, userProfile.streak);
+    const statsCard: string = getRouteSVGModal("stats")(req, userProfile.stats);
+    // const badgesCard: string = getRouteSVGModal("badges")(req, userProfile.badges);
+    const completionCard: string = getRouteSVGModal("completion")(req, userProfile.completion);
+    const submissionsCard: string = getRouteSVGModal("submissions")(req, userProfile.submissions);
+    res.setHeader("Content-Type", "image/svg+xml");
+    res.status(200).send(`<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;">
+        ${streakCard}
+        ${statsCard}
+        ${completionCard}
+        ${submissionsCard}
+      </div>`);
+  } catch (err){
+  }
 };
 
 export const unregister = async (req: Request, res: Response) => {
@@ -123,7 +124,8 @@ export const unregister = async (req: Request, res: Response) => {
     await Promise.all([
       cache.deleteItem(keyGenerator(req.params.username!, "streak")),
       cache.deleteItem(keyGenerator(req.params.username!, "stats")),
-      cache.deleteItem(keyGenerator(req.params.username!, "languages")),
+      cache.deleteItem(keyGenerator(req.params.username!, "completion")),
+      cache.deleteItem(keyGenerator(req.params.username!, "submissions")),
     ]);
   } catch (err: any){
     console.error("Error deleting cache:", err);
