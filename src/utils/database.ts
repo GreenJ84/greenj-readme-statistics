@@ -1,12 +1,15 @@
 import path from "path";
+import cron from "node-cron";
 import Database, { Database as TDatabase } from "better-sqlite3";
+
 import { ResponseError } from "./utils";
+import { PRODUCTION } from "../environment";
+// import { PRODUCTION } from "../environment";
 
 export class PlatformDb {
   private _db: TDatabase;
-  private _path: string;
 
-  constructor(_path: string){
+  constructor(private platform: string, private _path: string, private _updateFunction: (username: string) => void){
     this._path = _path;
     const dbPath = path.resolve(__dirname, this._path);
 
@@ -22,6 +25,11 @@ export class PlatformDb {
         registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+
+    cron.schedule(PRODUCTION ? "0 0 * * *" : "* * * * *", () => {
+      console.log(`[${new Date().toISOString()}] Starting midnight ${this.platform} cache data refresh...`);
+      this.updateRegisteredUsers();
+    }).start();
   }
 
   registerUser(username: string): boolean {
@@ -41,19 +49,26 @@ export class PlatformDb {
     try{
       this._db.prepare(`DELETE FROM users WHERE username = ?`).run(username);
     } catch (err) {
-      throw new ResponseError(`Error unregistering user ${username})`, err, 500);
+      throw new ResponseError(`Error unregistering user ${username}) to ${this.platform}`, err, 500);
     }
   }
 
-  updateRegisteredUsers(
-    dataUpdate: (user: string) => void
-  ){
-    const users: [number, string][] = this._db.prepare("SELECT id, username FROM users").all() as [number, string][];
+  private async updateRegisteredUsers(){
+    let users: { id: number, username: string }[];
+    try {
+      users = this._db.prepare("SELECT id, username FROM users").all() as { id: number; username: string; }[];
+    } catch (err) {
+      console.error("Error fetching registered users:", err);
+      return;
+    }
 
-    users.forEach(([id, username]) => {
-      dataUpdate(username);
-      this.refreshUpdateTime(id);
-    });
+    if (users.length > 0){
+      console.log(`[${new Date().toISOString()}] Refreshing ${this.platform} data for ${users.length} users...`, users);
+      users.forEach(({id, username}) => {
+        this._updateFunction(username);
+        this.refreshUpdateTime(id);
+      });
+    }
   }
 
   private refreshUpdateTime(id: number): boolean{
@@ -64,7 +79,7 @@ export class PlatformDb {
         WHERE id = ?;
       `).run(id);
     } catch (error) {
-      console.error(`Error refreshing data for user with ID ${id}:`, error);
+      console.error(`Error refreshing ${this.platform} data for user with ID ${id}:`, error);
     }
     return true;
   }
