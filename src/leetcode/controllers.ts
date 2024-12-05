@@ -77,7 +77,7 @@ const cacheProfile = async (username: string, userProfile: UserProfile) => {
     });
 }
 
-const registrar = new PlatformDb("leetcode", "../leetcode/users.sqlite", async (username: string) => {
+const registrar = new PlatformDb("leetcode", "./leetcode/users.sqlite", async (username: string) => {
   const userProfile: UserProfile = await querier.getUserData("profile")(username) as UserProfile;
   (async () => await cacheProfile(username, userProfile));
 });

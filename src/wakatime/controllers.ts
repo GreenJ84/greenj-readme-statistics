@@ -74,7 +74,7 @@ const cacheProfile = async (username: string, profile: UserProfile) => {
     });
 }
 
-const registrar = new PlatformDb("wakatime", "../wakatime/users.sqlite", async (username: string) => {
+const registrar = new PlatformDb("wakatime", "./wakatime/users.sqlite", async (username: string) => {
   try {
     const userProfile = await querier.getUserProfile(username);
     (async () => await cacheProfile(username, userProfile))();

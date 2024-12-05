@@ -52,7 +52,7 @@ await cache.setItem(keyGenerator(username, "languages"), userProfile.languages)
   });
 }
 
-const registrar = new PlatformDb("github", "../github/users.sqlite", async (username: string) => {
+const registrar = new PlatformDb("github", "./github/users.sqlite", async (username: string) => {
   const userProfile = await querier.getUserData("profile")(username) as UserProfile;
   (async () => { cacheProfile(username, userProfile)})();
 });
