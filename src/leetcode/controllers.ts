@@ -53,36 +53,42 @@ export const getProfileData = async (
   res.status(200).send(card);
 };
 
-const registrar = new PlatformDb("../leetcode/users.sqlite");
+
+const cacheProfile = async (username: string, userProfile: UserProfile) => {
+  await cache.setItem(keyGenerator(username, "streak"), userProfile.streak)
+    .catch((err) => {
+      console.error("Error setting cache:", err);
+    });
+  await cache.setItem(keyGenerator(username, "stats"), userProfile.stats)
+    .catch((err) => {
+      console.error("Error setting cache:", err);
+    });
+  await cache.setItem(keyGenerator(username, "badges"), userProfile.badges)
+    .catch((err) => {
+      console.error("Error setting cache:", err);
+    });
+  await cache.setItem(keyGenerator(username, "completion"), userProfile.completion)
+    .catch((err) => {
+      console.error("Error setting cache:", err);
+    });
+  await cache.setItem(keyGenerator(username, "submissions"), userProfile.submissions)
+    .catch((err) => {
+      console.error("Error setting cache:", err);
+    });
+}
+
+const registrar = new PlatformDb("leetcode", "../leetcode/users.sqlite", async (username: string) => {
+  const userProfile: UserProfile = await querier.getUserData("profile")(username) as UserProfile;
+  (async () => await cacheProfile(username, userProfile));
+});
 export const register = async (req: Request, res: Response) => {
   const username = req.params.username!;
   const newRegistration = registrar.registerUser(username);
 
   let userProfile: UserProfile;
   if (newRegistration || req.query.refresh === "true" ) {
-  userProfile = await querier.getUserData("profile")(username) as UserProfile;
-  (async () => {
-      await cache.setItem(keyGenerator(username, "streak"), userProfile.streak)
-        .catch((err) => {
-          console.error("Error setting cache:", err);
-        });
-      await cache.setItem(keyGenerator(username, "stats"), userProfile.stats)
-        .catch((err) => {
-          console.error("Error setting cache:", err);
-        });
-      await cache.setItem(keyGenerator(username, "badges"), userProfile.badges)
-        .catch((err) => {
-          console.error("Error setting cache:", err);
-        });
-      await cache.setItem(keyGenerator(username, "completion"), userProfile.completion)
-        .catch((err) => {
-          console.error("Error setting cache:", err);
-        });
-      await cache.setItem(keyGenerator(username, "submissions"), userProfile.submissions)
-        .catch((err) => {
-          console.error("Error setting cache:", err);
-        });
-    })();
+    userProfile = await querier.getUserData("profile")(username) as UserProfile;
+    (async () => await cacheProfile(username, userProfile));
   } else {
     const [streak, stats, badges, completion, submissions] = await Promise.all([
       cache.getItem(keyGenerator(username, "streak")),
