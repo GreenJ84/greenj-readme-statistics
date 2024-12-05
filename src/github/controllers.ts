@@ -37,28 +37,34 @@ export const getProfileData = async (
   res.status(200).send(card);
 };
 
-const registrar = new PlatformDb("../github/users.sqlite");
+const cacheProfile = async (username: string, userProfile: UserProfile) => {
+  await cache.setItem(keyGenerator(username, "streak"), userProfile.streak)
+  .catch((err) => {
+    console.error("Error setting cache:", err);
+  });
+await cache.setItem(keyGenerator(username, "stats"), userProfile.stats)
+  .catch((err) => {
+    console.error("Error setting cache:", err);
+  });
+await cache.setItem(keyGenerator(username, "languages"), userProfile.languages)
+  .catch((err) => {
+    console.error("Error setting cache:", err);
+  });
+}
+
+const registrar = new PlatformDb("github", "../github/users.sqlite", async (username: string) => {
+  const userProfile = await querier.getUserData("profile")(username) as UserProfile;
+  (async () => { cacheProfile(username, userProfile)})();
+});
+
 export const register = async (req: Request, res: Response) => {
   const username = req.params.username!;
   const newRegistration = registrar.registerUser(username);
 
   let userProfile: UserProfile;
   if (newRegistration || req.query.refresh === "true" ) {
-  userProfile = await querier.getUserData("profile")(username) as UserProfile;
-  (async () => {
-      await cache.setItem(keyGenerator(username, "streak"), userProfile.streak)
-        .catch((err) => {
-          console.error("Error setting cache:", err);
-        });
-      await cache.setItem(keyGenerator(username, "stats"), userProfile.stats)
-        .catch((err) => {
-          console.error("Error setting cache:", err);
-        });
-      await cache.setItem(keyGenerator(username, "languages"), userProfile.languages)
-        .catch((err) => {
-          console.error("Error setting cache:", err);
-        });
-    })();
+    userProfile = await querier.getUserData("profile")(username) as UserProfile;
+    (async () => { cacheProfile(username, userProfile)})();
   } else {
     const [streak, stats, languages] = await Promise.all([
       cache.getItem(keyGenerator(username, "streak")),
