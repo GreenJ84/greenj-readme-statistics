@@ -1,7 +1,0 @@
-query ($username: String!, $year: Int!) {
-    matchedUser(username: $username) {
-        userCalendar(year: $year){
-            activeYears
-        }
-    }
-}
