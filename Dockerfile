@@ -4,16 +4,19 @@ FROM node:latest
 # Set the working directory to /app
 WORKDIR /app
 
-ENV ENV_FILE ./.env
-ENV NODE_ENV production
-RUN env $(cat $ENV_FILE | xargs)
+ENV NODE_ENV=production
+
+RUN mkdir -p /var/data
 
 # Copy the application code to /app
-COPY . .
+COPY .env .
+COPY package.json .
+COPY tsconfig.json .
+COPY ./public ./public/
+COPY ./src ./src/
 
 # Install app dependencies
 RUN npm install
-
 
 # Build the TypeScript code to JavaScript
 RUN npm run build
