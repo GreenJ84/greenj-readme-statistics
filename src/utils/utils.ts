@@ -1,182 +1,36 @@
-/** @format */
-
 import { DateTime } from "luxon";
-import { Request, Response } from "express";
+import { Request } from "express";
+import { DocumentNode } from "graphql";
 import { createIntl, createIntlCache } from "@formatjs/intl";
 
+
 import { Themes, ThemeType } from "./themes";
-import { Colors } from "./colors";
-import xss from "xss";
-import { PRODUCTION } from "./constants";
-import { checkAllowlistRequest } from "./allowlist";
+import { PRODUCTION } from "../environment";
 
-export function sanitizeText(value: string): string {
-  // Match letters, digits, underscores, and spaces
-  const match = value.match(/^[a-zA-Z_]+$/);
-  if (match) {
-    return match[0].replaceAll("_", " ");
-  } else {
-    throw new Error(`Invalid text value: ${value}`);
+export class ResponseError extends Error {
+  error: any;
+  error_code: number;
+
+  constructor(message: string, error: any, error_code: number) {
+    super(message);
+    this.error = error;
+    this.error_code = error_code;
   }
 }
 
-export function sanitizeParam(value: string): string {
-  // Match letters, digits, underscores, and spaces
-  const match = value.match(/^[a-zA-Z_]+$/);
-  if (match) {
-    return match[0].replaceAll("_", "-");
-  } else {
-    throw new Error(`Invalid text value: ${value}`);
-  }
+export interface GraphQuery {
+  variables?: { [key: string]: unknown };
+  query: DocumentNode;
 }
 
-// Match CSS color name or 6-character hex code
-export function sanitizeColor(value: string): string {
-  const match = value.match(/^[a-z]{3,}(?:[a-z]{3,})?$|^[0-9a-fA-F]{6}$/);
-  if (match) {
-    if (Colors.includes(match[0])) {
-      return match[0];
-    } else {
-      let hex = match[0].match(/^[0-9a-fA-F]{6}$/);
-      if (hex) {
-        return `#${hex[0]}`;
-      }
-    }
+type LoggingMethod = typeof console.log;
+export const developmentLogger = (
+  method: LoggingMethod,
+  ...messages: string[]
+) => {
+  if (!PRODUCTION) {
+    method(...messages);
   }
-  throw new Error(`Invalid color value: ${value}`);
-}
-
-// Match any number
-export function sanitizeNumber(value: string): string {
-  const match = value.match(/^-?\d+(?:\.\d+)?$/);
-  if (match) {
-    return match[0];
-  } else {
-    throw new Error(`Invalid number value: ${value}`);
-  }
-}
-
-// Match 'true' or 'false'
-export function sanitizeBoolean(value: string): string {
-  const match = value.match(/^(true|false)$/i);
-  if (match) {
-    return match[0].toLowerCase();
-  } else {
-    throw new Error(`Invalid boolean value: ${value}`);
-  }
-}
-
-// Match alphanumeric characters and hyphens, with length between 1 and 39
-export function sanitizeUsername(value: string): string {
-  const match = value.match(/^[a-z_\d](?:[a-z_\d]|-(?=[a-z\d])){1,39}$/i);
-  if (match) {
-    return match[0];
-  } else {
-    throw new Error(`Invalid username value: ${value}`);
-  }
-}
-
-// Loop through all query parameters and sanitize them accordingly
-export function sanitizeQuery(req: Request): boolean {
-  const color: string[] = [
-    "background",
-    "border",
-    "stroke",
-    "ring",
-    "fire",
-    "dayAvg",
-    "pieBG",
-    "icons",
-    "logo",
-    "currStreak",
-    "question",
-    "score",
-    "stats",
-    "sideStat",
-    "textMain",
-    "textSub",
-    "dates",
-  ];
-  const number: string[] = ["borderRadius"];
-  const params: string[] = ["theme", "locale"];
-  const boolean: string[] = ["hideBorder"];
-
-  const sanitizedParams: Record<string, any> = {};
-  for (const param in req.query) {
-    const value = req.query[param];
-    if (value !== xss(value as string)) {
-      req.query = {};
-      return false;
-    }
-    !PRODUCTION && console.log(param);
-    switch (true) {
-      case color.includes(param):
-        try {
-          sanitizedParams[param] = sanitizeColor(value as string);
-        } catch (error) {
-          console.error(error);
-        }
-        break;
-      case number.includes(param):
-        try {
-          sanitizedParams[param] = sanitizeNumber(value as string);
-        } catch (error) {
-          console.error(error);
-        }
-        break;
-      case params.includes(param):
-        try {
-          sanitizedParams[param] = sanitizeParam(value as string);
-        } catch (error) {
-          console.error(error);
-        }
-        break;
-      case boolean.includes(param):
-        try {
-          sanitizedParams[param] = sanitizeBoolean(value as string);
-        } catch (error) {
-          console.error(error);
-        }
-        break;
-      case param == "title":
-        try {
-          sanitizedParams[param] = sanitizeText(value as string);
-        } catch (error) {
-          console.error(error);
-        }
-      // Remove all unwarrented parameters
-      default:
-        break;
-    }
-  }
-  !PRODUCTION && console.log(sanitizedParams);
-  req.query = sanitizedParams;
-  return true;
-}
-
-// API Security
-export const preFlight = (req: Request, res: Response): boolean => {
-  if (req.params.username == undefined) {
-    res.status(400).send({
-      message: "No username found on API Call that requires username",
-      error: "Missing username parameter.",
-      error_code: 400,
-    });
-    return false;
-  }
-
-  //! Allowlist implementation defined if necessary
-  if (!checkAllowlistRequest(req.params.username!)){
-    res.status(403).send({
-      message:
-        "Username found on API Call is not Authorized. Submit username for approval.",
-      error: "Access not granted",
-      error_code: 403,
-    });
-    return false;
-  }
-  sanitizeQuery(req);
-  return true;
 };
 
 /**

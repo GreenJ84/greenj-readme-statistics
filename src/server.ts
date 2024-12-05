@@ -1,117 +1,67 @@
 /** @format */
 
-import express, { Request, Response, NextFunction } from "express";
-import cors from "cors";
-import helmet from "helmet";
-import rateLimit from "express-rate-limit";
+import express, {NextFunction, Request, Response} from "express";
+
+import { corsHandler, errorHandler, securityHandler } from "./utils/middleware";
 import cacheControl from "express-cache-controller";
 
-import { LeetCodeRoutes } from "./routes/leetcode.routes";
-import { GithubRoutes } from "./routes/github.routes";
-import { WakaTimeRoutes } from "./routes/wakatime.routes";
-import { serverUtilities } from "./routes/utility.routes";
-
-import { PRODUCTION, ResponseError } from "./utils/constants";
-import { buildRedis, teardownRedis } from "./utils/cache";
+import { Cache } from "./utils/cache";
+import { GithubRoutes } from "./github/routes";
+import { LeetCodeRoutes } from "./leetcode/routes";
+import { WakaTimeRoutes } from "./wakatime/routes";
+import { Themes } from "./utils/themes";
 
 const PORT = 8000;
-const app = express();
+export const app: express.Application = express();
+export const cache = new Cache()
+cache.createConnection();
 
 app.use(express.static("public"));
-// Open cross origin access
-app.use(
-  cors({
-    origin: "*",
-    methods: "GET",
-  })
-);
+app.use(corsHandler);
+app.use(securityHandler);
+app.use(cacheControl({
+  noCache: false,
+  private: true,
+}));
 
-// API security
-app.use(
-  helmet({
-    crossOriginEmbedderPolicy: false,
-    crossOriginOpenerPolicy: false,
-    crossOriginResourcePolicy: false,
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", "data:", "https://greenj-readme-stats.onrender.com"],
-      },
-    },
-    xssFilter: true,
-    noSniff: true,
-    hsts: {
-      maxAge: 31536000,
-      includeSubDomains: true,
-      preload: true,
-    },
-  })
-);
-
-// Rate limiting the api
-export const limiter = rateLimit({
-  windowMs: 30 * 60 * 1000,
-  max: 100,
-  handler: async (req, res) => {
-    res.status(400).send({
-      message: `${
-        req.params.username ?? "This caller"
-      } has made to many calls. You have been limited.`,
-    });
-    return;
-  },
-});
-
-// Cache api calls
-PRODUCTION &&
-  app.use(
-    cacheControl({
-      maxAge: 60 * 20, // Dev Cache for 20 min
-    })
-  );
-
-LeetCodeRoutes(app);
 GithubRoutes(app);
+LeetCodeRoutes(app);
 WakaTimeRoutes(app);
-serverUtilities(app);
 
-// error handling middleware
-app.use((err: Error, _: Request, res: Response, __: NextFunction) => {
-  res.set("Content-Type", "application/json");
-  if (err && err instanceof ResponseError) {
-    res.status(err.error_code).json({
-      message: err.message,
-      error: err.error,
-    });
-  } else if (err) {
-    res.status(500).json({
-      message: "Internal server error",
-      error: err,
-    });
-  }
+app.get('/', (_req: Request, res: Response, _next: NextFunction) => {
+  res.set('Content-Type', 'text/html');
+  res.sendFile('/index.html');
 });
+
+app.get('/themes', (_req: Request, res: Response, _next: NextFunction) => {
+  res.set("Content-Type", "application/json");
+  res.status(200).send({ themes: Object.keys(Themes) });
+});
+
+app.get('/health', (_req: Request, res: Response, _next: NextFunction) => {
+  res.set("Content-Type", "application/json");
+  res.status(200).send({ message: 'Server is up and running' });
+});
+
+app.use(errorHandler);
 
 const server = app.listen(PORT, async () => {
   console.log(`Express server running on port ${PORT}`);
-  await buildRedis();
 });
-server.setTimeout(60000);
 
-let shuttingDown = false;
+//========== SHUTDOWN PROCESSES =================================
 // Stop the Redis server and close the Express server
+let shuttingDown = false;
 const gracefulShutdown = async () => {
   if (!shuttingDown) {
     shuttingDown = true;
-    console.log("\n");
-    console.log("Shutting Down.....");
+    console.log("\nShutting Down.....");
     server.close(() => {
-      // Disconnect from Redis server
-      teardownRedis().then(() => {
+      cache.tearConnection().then(() => {
         console.log("Express server closed.");
         process.exit(0);
-      });
+      })
+      .catch(() => {process.exit(1);});
     });
   }
 };

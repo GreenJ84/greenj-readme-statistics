@@ -1,5 +1,6 @@
 query ($login: String!, $start: DateTime!, $end: DateTime!) {
         user(login: $login) {
+            id
             createdAt
             contributionsCollection(from: $start, to: $end) {
                 contributionYears

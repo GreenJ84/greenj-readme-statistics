@@ -1,141 +1,106 @@
-/** @format */
-
 import { RedisClientType, createClient } from "redis";
-import flatted from "flatted";
+import flatted from 'flatted';
 
 import {
-  LeetRawDaily,
-  LeetUserData,
-} from "../leetcode/leetcodeTypes";
-import { GithUserData } from "../github/githubTypes";
-import {
-  DATA_UDPDATE_INTERVAL,
   PRODUCTION,
   PROD_HOST,
   PROD_PORT,
   REDIS_PASS,
   REDIS_USER
-} from "./constants";
-import { WakaProfileData } from "../wakatime/wakatimeTypes";
+} from "../environment";
+import { UserData as GithubUserData } from "../github/types";
+import { UserData as LeetCodeUserData } from "../leetcode/types";
+import { UserData as WakaTimeUserData } from "../wakatime/types";
 
-export type RedisCache =
-  | LeetUserData
-  | GithUserData
-  | LeetRawDaily
-  | NodeJS.Timer
-  | WakaProfileData
-  | { times: number };
+import { developmentLogger, ResponseError } from "./utils";
 
-export const redisClient: RedisClientType = PRODUCTION
-  ? createClient({
-      url: `redis://${REDIS_USER}:${REDIS_PASS}@${PROD_HOST}:${PROD_PORT}`,
-    })
-  : createClient();
+export type RedisCache = GithubUserData
+  | LeetCodeUserData
+  | WakaTimeUserData
+  | { times: 1 };
 
-redisClient.on("error", (err) => console.error(`Redis Client error: ${err}`));
+export class Cache {
+  private client: RedisClientType;
 
-export const getCacheKey = (reqPath: string, username: string | null = null) => {
-  const path = reqPath.split("/");
+  constructor(){
+    this.client = PRODUCTION ?
+      createClient({
+          url: `redis://${REDIS_USER}:${REDIS_PASS}@${PROD_HOST}:${PROD_PORT}`,
+        })
+      : createClient();
 
-  // Get platform route
-  const route = path[1];
-  const user =
-    username !== null ? `:${username}` : "";
-  // Get subroute if not wakatime else set profile
-  const subroute =
-    path[2] == "register" || path[2] == "unregister" ? "profile" : path[2];
-  // User terirnary for not user routes
-  return `${route}${user}:${subroute}`;
-};
-
-export const buildRedis = async () => {
-  await redisClient
-    .connect()
-    .then(() => console.log("Redis server connected."));
-};
-
-export const teardownRedis = async () => {
-  await redisClient
-    .disconnect()
-    .then(() => console.log("Redis server disconnected."));
-};
-
-export const getRegistrationCache = async (
-  key: string
-): Promise<[boolean, string | number | null]> => {
-  try {
-    const data = await redisClient.get(key);
-    if (data == undefined) {
-      !PRODUCTION && console.warn("Empty Cache");
-      return [false, null];
-    }
-    !PRODUCTION && console.log(`Getting ${key}`);
-    return [true, parseInt(data)];
-    }
-  catch (error) {
-    !PRODUCTION && console.error(`Error getting cache for ${key}: ${error}`);
-    return [false, null];
+    this.client.on("error", (err) => developmentLogger(console.error, `Redis Client error: ${err}`));
   }
-};
 
-export const getCacheData = async (
-  key: string
-): Promise<[boolean, RedisCache | null]> => {
-  try {
-    const data = await redisClient.get(key);
-    if (data == undefined) {
-      !PRODUCTION && console.warn("Empty Cache");
-      return [false, null];
-    }
-    !PRODUCTION && console.log(`Getting ${key}`);
-    return [true, flatted.parse(data)];
-  } catch (error) {
-    !PRODUCTION && console.error(`Error getting cache for ${key}: ${error}`);
-    return [false, null];
+  async createConnection(){
+    await this.client
+      .connect()
+      .then(() => console.log("Redis server connected."));
   }
-};
 
-export const setRegistrationCache = async (
-  key: string,
-  data: string | number
-): Promise<void> => {
-  try {
-      await redisClient.set(key, data);
-    }
-  catch (error) {
-    !PRODUCTION && console.error(`Error setting cache for ${key}: ${error}`);
+  async tearConnection(){
+    await this.client
+      .disconnect()
+      .then(() => console.log("Redis server disconnected"));
   }
-  !PRODUCTION && console.log(`Set cache for ${key}`);
-  return;
-};
 
-
-export const setCacheData = async (
-  key: string,
-  data: RedisCache
-): Promise<void> => {
-  const ExpirationBuffer = PRODUCTION
-  ? 2
-  : 1.5;
-  try {
-    await redisClient.set(key, flatted.stringify(data), {
-      // 3 min development cache lifetime
-      // 16hr production cache lifetime
-      PX: DATA_UDPDATE_INTERVAL * ExpirationBuffer,
-    });
-    }
-  catch (error) {
-    !PRODUCTION && console.error(`Error setting cache for ${key}: ${error}`);
+  static keyGenerator(platform: string): (username: string, subroute: string) => string {
+    return (username: string, subroute: string) => {
+      return `${platform}:${username}:${subroute}`;
+    };
   }
-  !PRODUCTION && console.log(`Set cache for ${key}`);
-  return;
-};
 
-export const deleteCacheData = async (key: string): Promise<boolean> => {
-  const repsonse = await redisClient.del(key);
-  if (repsonse > 0) {
+  async setItem(
+    key: string,
+    data: RedisCache,
+    persistent: boolean = false
+  ): Promise<void> {
+    try {
+      if (persistent){
+        await this.client.set(key, flatted.stringify(data));
+      } else {
+        const Expiration = PRODUCTION ?
+          1000 * 60 * 60 * 24
+          : 1000 * 60 * 10;
+        await this.client.set(key, flatted.stringify(data), {
+          PX: Expiration,
+        });
+      }
+    }
+    catch (error) {
+      developmentLogger(console.error, `Error setting cache for ${key}: ${error}`);
+      return;
+    }
+    developmentLogger(console.log, `Set cache for ${key}`);
+  };
+
+  async getItem(
+    key: string
+  ): Promise<RedisCache | null> {
+    let data;
+    try {
+      developmentLogger(console.log, `Getting ${key}`);
+      data = await this.client.get(key);
+      if (data == undefined) throw Error("Cache empty");
+    } catch (error) {
+      developmentLogger(console.error,`Error getting cache for ${key}: ${error}`);
+      return null;
+    }
+    developmentLogger(console.log, `Successfully retrieved`);
+    return flatted.parse(data) as RedisCache;
+  }
+
+  async deleteItem(
+    key: string
+  ): Promise<boolean>{
+    try {
+      const response = await this.client.del(key);
+      if (response == 0) return false;
+    } catch (error) {
+      developmentLogger(console.error, `Error deleting cache for ${key}: ${error}`);
+      throw new ResponseError("Failed to delete cached user data after unregistering. Data will expire and be removed within the next 24hrs.", new Error(), 500);
+    }
+    developmentLogger(console.log, `Cache for ${key} deleted.`);
     return true;
-  } else {
-    return false;
   }
-};
+}

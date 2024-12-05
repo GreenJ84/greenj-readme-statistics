@@ -1,71 +1,69 @@
-import { buildRedis, deleteCacheData, getCacheData, getCacheKey, setCacheData, teardownRedis } from "../../src/utils/cache";
+import { Cache } from "../../src/utils/cache";
 
+
+const cache = new Cache();
 beforeAll(async () => {
-    await buildRedis();
+    await cache.createConnection();
+
 })
 
 afterAll(async () => {
-    await teardownRedis();
+    await cache.tearConnection();
 });
 
+let keyGenerator: Function;
 describe("Testing the resources provided by the cache", () => {
     const username = 'GreenDud'
+    keyGenerator = Cache.keyGenerator('github');
     it("Should get the correct cache key for each Github Routes", () => {
-        expect(getCacheKey("url/github/register", username)).toEqual('github:GreenDud:profile');
-        expect(getCacheKey("url/github/unregister", username)).toEqual('github:GreenDud:profile');
-        expect(getCacheKey("url/github/trophies", username)).toEqual('github:GreenDud:trophies');
-        expect(getCacheKey("url/github/languages", username)).toEqual('github:GreenDud:languages');
-        expect(getCacheKey("url/github/stats", username)).toEqual('github:GreenDud:stats');
-
-        expect(getCacheKey("url/github/streak/register", username)).toEqual('github:GreenDud:streak');
-        expect(getCacheKey("url/github/streak", username)).toEqual('github:GreenDud:streak');
+        expect(keyGenerator(username, "trophies")).toEqual('github:GreenDud:trophies');
+        expect(keyGenerator(username, "languages")).toEqual('github:GreenDud:languages');
+        expect(keyGenerator(username, "stats")).toEqual('github:GreenDud:stats');
+        expect(keyGenerator(username, "streak")).toEqual('github:GreenDud:streak');
     });
 
     it("Should get the correct cache key for each Leetcode Routes", () => {
-        expect(getCacheKey("url/leetcode/register", username)).toEqual('leetcode:GreenDud:profile');
-        expect(getCacheKey("url/leetcode/unregister", username)).toEqual('leetcode:GreenDud:profile');
-        expect(getCacheKey("url/leetcode/stats", username)).toEqual('leetcode:GreenDud:stats');
-        expect(getCacheKey("url/leetcode/badges", username)).toEqual('leetcode:GreenDud:badges');
-        expect(getCacheKey("url/leetcode/completion", username)).toEqual('leetcode:GreenDud:completion');
-        expect(getCacheKey("url/leetcode/submission", username)).toEqual('leetcode:GreenDud:submission');
-
-        expect(getCacheKey("url/leetcode/streak/register", username)).toEqual('leetcode:GreenDud:streak');
-        expect(getCacheKey("url/leetcode/streak", username)).toEqual('leetcode:GreenDud:streak');
+        keyGenerator = Cache.keyGenerator('leetcode');
+        expect(keyGenerator(username, "stats")).toEqual('leetcode:GreenDud:stats');
+        expect(keyGenerator(username, "badges")).toEqual('leetcode:GreenDud:badges');
+        expect(keyGenerator(username, "completion")).toEqual('leetcode:GreenDud:completion');
+        expect(keyGenerator(username, "submission")).toEqual('leetcode:GreenDud:submission');
+        expect(keyGenerator(username, "streak")).toEqual('leetcode:GreenDud:streak');
     });
 
     it ("Should get the correct cache key for each Wakatime Routes", () => {
-        expect(getCacheKey("url/wakatime/register", username)).toEqual('wakatime:GreenDud:profile');
-        expect(getCacheKey("url/wakatime/unregister", username)).toEqual('wakatime:GreenDud:profile');
-        expect(getCacheKey("url/wakatime/insights", username)).toEqual('wakatime:GreenDud:insights');
-        expect(getCacheKey("url/wakatime/languages", username)).toEqual('wakatime:GreenDud:languages');
-        expect(getCacheKey("url/wakatime/stats", username)).toEqual('wakatime:GreenDud:stats');
+        keyGenerator = Cache.keyGenerator('wakatime');
+        expect(keyGenerator(username, "insights")).toEqual('wakatime:GreenDud:insights');
+        expect(keyGenerator(username, "languages")).toEqual('wakatime:GreenDud:languages');
+        expect(keyGenerator(username, "stats")).toEqual('wakatime:GreenDud:stats');
     })
 
+    const cacheKey = keyGenerator(username, "languages")
     it('Should not have a key set prior to retrieval', async () => {
         expect(
-            await getCacheData(getCacheKey("url/wakatime/register", username)))
-        .toEqual([false, null]);
+            await cache.getItem(cacheKey))
+        .toEqual(null);
     })
 
     it('Should not be able to delete unset keys', async () => {
         expect(
-            await deleteCacheData(getCacheKey("url/wakatime/register", username))).toEqual(false);
+            await cache.deleteItem(cacheKey)).toEqual(false);
     })
 
     it('Should set and recieve a cache validly', async () => {
-        const streakKey = getCacheKey("url/leetcode/streak", username);
+        const streakKey = Cache.keyGenerator("leetcode")(username, "streak");
 
-        await setCacheData(streakKey, { times: 1 });
-        expect(await getCacheData(streakKey)).toEqual([true, { times: 1 }]);
+        await cache.setItem(streakKey, { times: 1 });
+        expect(await cache.getItem(streakKey)).toEqual({ times: 1 });
     })
 
     it('Should delete a key successfully not be able to access keys after deletion', async () => {
-        const trophyKey = getCacheKey("url/github/trophies", username);
+        const trophyKey = Cache.keyGenerator("github")(username, "trophies");
 
-        await setCacheData(trophyKey, { times: 1 });
-        expect(await deleteCacheData(trophyKey)).toEqual(true);
+        await cache.setItem(trophyKey, { times: 1 });
+        expect(await cache.deleteItem(trophyKey)).toEqual(true);
 
-        expect(await getCacheData(trophyKey)).toEqual([false, null]);
+        expect(await cache.getItem(trophyKey)).toEqual(null);
     })
     
 })

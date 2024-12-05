@@ -1,7 +1,10 @@
-query userInfo($login: String!) {
+query userInfo($login: String!, $start: DateTime!, $end: DateTime!) {
     user(login: $login) {
+        id
         name
-        contributionsCollection {
+        createdAt
+        contributionsCollection(from: $start, to: $end) {
+            contributionYears
             totalCommitContributions
             restrictedContributionsCount
         }
