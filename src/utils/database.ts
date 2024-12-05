@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from "path";
 import cron from "node-cron";
 import Database, { Database as TDatabase } from "better-sqlite3";
@@ -6,16 +7,23 @@ import { ResponseError } from "./utils";
 import { PRODUCTION } from "../environment";
 // import { PRODUCTION } from "../environment";
 
+const BASE_PATH = PRODUCTION ? "/var/data" : `${__dirname}/..`;
 export class PlatformDb {
   private _db: TDatabase;
 
   constructor(private platform: string, private _path: string, private _updateFunction: (username: string) => void){
     this._path = _path;
-    const dbPath = path.resolve(__dirname, this._path);
-
-    this._db = new Database(dbPath, {
-      fileMustExist: true
-    });
+    const dbPath = path.resolve(BASE_PATH, this._path);
+    const dirPath = path.dirname(dbPath);
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
+    try {
+      this._db = new Database(dbPath, {});
+    } catch (err){
+      console.error(`Error connecting to database at ${dbPath}:`, err);
+      throw new Error(`Error connecting to database at ${dbPath}`);
+    }
 
     this._db.exec(`
       CREATE TABLE IF NOT EXISTS users (
