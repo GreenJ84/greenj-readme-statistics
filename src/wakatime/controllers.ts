@@ -33,10 +33,7 @@ export const getUserData = async (
   // Try for cached data, Query API if not present
   let cacheData = await cache.getItem(cacheKey);
   if (cacheData === null) {
-    const profile = await querier.getUserProfile(username)
-      .catch((err) => {
-        throw err;
-      });
+    const profile = await querier.getUserProfile(username);
       (async () => {
         await cache.setItem(keyGenerator(username, "insights"), profile.insights)
           .catch((err) => {
@@ -62,7 +59,30 @@ export const getUserData = async (
   res.status(200).send(card);
 };
 
-const registrar = new PlatformDb("../wakatime/users.sqlite");
+const cacheProfile = async (username: string, profile: UserProfile) => {
+  await cache.setItem(keyGenerator(username, "insights"), profile.insights)
+    .catch((err) => {
+      console.error("Error setting cache:", err);
+    });
+  await cache.setItem(keyGenerator(username, "stats"), profile.stats)
+    .catch((err) => {
+      console.error("Error setting cache:", err);
+    });
+  await cache.setItem(keyGenerator(username, "languages"), profile.languages)
+    .catch((err) => {
+      console.error("Error setting cache:", err);
+    });
+}
+
+const registrar = new PlatformDb("wakatime", "../wakatime/users.sqlite", async (username: string) => {
+  try {
+    const userProfile = await querier.getUserProfile(username);
+    (async () => await cacheProfile(username, userProfile))();
+  } catch (err) {
+    console.error("Error fetching user profile:", err);
+    return;
+  }
+});
 export const register = async (req: Request, res: Response) => {
   const username = req.params.username!;
   const newRegistration = registrar.registerUser(username);
@@ -70,20 +90,7 @@ export const register = async (req: Request, res: Response) => {
   let userProfile: UserProfile;
   if (newRegistration || req.query.refresh === "true" ) {
   userProfile = await querier.getUserProfile(username) as UserProfile;
-  (async () => {
-      await cache.setItem(keyGenerator(username, "insights"), userProfile.insights)
-        .catch((err) => {
-          console.error("Error setting cache:", err);
-        });
-      await cache.setItem(keyGenerator(username, "stats"), userProfile.stats)
-        .catch((err) => {
-          console.error("Error setting cache:", err);
-        });
-      await cache.setItem(keyGenerator(username, "languages"), userProfile.languages)
-        .catch((err) => {
-          console.error("Error setting cache:", err);
-        });
-    })();
+  (async () => {(async () => await cacheProfile(username, userProfile))();})();
   } else {
     const [insights, stats, languages] = await Promise.all([
       cache.getItem(keyGenerator(username, "insights")),
