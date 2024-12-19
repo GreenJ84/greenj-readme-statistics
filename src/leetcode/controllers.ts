@@ -35,9 +35,11 @@ export const getProfileData = async (
 ) => {
   const username = req.params.username!;
   const cacheKey = keyGenerator(username, subRoute);
+  const refresh = typeof req.query.refresh === "string" ? req.query.refresh : null;
+
 
   let cacheData = await cache.getItem(cacheKey);
-  if (cacheData === null) {
+  if (cacheData === null || refresh) {
     cacheData = await querier.getUserData(subRoute)(username);
     (async () => {
       await cache.setItem(cacheKey, cacheData)

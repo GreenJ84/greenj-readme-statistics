@@ -29,10 +29,11 @@ export const getUserData = async (
 ): Promise<void> => {
   const username = req.params.username!;
   const cacheKey = keyGenerator(username, subRoute);
+  const refresh = typeof req.query.refresh === "string" ? req.query.refresh : null;
   
   // Try for cached data, Query API if not present
   let cacheData = await cache.getItem(cacheKey);
-  if (cacheData === null) {
+  if (cacheData === null || refresh) {
     const profile = await querier.getUserProfile(username);
       (async () => {
         await cache.setItem(keyGenerator(username, "insights"), profile.insights)
