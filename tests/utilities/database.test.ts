@@ -45,14 +45,16 @@ import { PlatformDb } from "../../src/utils/database";
   }
 
   console.log("Database setup completed. Ready to use.");
+  db.close();
 })();
 
 describe('Database class should work functionally', () => {
   let db;
 
   it('Should connect to the database file', () => {
-      db = new PlatformDb("../../tests/utilities/test.sqlite");
-      console.log(db);
+      db = new PlatformDb("testing", "../../tests/utilities/test.sqlite", (username: string) => {
+        expect(username).not.toBeNull();
+      });
       expect(db).toBeInstanceOf(PlatformDb);
   });
 
