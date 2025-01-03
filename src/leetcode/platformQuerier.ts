@@ -168,7 +168,7 @@ export class LeetCodeQuerier {
         return data as RawUserCompletion;
       })
       .catch((err) => {
-        this.statsQueryInProgress[username] = false;
+        this.completionQueryInProgress[username] = false;
         throw err instanceof ResponseError ? err : new ResponseError(
           "Error building Completion query for the LeetCode API",
           err,
@@ -176,7 +176,7 @@ export class LeetCodeQuerier {
         );
       });
 
-      this.statsQueryInProgress[username] = false;
+      this.completionQueryInProgress[username] = false;
       return completionParse(queryResponse);
   }
 
@@ -193,7 +193,7 @@ export class LeetCodeQuerier {
         return data as RawUserSubmissions;
       })
       .catch((err) => {
-        this.statsQueryInProgress[username] = false;
+        this.submissionsQueryInProgress[username] = false;
         throw err instanceof ResponseError ? err : new ResponseError(
           "Error building Submissions query for the LeetCode API",
           err,
@@ -201,7 +201,7 @@ export class LeetCodeQuerier {
         );
       });
 
-      this.statsQueryInProgress[username] = false;
+      this.submissionsQueryInProgress[username] = false;
       return submissionsParse(queryResponse);
   }
 

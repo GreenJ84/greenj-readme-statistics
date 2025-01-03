@@ -93,7 +93,7 @@ export const streakParse = (streak: UserStreak, data: RawStreakData, year: numbe
   const yearsActiveDays = data.matchedUser.userCalendar.totalActiveDays;
 
   streak.totalActive += yearsActiveDays
-  if (year == new Date().getFullYear()) {
+  if (yearsActiveDays > streak.mostActiveYear) {
       streak.mostActiveYear = yearsActiveDays;
   }
 };
