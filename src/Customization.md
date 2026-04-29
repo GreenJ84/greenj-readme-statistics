@@ -41,39 +41,10 @@
     </li>
 </ul>
 
-## Environmental variables configuration
-
-Example .env configuration:
-``` .env
-# API Tokens
-    GITHUB_TOKEN="<GitHub API Token>"
-    WAKATIME_TOKEN="<WakaTime API Token>"
-
-
-# Redis
-    REDIS_USER="<Redis Cloud Username>"
-    REDIS_PASS="<Redis cloud password>"
-    PROD_HOST="<Redis cloud connection string>"
-    PROD_PORT="<Redis cloud port (Redis labs is at: 15872)>"
-```
-## Register for Statistics Refreshing
-
-Each platform has routes dedicated to registration to refresh User's data on a 8hr interval. There routes follow the following patterns:
-
-Profile Data:
-```
-    https://greenj-readme-stats.onrender.com/<platform>/register/<username>
-```
-
-Profile Streak Data:
-*** Streak data is only applicable for LeetCode and GitHub platforms ***
-```
-    https://greenj-readme-stats.onrender.com/<platform>/streak/register/<username>
-```
 
 ## Available Pre-set Themes
 
-*** Do note that to be passed as parameters all hyphenated theme names must be represented with underscores replacing the hyphens. (Ex. 'greenj-dark' must be 'greenj_dark' ) ***
+***Note that to be passed as parameters all hyphenated theme names must be represented with underscores replacing the hyphens. (Ex. 'greenj-dark' must be 'greenj_dark' )***
 
 - default
 - greenj-dark
@@ -197,6 +168,7 @@ Profile Streak Data:
 The optional parameters for colors on the modals can be presented as either a color name or as any valid Hex code without the # sign.
 
 Named colors available:
+
 - aliceblue 
 - antiquewhite 
 - aqua 
@@ -349,7 +321,7 @@ Named colors available:
 
 ## Parameter Examples
 
-```
+```text
 https://greenj-readme-stats.onrender.com/wakatime/stats/<username>?background=springgreen&border=aquamarine&locale=zh_Hans_CN
 
 https://greenj-readme-stats.onrender.com/github/languages/<username>?theme-greenj_dark&hideBorder=true&borderRadius=50
